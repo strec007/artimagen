@@ -1,0 +1,73 @@
+***************************
+VERY BRIEF DESCRIPTION:
+
+The Artificial SEM Image Generator (artimagen) is a library that can generate
+artificial scanning electron microscope (SEM) images of various samples,
+including gold-on-carbon resolution sample, or some semiconductor structures.
+Numerous effects that appear in real SEMs are simulated (noise,
+drift-distortion, edge-effect, etc.), which enables assessment of imaging,
+metrology or other techniques that work with SEM micrographs. Unlike the real
+SEM images, the artificial images exhibit defined types and amounts of these
+effects, which is their key advantage. 
+
+The Artificial SEM Image Generator has been developed by Petr Cizmar at the U.S.
+National Institute of Standards and Technology. The first version of the
+generator was written in C to evaluate the ISO-candidate
+image-sharpness-calculation techniques. Later, the Artificial SEM Image
+Generator become needed for other applications as well and support for new kinds
+of samples was added to the generator. In order to make the generator more
+flexible, it was rewritten to C++. The users now may take advantage of the
+modular object structure of the program.
+
+The scientific background of this software is described in the following
+publications:
+[1] P. Cizmar, A. E. Vladar, B. Ming, and M. T. Postek.
+    Simulated SEM Images for Resolution Measurement.
+    SCANNING, 30(5):381­391, Sep-Oct 2008.
+
+[2] P. Cizmar, A. E. Vladar, and M. T. Postek.
+    Optimization of Accurate SEM Imaging by Use of Artificial Images
+    Proc. of SPIE Vol. 7378 737815-1, May 2009 
+
+Should you use this generator for scientific research, please cite any of these
+papers.
+
+***************************
+AUTHOR:
+
+	Petr Cizmar, Ph.D., National Institute of Standards and Technology
+
+	Address: 
+		National Institute of Standards and Technology
+		100 Bureau Drive
+		Gaithersburg, MD 20899
+		USA
+	E-mail: petr.cizmar@nist.gov
+	Phone:	+1 (301) 975-2166
+
+
+***************************
+INSTALLATION:
+
+Prerequisites: artimagen depends on libtiff and fftw3 libraries.
+
+This program uses the standard GNU Autotools toolkit, the installation procedure
+is standard:
+
+./configure
+make && make install
+
+In order to compile libartimagen as a shared library, use 
+"./configure --enable-shared" instead of "./configure". 
+However, it is not recommended, since shared libraries must be compiled as the
+Position Independent Code, which is in case of this library (with use of the
+gcc-4.3.3 compiler) producing significantly less optimized code. :-(
+
+***************************
+LICENSE:
+
+As this software was developed as part of work done by the United States
+Government, it is not subject to copyright, and is in the public domain. Note
+that according to Gnu.org public domain is compatible with GPL.
+
+

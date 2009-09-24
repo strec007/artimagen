@@ -1,0 +1,5 @@
+SUBDIRS=src
+
+dist_data_DATA = README LICENSE
+#ACLOCAL_AMFLAGS = -I m4
+
