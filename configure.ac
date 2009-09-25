@@ -11,7 +11,13 @@ AC_CONFIG_HEADER([config.h])
 # Checks for programs.
 AC_PROG_CXX
 AC_DISABLE_SHARED
+AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
+
+dnl initialize libtool
+LT_INIT([win32-dll])
+LT_LANG([C++])
+
 
 # Checks for libraries.
 AC_CHECK_LIB([tiff], [TIFFOpen], [TIFFLIB=-ltiff],
