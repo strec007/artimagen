@@ -22,30 +22,6 @@ AC_CHECK_LIB([fftw3], [fftw_execute], [FFTW3LIB=-lfftw3],
 AC_MSG_ERROR([fftw3 check failed]))
 AC_SUBST([FFTW3LIB])
 
-AM_OPTIONS_WXCONFIG
-reqwx=2.8.0
-AM_PATH_WXCONFIG($reqwx, wxWin=1)
-if test "$wxWin" != 1; then
-#	AC_MSG_ERROR([
-#		wxWidgets must be installed on your system.
-# 
-#		Please check that wx-config is in path, the directory
-#		where wxWidgets libraries are installed (returned by
-#		'wx-config --libs' or 'wx-config --static --libs' command)
-#		is in LD_LIBRARY_PATH or equivalent variable and
-#		wxWidgets version is $reqwx or above.
-#		])
-	AC_MSG_NOTICE([
-		wxWidgets library is not installed properly.
-
-		Not making the GUI wrapper (gaig).
-		])
-fi
-if test "$wxWin" = 1; then
-	wx_ok=true
-fi
-AM_CONDITIONAL([WX_OK], [test x$wx_ok = xtrue])
-
 
 # Checks for header files.
 
