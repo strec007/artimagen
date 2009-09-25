@@ -35,6 +35,10 @@
  #endif
 #endif
  
+void artimagen_test(void){
+printf("Hello!\n");
+} // this is just for autotools
+
 using namespace std;
 using namespace artimagen;
 ///////////////// CImage ////////////////////////////
