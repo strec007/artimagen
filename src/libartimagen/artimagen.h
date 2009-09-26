@@ -13,6 +13,7 @@
 #define ARTIMAGEN_H
 
 #include <cstring>
+#include <string>
 #include <fftw3.h>
 #include <tiffio.h>
 #include <cmath>
