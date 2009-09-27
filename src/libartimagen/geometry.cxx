@@ -518,7 +518,7 @@ int CPolygon::is_inside(CVector p){/*{{{*/
    give_bounding_box(&bbtl, &bbbr);
 
    // Test 1: is p inside the bounding box?
-   if ((p.x < bbtl.x) || (p.y < bbtl.y) || (p.x > bbbr.x) || (p.y > bbbr.y)) return 0; // p is outside the boundign box.
+   if ((p.x < bbtl.x) || (p.y < bbtl.y) || (p.x >= bbbr.x) || (p.y >= bbbr.y)) return 0; // p is outside the boundign box.
 
 
    // Test 2: map test
@@ -528,6 +528,9 @@ int CPolygon::is_inside(CVector p){/*{{{*/
    // Find the map indexes corresponding to p:
    i = floor ((p.x - bbtl.x) * map_division / (bbbr.x - bbtl.x));
    j = floor ((p.y - bbtl.y) * map_division / (bbbr.y - bbtl.y));
+   if ((j * map_division + i) >= sq(map_division)) {
+      cout << "map_division = " << map_division << ", i=" << i << "; j=" << j <<endl;
+   }
    if (map[j * map_division + i] == 2) return 1; // the whole map segment is inside, thus p is inside.
    if (map[j * map_division + i] == 0) return 0; //  segment outside, thus p outside
 

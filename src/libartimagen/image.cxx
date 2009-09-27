@@ -464,8 +464,8 @@ int CVibration::apply(CImage *im, unsigned long time_shift){/*{{{*/
 
    memcpy(helper_array, im->give_buffer(),sx*sy*sizeof(IM_STORE_TYPE));
 
-   for (IM_COORD_TYPE j=0; j<sy; j++)
-      for (IM_COORD_TYPE i=0; i<sx; i++){
+   for (IM_COORD_TYPE j=0; j<sy-1; j++)
+      for (IM_COORD_TYPE i=0; i<sx-1; i++){
 	 GE_INDEX_TYPE ind = index(i, j, sx);
 	 if ((i+motion_x[ind] >= 0) && (i+motion_x[ind] < sx) && (j+motion_y[ind] >= 0) && (j+motion_y[ind] < sy)){
 	    double x = motion_x[ind]; 
