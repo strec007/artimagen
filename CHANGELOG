@@ -1,0 +1,4 @@
+0.4rc2: Two serious bugs fixed. These were the reason, why the previous
+	version crashed in Windows.
+
+0.4rc1: The first usable version.
