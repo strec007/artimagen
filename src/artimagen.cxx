@@ -2,7 +2,7 @@
 #include <cmath>
 #include <ctime>
 #include <cstdlib>
-#include "libartimagen/artimagen.h"
+#include "libartimagen/artimagen_i.h"
 #include "../config.h"
 
 /* missing functions */

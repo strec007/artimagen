@@ -16,7 +16,7 @@ using namespace std;
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
-#include "artimagen.h"
+#include "artimagen_i.h"
 #include "../../config.h"
 
 /* missing functions */

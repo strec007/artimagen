@@ -15,7 +15,7 @@ using namespace std;
 #include <ctime>
 #include <cstdlib>
 #include <cstring>
-#include "artimagen.h"
+#include "artimagen_i.h"
 #include <cassert>
 #include "../../config.h"
 

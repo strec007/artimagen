@@ -2,8 +2,8 @@ AUTOMAKE_OPTIONS = foreign
 ARTIMAGEN_LIBRARY_VERSION = 0:4:0
 
 lib_LTLIBRARIES = libartimagen.la
-libartimagen_la_SOURCES = libartimagen/image.cxx libartimagen/geometry.cxx libartimagen/sample.cxx
-include_HEADERS=libartimagen/artimagen.h
+libartimagen_la_SOURCES = libartimagen/image.cxx libartimagen/geometry.cxx libartimagen/sample.cxx libartimagen/wrapper.cxx
+include_HEADERS=libartimagen/artimagen.h libartimagen/artimagen_i.h
 libartimagen_la_LIBADD=$(TIFFLIB) $(FFTW3LIB)
 libartimagen_la_LDFLAGS= -version-info $(ARTIMAGEN_LIBRARY_VERSION) -no-undefined
 

@@ -15,7 +15,7 @@
 #include <cstdlib>
 #include <assert.h>
 #include "strings.h"
-#include "artimagen.h"
+#include "artimagen_i.h"
 #include "../../config.h"
 
 /* missing functions */
