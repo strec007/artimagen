@@ -46,14 +46,14 @@
   #define random (long)lrand48
  #endif
 #endif
- 
 
 #include "artimagen.h"
 #include "artimagen_i.h"
 #include "../../config.h"
 
+using namespace artimagen;
 
-extern "C" void *fill_image_definition_structure(
+extern "C" void *fill_image_definition_structure(/*{{{*/
       t_std_image_def_struct *def_str,
       IM_STORE_TYPE bg_min_gl,
       IM_STORE_TYPE bg_max_gl,
@@ -89,9 +89,9 @@ extern "C" void *fill_image_definition_structure(
    def_str->vib_pixel_dead_time = vib_pixel_dead_time;
    def_str->vib_line_dead_time = vib_line_dead_time;
    def_str->noise_sigma = noise_sigma;
-}
+}/*}}}*/
 
-extern "C" void *fill_gc_sample_definition_structure(
+extern "C" void *fill_gc_sample_definition_structure(/*{{{*/
       t_gc_definition *def_str,
       int sizex,
       int sizey,
@@ -126,5 +126,19 @@ extern "C" void *fill_gc_sample_definition_structure(
    def_str->fs_max_r = fs_max_r;
    def_str->fs_min_coe = fs_min_coe;
    def_str->fs_max_coe = fs_max_coe;
+}/*}}}*/
+
+extern "C" void *generate_gc_sample(t_gc_definition *def){
+   CSample *sam = new CGoldOnCarbonSample(def);
+   return (void *) sam;
 }
+
+extern "C" void destroy_gc_sample(void *poi){
+   CSample *sam = (CGoldOnCarbonSample *) poi;
+   delete sam;
+}
+
+//TODO add process_image, destroy_image, save_image and get_image_data
+//functions!!!
+
  // vim: cindent

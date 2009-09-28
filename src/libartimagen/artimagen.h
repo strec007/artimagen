@@ -152,7 +152,7 @@ typedef struct {/*{{{*/
 #ifdef __cplusplus
 extern "C"
 #endif
-void *fill_image_definition_structure(
+void *fill_image_definition_structure(/*{{{*/
       t_std_image_def_struct *def_str,
       IM_STORE_TYPE bg_min_gl,
       IM_STORE_TYPE bg_max_gl,
@@ -170,12 +170,12 @@ void *fill_image_definition_structure(
       int vib_number_of_frequencies,
       unsigned int vib_pixel_dead_time,
       unsigned int vib_line_dead_time,
-      double noise_sigma);
+      double noise_sigma);/*}}}*/
 
 #ifdef __cplusplus
 extern "C"
 #endif
-void *fill_gc_sample_definition_structure(
+void *fill_gc_sample_definition_structure(/*{{{*/
       t_gc_definition *def_str,
       int sizex,
       int sizey,
@@ -193,8 +193,19 @@ void *fill_gc_sample_definition_structure(
       DIST_TYPE fs_max_r,
       float fs_min_coe,
       float fs_max_coe
-);
+);/*}}}*/
 
+#ifdef __cplusplus
+extern "C"
+#endif
+void *generate_gc_sample(t_gc_definition *def);
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void destroy_gc_sample(void *poi);
+
+/////////////// Footer - do not write below this line //////////////
 #endif
 // vim: cindent
 
