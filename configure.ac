@@ -41,5 +41,5 @@ AC_TYPE_SIZE_T
 
 AC_HEADER_STDC
 AC_CHECK_FUNCS([floor sqrt pow random srandom memset])
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile src/cexample/Makefile])
 AC_OUTPUT

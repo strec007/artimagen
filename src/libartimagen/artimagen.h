@@ -50,23 +50,25 @@
 
 // t_std_image_def_struct 
 typedef struct{/*{{{*/
-IM_STORE_TYPE bg_min_gl;
-IM_STORE_TYPE bg_max_gl;
-int bg_dens_x;
-int bg_dens_y;
-float beam_sigma;
-float beam_astig_ratio;
-float beam_astig_angle;
-float shift_x;
-float shift_y;
-unsigned int vib_pixel_dwell_time;
-float vib_min_frequency;
-float vib_max_frequency;
-float vib_max_amplitude;
-int vib_number_of_frequencies;
-unsigned int vib_pixel_dead_time;
-unsigned int vib_line_dead_time;
-double noise_sigma;
+   DIST_TYPE sizex;
+   DIST_TYPE sizey;
+   IM_STORE_TYPE bg_min_gl;
+   IM_STORE_TYPE bg_max_gl;
+   int bg_dens_x;
+   int bg_dens_y;
+   float beam_sigma;
+   float beam_astig_ratio;
+   float beam_astig_angle;
+   float shift_x;
+   float shift_y;
+   unsigned int vib_pixel_dwell_time;
+   float vib_min_frequency;
+   float vib_max_frequency;
+   float vib_max_amplitude;
+   int vib_number_of_frequencies;
+   unsigned int vib_pixel_dead_time;
+   unsigned int vib_line_dead_time;
+   double noise_sigma;
 } t_std_image_def_struct;/*}}}*/
 
 // t_gc_definition structure
@@ -150,10 +152,12 @@ typedef struct {/*{{{*/
 
 
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
-void *fill_image_definition_structure(/*{{{*/
+void fill_image_definition_structure(/*{{{*/
       t_std_image_def_struct *def_str,
+      DIST_TYPE sizex,
+      DIST_TYPE sizey,
       IM_STORE_TYPE bg_min_gl,
       IM_STORE_TYPE bg_max_gl,
       int bg_dens_x,
@@ -172,10 +176,7 @@ void *fill_image_definition_structure(/*{{{*/
       unsigned int vib_line_dead_time,
       double noise_sigma);/*}}}*/
 
-#ifdef __cplusplus
-extern "C"
-#endif
-void *fill_gc_sample_definition_structure(/*{{{*/
+void fill_gc_sample_definition_structure(/*{{{*/
       t_gc_definition *def_str,
       int sizex,
       int sizey,
@@ -195,15 +196,18 @@ void *fill_gc_sample_definition_structure(/*{{{*/
       float fs_max_coe
 );/*}}}*/
 
-#ifdef __cplusplus
-extern "C"
-#endif
 void *generate_gc_sample(t_gc_definition *def);
 
-#ifdef __cplusplus
-extern "C"
-#endif
 void destroy_gc_sample(void *poi);
+
+void *generate_standard_image(void *sample, t_std_image_def_struct *def);
+
+void destroy_image(void *poi);
+
+void save_image(void *image, char* filename, char *comment);
+#ifdef __cplusplus
+}
+#endif
 
 /////////////// Footer - do not write below this line //////////////
 #endif

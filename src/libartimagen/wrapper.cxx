@@ -53,8 +53,12 @@
 
 using namespace artimagen;
 
-extern "C" void *fill_image_definition_structure(/*{{{*/
+const DIST_TYPE overhead = 70;
+
+extern "C" void fill_image_definition_structure(/*{{{*/
       t_std_image_def_struct *def_str,
+      DIST_TYPE sizex,
+      DIST_TYPE sizey,
       IM_STORE_TYPE bg_min_gl,
       IM_STORE_TYPE bg_max_gl,
       int bg_dens_x,
@@ -72,6 +76,8 @@ extern "C" void *fill_image_definition_structure(/*{{{*/
       unsigned int vib_pixel_dead_time,
       unsigned int vib_line_dead_time,
       double noise_sigma){
+   def_str->sizex = sizex;
+   def_str->sizey = sizey;
    def_str->bg_min_gl = bg_min_gl;
    def_str->bg_max_gl = bg_max_gl;
    def_str->bg_dens_x = bg_dens_x;
@@ -91,7 +97,7 @@ extern "C" void *fill_image_definition_structure(/*{{{*/
    def_str->noise_sigma = noise_sigma;
 }/*}}}*/
 
-extern "C" void *fill_gc_sample_definition_structure(/*{{{*/
+extern "C" void fill_gc_sample_definition_structure(/*{{{*/
       t_gc_definition *def_str,
       int sizex,
       int sizey,
@@ -128,17 +134,67 @@ extern "C" void *fill_gc_sample_definition_structure(/*{{{*/
    def_str->fs_max_coe = fs_max_coe;
 }/*}}}*/
 
-extern "C" void *generate_gc_sample(t_gc_definition *def){
+extern "C" void *generate_gc_sample(t_gc_definition *def){/*{{{*/
+   def->sizex += 2*overhead;
+   def->sizey += 2*overhead;
    CSample *sam = new CGoldOnCarbonSample(def);
+   def->sizex -= 2*overhead;
+   def->sizey -= 2*overhead;
    return (void *) sam;
-}
+}/*}}}*/
 
-extern "C" void destroy_gc_sample(void *poi){
+extern "C" void destroy_gc_sample(void *poi){/*{{{*/
    CSample *sam = (CGoldOnCarbonSample *) poi;
    delete sam;
-}
+}/*}}}*/
 
-//TODO add process_image, destroy_image, save_image and get_image_data
-//functions!!!
+extern "C" void *generate_standard_image(void *sample, t_std_image_def_struct *def){/*{{{*/
 
+   DIST_TYPE o_sizex = def->sizex + 2*overhead;
+   DIST_TYPE o_sizey = def->sizey + 2*overhead;
+   CImage *im = new CImage(o_sizex, o_sizey);
+
+   CWavyBackgroud back(def->bg_min_gl, def->bg_max_gl, def->bg_dens_x, def->bg_dens_y);
+   back.apply(im);
+
+   //generate_snake_structure_image(&sam);
+   //generate_rectangle_structure_image(&sam);
+   //generate_corner_structure_image(&sam);
+   //generate_cross_structure_image(&sam);
+   ((CSample *)sample)->paint(im);
+
+   im->set_ifft_blocking(IM_IFFT_BLOCK);
+   CGaussianPsf psf(o_sizex, o_sizey, def->beam_sigma, def->beam_astig_ratio , def->beam_astig_angle); //sizex, sizey, sigma, astig. ratio, ast. angle.
+   psf.apply(im);
+   im->shift(def->shift_x, def->shift_y);
+   im->calculate_ifft();
+
+   // create the drift-distortion function and apply it
+   t_vib_definition vibdef;
+   vibdef.pixel_dwell_time = def->vib_pixel_dwell_time;
+   vibdef.min_frequency = def->vib_min_frequency;
+   vibdef.max_frequency = def->vib_max_frequency;
+   vibdef.max_amplitude = def->vib_max_amplitude;
+   vibdef.number_of_frequencies = def->vib_number_of_frequencies;
+   vibdef.pixel_dead_time = def->vib_pixel_dead_time;
+   vibdef.line_dead_time = def->vib_line_dead_time;
+   CVibration vib(&vibdef);
+   vib.apply(im, 0);
+   im->crop(overhead, overhead, o_sizex-overhead, o_sizey-overhead);
+   CGaussianNoise gn(def->noise_sigma);
+   gn.apply(im);
+   return (void *) im;
+}/*}}}*/
+
+extern "C" void destroy_image(void *poi){/*{{{*/
+   CImage *im = (CImage *) poi;
+   delete im;
+}/*}}}*/
+
+extern "C" void save_image(void *image, char* filename, char *comment){/*{{{*/
+   CImage *im = (CImage *) image;
+   im->tiff_write(filename, comment, BI_8B);
+}/*}}}*/
+
+//TODO add get_image data function.
  // vim: cindent
