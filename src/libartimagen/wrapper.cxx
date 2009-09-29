@@ -11,7 +11,7 @@
  *        Version:  1.0
  *        Created:  09/28/2009 01:31:00 PM
  *       Revision:  none
- *       Compiler:  gcc
+ *       Compiler:  g++
  *
  *         Author:  Dr. Petr Cizmar (pc), petr.cizmar@nist.gov
  *        Company:  National Institute od Standards and Technology

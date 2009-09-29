@@ -36,16 +36,37 @@
  * using the g++ (C++ compiler), although, this program users plain C only.
  */
 
+/* missing functions */
+#ifndef HAVE_SRANDOM
+ #ifdef WIN32
+  #define srandom srand
+ #else
+  #define srandom srand48
+ #endif
+#endif
+
+#ifndef HAVE_RANDOM
+ #ifdef WIN32
+  #define random (long)rand
+ #else
+  #define random (long)lrand48
+ #endif
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include "../libartimagen/artimagen.h"
 
 int main(){
    printf ("\n*********\nArtimagen in C example.\nby Petr Cizmar @ NIST, September 2009\n*********\n\n");
 
    DIST_TYPE size = 512;
+
    t_gc_definition gc_def; 
    t_std_image_def_struct im_def;
+
+   srandom(time(0));
 
    fill_gc_sample_definition_structure(
 	 &gc_def,                  //t_gc_definition *def_str,
