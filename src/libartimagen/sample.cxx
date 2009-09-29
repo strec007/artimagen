@@ -469,6 +469,10 @@ int CSample::add_feature(CFeature *fe){/*{{{*/
 
 }/*}}}*/
 
+void CSample::move_by(CVector mv){/*{{{*/
+   for (int i=0; i<actual_number_of_features; i++) ((CFeature *)features[i])->move_by(mv);
+}/*}}}*/
+
 CSample::~CSample(){/*{{{*/
    if (features) {
       for (int i=0; i<number_of_features; i++) if (features[i]) delete features[i];

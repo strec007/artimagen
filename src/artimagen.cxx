@@ -3,6 +3,7 @@
 #include <ctime>
 #include <cstdlib>
 #include "libartimagen/artimagen_i.h"
+#include "libartimagen/artimagen.h"
 #include "../config.h"
 
 /* missing functions */
@@ -90,14 +91,23 @@ void generate_cross_structure_image(CSample **sam){
    crsdef.basic_level_variation=0.2;
    crsdef.lsize=70;
    crsdef.tsize=20;
-   crsdef.distance=100;
+   crsdef.distance=200;
    crsdef.rotation=0;
    crsdef.fs_density = 2e-2;
    crsdef.fs_min_r = 2;
    crsdef.fs_max_r = 6;
    crsdef.fs_min_coe = 0.9;
    crsdef.fs_max_coe = 1.1;
-   *sam = new CPeriodicCrossSample(&crsdef);
+   try {
+      CSample *sample;
+      sample = new CPeriodicCrossSample(&crsdef);
+      sample->move_by(CVector(70,70));
+      *sam = sample;
+   }
+   catch (int exc){
+      if (exc == AIG_EX_FEATURE_OVERLAP) 
+	 cout << "Bad configuration, features overlap" << endl;
+   }
 }
 
 void generate_rectangle_structure_image(CSample **sam){
@@ -158,6 +168,7 @@ int main(int argc, char **argv){
       generate_snake_structure_image(&sam);
       //generate_rectangle_structure_image(&sam);
       //generate_corner_structure_image(&sam);
+      //generate_cross_structure_image(&sam);
       sam->paint(&im);
 
       im.set_ifft_blocking(IM_IFFT_BLOCK);

@@ -290,7 +290,7 @@ class CSample{/*{{{*/
       			// returns either SA_ADD_OK od SA_ADD_OVERLAP
       ~CSample();
       void paint(CImage *im);
-   
+      void move_by(CVector mv);
    protected:
       CFeature **features; // list of features
       int number_of_features;
