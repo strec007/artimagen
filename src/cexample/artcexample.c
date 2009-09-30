@@ -70,48 +70,43 @@ int main(){
 
    srandom(time(0));
 
-   fill_gc_sample_definition_structure(
-	 &gc_def,                  //t_gc_definition *def_str,
-	 size,                  //int sizex,
-	 size,                  //int sizey,
-	 0.2,                //float ee_coefficient,
-	 0.3,                  //IM_STORE_TYPE ee_top_above_basic,
-	 0,                  //reserved,
-	 0.5,                  //IM_STORE_TYPE basic_level,
-	 0.1,                  //IM_STORE_TYPE basic_level_variation,
-	 5,                  //DIST_TYPE grain_min_size,
-	 15,                  //DIST_TYPE grain_max_size,
-	 size*size/2000,                  //int number_of_grains,
-	 0,                  //float rotation,
-	 7e-3,                  //float fs_density,
-	 6,                  //DIST_TYPE fs_min_r,
-	 10,                  //DIST_TYPE fs_max_r,
-	 0.95,                  //float fs_min_coe,
-	 1.05                  //float fs_max_coe
-	 );
-   
-   fill_image_definition_structure(
-	 &im_def,	//      t_std_image_def_struct *def_str,
-	 size,		//      DIST_TYPE sizex,
-	 size,		//      DIST_TYPE sizey,
-	 0.1,		//      IM_STORE_TYPE bg_min_gl,
-	 0.3,		//      IM_STORE_TYPE bg_max_gl,
-	 5,		//      int bg_dens_x,
-	 5,		//      int bg_dens_y,
-	 1,		//      float beam_sigma,
-	 1,		//      float beam_astig_ratio,
-	 30,		//      float beam_astig_angle,
-	 0,		//      float shift_x,
-	 0,		//      float shift_y,
-	 10000,		//      unsigned int vib_pixel_dwell_time,
-	 3,		//      float vib_min_frequency,
-	 200,		//      float vib_max_frequency,
-	 0.2,		//      float vib_max_amplitude,
-	 10,		//      int vib_number_of_frequencies,
-	 100,		//      unsigned int vib_pixel_dead_time,
-	 100000,	//      unsigned int vib_line_dead_time,
-	 0.08		//      double noise_sigma);
-	 );
+// define the sample
+   gc_def.sizex = size;
+   gc_def.sizey = size;
+   gc_def.ee_coefficient = 0.2;
+   gc_def.ee_top_above_basic = 0.3;
+   gc_def.basic_level = 0.5;
+   gc_def.basic_level_variation = 0.1;
+   gc_def.grain_min_size = 5;
+   gc_def.grain_max_size = 15;
+   gc_def.number_of_grains = size*size/2000;
+   gc_def.rotation = 0;
+   gc_def.fs_density = 7e-3;
+   gc_def.fs_min_r = 6;
+   gc_def.fs_max_r = 10;
+   gc_def.fs_min_coe = 0.95;
+   gc_def.fs_max_coe = 1.05;
+
+//define the image
+   im_def.sizex = size;
+   im_def.sizey = size;
+   im_def.bg_min_gl = 0.1;
+   im_def.bg_max_gl = 0.3;
+   im_def.bg_dens_x = 5;
+   im_def.bg_dens_y = 5;
+   im_def.beam_sigma = 1;
+   im_def.beam_astig_ratio = 1;
+   im_def.beam_astig_angle = 30;
+   im_def.shift_x = 0;
+   im_def.shift_y = 0;
+   im_def.vib_pixel_dwell_time = 10000;
+   im_def.vib_min_frequency = 3;
+   im_def.vib_max_frequency = 200;
+   im_def.vib_max_amplitude = 0.2;
+   im_def.vib_number_of_frequencies = 10;
+   im_def.vib_pixel_dead_time = 100;
+   im_def.vib_line_dead_time = 100000;
+   im_def.noise_sigma = 0.08;
 
    void *sample = generate_gc_sample(&gc_def);
    printf("sample OK\n");
