@@ -1,3 +1,6 @@
+0.4rc3: Added wrapper for C, added example of usage in C.
+	Also, added move_by function to the CSample class.
+
 0.4rc2: Two serious bugs fixed. These were the reason, why the previous
 	version crashed in Windows.
 
