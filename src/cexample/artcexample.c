@@ -36,6 +36,13 @@
  * using the g++ (C++ compiler), although, this program users plain C only.
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+#include "../libartimagen/artimagen.h"
+#include "../../config.h"
+
+
 /* missing functions */
 #ifndef HAVE_SRANDOM
  #ifdef WIN32
@@ -52,11 +59,6 @@
   #define random (long)lrand48
  #endif
 #endif
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include "../libartimagen/artimagen.h"
 
 int main(){
    printf ("\n*********\nArtimagen in C example.\nby Petr Cizmar @ NIST, September 2009\n*********\n\n");

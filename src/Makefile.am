@@ -1,4 +1,4 @@
-SUBDIRS=cexample
+SUBDIRS=. cexample
 AUTOMAKE_OPTIONS = foreign
 ARTIMAGEN_LIBRARY_VERSION = 0:4:0
 
