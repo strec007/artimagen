@@ -9,5 +9,12 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+build: build-stamp
+build-stamp:
+	dh_testdir
+	./configure --enable-shared --prefix=/usr
+	make
+	touch build-stamp
+
 %:
 	dh  $@
