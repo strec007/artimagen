@@ -1,0 +1,33 @@
+Source: artimagen
+Priority: extra
+Maintainer: Petr Cizmar <petr.cizmar@nist.gov>
+Build-Depends: debhelper (>= 7), autotools-dev, libtiff4-dev, libfftw3-dev
+Standards-Version: 3.8.3
+Section: libs
+Homepage: http://artimagen.sourceforge.net
+
+Package: artimagen-dev
+Section: libdevel
+Architecture: any
+Depends: artimagen (= ${binary:Version})
+Description: The Artificial SEM Image Generator (artimagen) is a library that 
+ can generate artificial scanning electron microscope (SEM) images of various
+ samples, including gold-on-carbon resolution sample, or some semiconductor
+ structures.  Numerous effects that appear in real SEMs are simulated (noise,
+ drift-distortion, edge-effect, etc.), which enables assessment of imaging,
+ metrology or other techniques that work with SEM micrographs. Unlike the real
+ SEM images, the artificial images exhibit defined types and amounts of these
+ effects, which is their key advantage.
+
+Package: artimagen
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: The Artificial SEM Image Generator (artimagen) is a library that 
+ can generate artificial scanning electron microscope (SEM) images of various
+ samples, including gold-on-carbon resolution sample, or some semiconductor
+ structures.  Numerous effects that appear in real SEMs are simulated (noise,
+ drift-distortion, edge-effect, etc.), which enables assessment of imaging,
+ metrology or other techniques that work with SEM micrographs. Unlike the real
+ SEM images, the artificial images exhibit defined types and amounts of these
+ effects, which is their key advantage.

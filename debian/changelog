@@ -1,0 +1,13 @@
+artimagen (0.4rc3-1) unstable; urgency=low
+
+  * 0.4rc3: Added wrapper for C, added example of usage in C. Also, added
+    move_by function to the CSample class.
+
+  Earlier version not packaged:
+  
+  * 0.4rc2: Two serious bugs fixed. These were the reason, why the previous
+    version crashed in Windows.
+
+  * 0.4rc1: The first usable version.
+
+ -- Petr Cizmar <petr.cizmar@nist.gov>  Thu, 01 Oct 2009 14:12:29 -0400
