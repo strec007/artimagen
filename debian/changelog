@@ -1,3 +1,9 @@
+artimagen (0.4rc4-1.1) unstable; urgency=low
+
+  * Fixing broken installation in Debian and Ubuntu
+
+ -- Petr Cizmar <cizmar@sysel.mxnet.mel.nist.gov>  Fri, 02 Oct 2009 11:33:47 -0400
+
 artimagen (0.4rc3-1) unstable; urgency=low
 
   * 0.4rc3: Added wrapper for C, added example of usage in C. Also, added
