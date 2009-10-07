@@ -193,7 +193,7 @@ IM_STORE_TYPE *CImage::give_buffer(){/*{{{*/
 }/*}}}*/
 
 void CImage::dot(IM_COORD_TYPE x, IM_COORD_TYPE y, IM_STORE_TYPE color){/*{{{*/
-   if ((x>0) && (y>0) && (x<sizex) && (y<sizey))
+   if ((x>=0) && (y>=0) && (x<sizex) && (y<sizey))
 	buffer[y * sizex + x] = color;
    fft_valid = 0;
 }/*}}}*/
