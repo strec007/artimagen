@@ -154,48 +154,6 @@ typedef struct {/*{{{*/
 #ifdef __cplusplus
 extern "C" {
 #endif
-void fill_image_definition_structure(/*{{{*/
-      t_std_image_def_struct *def_str,
-      DIST_TYPE sizex,
-      DIST_TYPE sizey,
-      IM_STORE_TYPE bg_min_gl,
-      IM_STORE_TYPE bg_max_gl,
-      int bg_dens_x,
-      int bg_dens_y,
-      float beam_sigma,
-      float beam_astig_ratio,
-      float beam_astig_angle,
-      float shift_x,
-      float shift_y,
-      unsigned int vib_pixel_dwell_time,
-      float vib_min_frequency,
-      float vib_max_frequency,
-      float vib_max_amplitude,
-      int vib_number_of_frequencies,
-      unsigned int vib_pixel_dead_time,
-      unsigned int vib_line_dead_time,
-      double noise_sigma);/*}}}*/
-
-void fill_gc_sample_definition_structure(/*{{{*/
-      t_gc_definition *def_str,
-      int sizex,
-      int sizey,
-      float ee_coefficient,
-      IM_STORE_TYPE ee_top_above_basic,
-      DIST_TYPE ee_thickness,
-      IM_STORE_TYPE basic_level,
-      IM_STORE_TYPE basic_level_variation,
-      DIST_TYPE grain_min_size,
-      DIST_TYPE grain_max_size,
-      int number_of_grains,
-      float rotation,
-      float fs_density,
-      DIST_TYPE fs_min_r,
-      DIST_TYPE fs_max_r,
-      float fs_min_coe,
-      float fs_max_coe
-);/*}}}*/
-
 void *generate_gc_sample(t_gc_definition *def);
 
 void destroy_gc_sample(void *poi);
