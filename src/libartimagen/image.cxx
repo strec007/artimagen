@@ -202,8 +202,8 @@ int CImage::make_fft_plan(){/*{{{*/
    fft_data = (fftw_complex *) fftw_malloc(sizex * sizey * sizeof(fftw_complex));
    assert(fft_data);
 
-   plan_im = fftw_plan_dft_2d(sizex, sizey, fft_data, fft_data, FFTW_FORWARD, FFTW_ESTIMATE);
-   plan_imi = fftw_plan_dft_2d(sizex, sizey, fft_data, fft_data, FFTW_BACKWARD, FFTW_ESTIMATE);
+   plan_im = fftw_plan_dft_2d(sizey, sizex, fft_data, fft_data, FFTW_FORWARD, FFTW_ESTIMATE);
+   plan_imi = fftw_plan_dft_2d(sizey, sizex, fft_data, fft_data, FFTW_BACKWARD, FFTW_ESTIMATE);
 
    plan_initialized = 1;
 
@@ -327,7 +327,7 @@ int CPsf::calculate_fft_psf(){/*{{{*/
       fft_psf_data[i][1] = 0;	
    }
 
-   fftw_plan pl = fftw_plan_dft_2d(sizex, sizey, fft_psf_data, fft_psf_data, FFTW_FORWARD, FFTW_ESTIMATE);
+   fftw_plan pl = fftw_plan_dft_2d(sizey, sizex, fft_psf_data, fft_psf_data, FFTW_FORWARD, FFTW_ESTIMATE);
 
    fftw_execute(pl);
    fftw_destroy_plan(pl);
