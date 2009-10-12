@@ -174,7 +174,8 @@ bool CLine::operator ^ (CLine a){/*{{{*/
 
 /* Line intersections relation*/
 double CLine::operator % (CLine a){/*{{{*/
-   double t, u;
+   double t = 0; // the initialization here is just to keep the compiler quiet,
+   double u = 0; // otherwise it spits out a warning.
    if (intersection(a, &t, &u) < 0) return -1; // error, bad dir vectors
    
    if ((u<0) || (u>1) || (t<0)) return 0; // the intersection is in negative t or u outside segment

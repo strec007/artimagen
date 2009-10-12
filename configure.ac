@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.63)
-define(ARTIMAGEN_VERSION,0.4rc4)
+define(ARTIMAGEN_VERSION,0.4rc5)
 AC_SUBST([ARTIMAGEN_VERSION])
 AC_INIT(artimagen, ARTIMAGEN_VERSION, petr.cizmar@nist.gov)
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])

@@ -13,4 +13,4 @@ noinst_PROGRAMS=artimagen
 artimagen_SOURCES=artimagen.cxx
 artimagen_LDADD=libartimagen.la
 
-CXXFLAGS=-O3 -ggdb -fomit-frame-pointer -malign-double -fstrict-aliasing -ffast-math -Wall
+CXXFLAGS=-O3 -ggdb -fomit-frame-pointer -fstrict-aliasing -ffast-math -Wall
