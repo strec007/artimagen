@@ -8,16 +8,19 @@ Numerous effects that appear in real SEMs are simulated (noise,
 drift-distortion, edge-effect, etc.), which enables assessment of imaging,
 metrology or other techniques that work with SEM micrographs. Unlike the real
 SEM images, the artificial images exhibit defined types and amounts of these
-effects, which is their key advantage. 
+effects, which is their key advantage.
 
 The Artificial SEM Image Generator has been developed by Petr Cizmar at the U.S.
 National Institute of Standards and Technology. The first version of the
 generator was written in C to evaluate the ISO-candidate
 image-sharpness-calculation techniques. Later, the Artificial SEM Image
-Generator become needed for other applications as well and support for new kinds
-of samples was added to the generator. In order to make the generator more
-flexible, it was rewritten to C++. The users now may take advantage of the
-modular object structure of the program.
+Generator became needed for other applications as well and support for new kinds
+of samples was added. In order to make the generator more flexible, it was
+rewritten to C++. The users now may take advantage of the modular object
+structure of the program.
+
+At this time, also C and programs may be linlked with the library, which is
+enabled by the C wrapper. The basic usage of the library is quite easy.
 
 The scientific background of this software is described in the following
 publications:
