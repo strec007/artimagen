@@ -1,8 +1,15 @@
+artimagen (0.4rc5-1) unstable; urgency=low
+
+  * Fixed the non-square-image generation bug in the FFT.
+  * Fixed the first-row-first-column bug.
+
+ -- Petr Cizmar <petr.cizmar@nist.gov>  Mon, 12 Oct 2009 09:07:32 -0400
+
 artimagen (0.4rc4-1.1) unstable; urgency=low
 
   * Fixing broken installation in Debian and Ubuntu
 
- -- Petr Cizmar <cizmar@sysel.mxnet.mel.nist.gov>  Fri, 02 Oct 2009 11:33:47 -0400
+ -- Petr Cizmar <petr.cizmar@nist.gov>  Fri, 02 Oct 2009 11:33:47 -0400
 
 artimagen (0.4rc3-1) unstable; urgency=low
 
