@@ -47,7 +47,7 @@ CFeature::CFeature(){/*{{{*/
    curves = NULL;
    number_of_effects = 0;
    effects = NULL;
-   basic_gray_level = 0.6; // default value
+   base_gray_level = 0.6; // default value
 }/*}}}*/
 
 // global initialization function
@@ -92,7 +92,7 @@ void CFeature::paint(CImage *im){/*{{{*/
       for (x=bbtl.x; x<=bbbr.x; x++){
 	 CVector vec(x,y);
 	 if (is_inside(vec)) { // if the vec is outside the feature, no paint
-	    val = basic_gray_level;
+	    val = base_gray_level;
 	    for (i=0; i<number_of_effects; i++){
 	       CVector pixel(x,y);
 	       // feature effects are mutliplicative, they return 
@@ -105,12 +105,12 @@ void CFeature::paint(CImage *im){/*{{{*/
 
 }/*}}}*/
 
-IM_STORE_TYPE CFeature::give_basic_gray_level(){/*{{{*/
-   return basic_gray_level;
+IM_STORE_TYPE CFeature::give_base_gray_level(){/*{{{*/
+   return base_gray_level;
 }/*}}}*/
 
-void CFeature::set_basic_gray_level(IM_STORE_TYPE level){/*{{{*/
-   basic_gray_level = level;
+void CFeature::set_base_gray_level(IM_STORE_TYPE level){/*{{{*/
+   base_gray_level = level;
 }/*}}}*/
 
 void CFeature::add_effect_chain(CEffect **effects, int number_of_effects){/*{{{*/
@@ -274,9 +274,9 @@ float CEffect::give_amplification(CFeature *fe, CVector v){/*{{{*/
 
 //////////////////// CEdgeEffect /////////////////
 
-CEdgeEffect::CEdgeEffect(float coefficient, IM_STORE_TYPE top_edge_value_above_basic, DIST_TYPE thickness):CEffect(){/*{{{*/
+CEdgeEffect::CEdgeEffect(float coefficient, IM_STORE_TYPE top_edge_value_above_base, DIST_TYPE thickness):CEffect(){/*{{{*/
    this->coefficient = coefficient;
-   this->top_edge_value_above_basic = top_edge_value_above_basic;
+   this->top_edge_value_above_base = top_edge_value_above_base;
    this->thickness = thickness;
 }/*}}}*/
 
@@ -285,10 +285,10 @@ double CEdgeEffect::fun(CFeature *fe, CVector v){/*{{{*/
 
    if (!fe->is_inside(v)) return 1;
 
-   center_feature_value = fe->give_basic_gray_level();
+   center_feature_value = fe->give_base_gray_level();
 
    b = coefficient;
-   a = (double) top_edge_value_above_basic;
+   a = (double) top_edge_value_above_base;
    c = (double) center_feature_value;
 
    DIST_TYPE dist = sqrt(fe->sq_distance_from(v));
@@ -508,13 +508,13 @@ CGoldOnCarbonSample::CGoldOnCarbonSample(t_gc_definition *def):CSample(def->size
       int size = def->grain_max_size-i*(def->grain_max_size - def->grain_min_size)/number_of_features;
       CVector pos(rand()*sizex/RAND_MAX, rand()*sizey/RAND_MAX); // make a random position
       gg = new CGoldenGrain(pos,size);
-      gg->set_basic_gray_level(def->basic_level*(1+rand()*def->basic_level_variation/RAND_MAX));
+      gg->set_base_gray_level(def->base_level*(1+rand()*def->base_level_variation/RAND_MAX));
 
 
       effects = new CEffect*[2];
       number_of_effects = 2;
       for (int i=0; i<number_of_effects; i++) effects[i] = NULL; // important if effect constructor throws
-      effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_basic, def->ee_thickness);
+      effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base, def->ee_thickness);
       effects[1] = new CFineStructureEffect(def->fs_density, def->fs_min_r, def->fs_max_r, def->fs_min_coe, def->fs_max_coe);
 
       gg->add_effect_chain(effects, number_of_effects);
@@ -554,12 +554,12 @@ CPeriodicCornerSample::CPeriodicCornerSample(t_cor_definition *def):CSample(def-
       for (int i=0; i<countx; i++){
 	 cc = new CCorner(def->lsize, def->tsize, 0);
 	 cc->move_by(CVector(i*def->distance,j*def->distance));
-	 cc->set_basic_gray_level(def->basic_level*(1+rand()*def->basic_level_variation/RAND_MAX));
+	 cc->set_base_gray_level(def->base_level*(1+rand()*def->base_level_variation/RAND_MAX));
 
 	 effects = new CEffect*[2];
 	 number_of_effects = 2;
 	 for (int i=0; i<number_of_effects; i++) effects[i] = NULL; // important if effect constructor throws
-	 effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_basic, def->ee_thickness);
+	 effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base, def->ee_thickness);
 	 effects[1] = new CFineStructureEffect(def->fs_density, def->fs_min_r, def->fs_max_r, def->fs_min_coe, def->fs_max_coe);
 
 	 cc->add_effect_chain(effects,2);
@@ -577,7 +577,7 @@ CSingleRectangleSample::CSingleRectangleSample(t_rct_definition *def):CSample(de
    effects = new CEffect*[2];
    number_of_effects = 2;
    for (int i=0; i<number_of_effects; i++) effects[i] = NULL; // important if effect constructor throws
-   effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_basic, def->ee_thickness);
+   effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base, def->ee_thickness);
    effects[1] = new CFineStructureEffect(def->fs_density, def->fs_min_r, def->fs_max_r, def->fs_min_coe, def->fs_max_coe);
 
    number_of_features = 1;
@@ -587,7 +587,7 @@ CSingleRectangleSample::CSingleRectangleSample(t_rct_definition *def):CSample(de
    //IF_CO cout << "Placing Rectangle" << endl << "[";
    cc = new CRectangle(def->lsize, def->tsize, def->rotation);
    cc->move_by(CVector(def->sizex/2-def->tsize/2,def->sizey/2-def->lsize/2));
-   cc->set_basic_gray_level(def->basic_level*(1+rand()*def->basic_level_variation/RAND_MAX));
+   cc->set_base_gray_level(def->base_level*(1+rand()*def->base_level_variation/RAND_MAX));
    cc->add_effect_chain(effects,2);
    if (add_feature(cc) == SA_ADD_OVERLAP) throw (int) AIG_EX_FEATURE_OVERLAP;
    //IF_CO cout << "@";
@@ -601,7 +601,7 @@ CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey
    effects = new CEffect*[1];
    number_of_effects = 1;
    for (int i=0; i<number_of_effects; i++) effects[i] = NULL; // important if effect constructor throws
-   effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_basic, def->ee_thickness);
+   effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base, def->ee_thickness);
    //effects[1] = new CFineStructureEffect(def->fs_density, def->fs_min_r, def->fs_max_r, def->fs_min_coe, def->fs_max_coe);
 
    number_of_features = 9;
@@ -645,7 +645,7 @@ CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey
 
 
    for (int i=0; i<number_of_features; i++) if (fes[i]){
-      fes[i]->set_basic_gray_level(def->basic_level*(1+rand()*def->basic_level_variation/RAND_MAX));
+      fes[i]->set_base_gray_level(def->base_level*(1+rand()*def->base_level_variation/RAND_MAX));
       fes[i]->add_effect_chain(effects,number_of_effects);
       if (add_feature(fes[i]) == SA_ADD_OVERLAP) {
 	 cout << i << " overlaps!!!" << cout;
@@ -675,12 +675,12 @@ CPeriodicCrossSample::CPeriodicCrossSample(t_crs_definition *def):CSample(def->s
       for (int i=0; i<countx; i++){
 	 cc = new CCross(def->lsize, def->tsize, def->rotation);
 	 cc->move_by(CVector(i*def->distance,j*def->distance));
-	 cc->set_basic_gray_level(def->basic_level*(1+rand()*def->basic_level_variation/RAND_MAX));
+	 cc->set_base_gray_level(def->base_level*(1+rand()*def->base_level_variation/RAND_MAX));
 
 	 effects = new CEffect*[2];
 	 number_of_effects = 2;
 	 for (int i=0; i<number_of_effects; i++) effects[i] = NULL; // important if effect constructor throws
-	 effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_basic, def->ee_thickness);
+	 effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base, def->ee_thickness);
 	 effects[1] = new CFineStructureEffect(def->fs_density, def->fs_min_r, def->fs_max_r, def->fs_min_coe, def->fs_max_coe);
 
 	 cc->add_effect_chain(effects,2);

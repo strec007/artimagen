@@ -40,9 +40,9 @@ int main(){
    gc_def.sizex = SIZEX;
    gc_def.sizey = SIZEY;
    gc_def.ee_coefficient = 0.2;
-   gc_def.ee_top_above_basic = 0.3;
-   gc_def.basic_level = 0.5;
-   gc_def.basic_level_variation = 0.1;
+   gc_def.ee_top_above_base = 0.3;
+   gc_def.base_level = 0.5;
+   gc_def.base_level_variation = 0.1;
    gc_def.grain_min_size = 5;
    gc_def.grain_max_size = 15;
    gc_def.number_of_grains = SIZEX*SIZEY/2000;

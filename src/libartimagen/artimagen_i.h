@@ -199,14 +199,14 @@ class CFeature:public CPolygon{/*{{{*/
       ~CFeature();
       virtual void paint(CImage *im);
       void add_effect_chain(CEffect **effects, int number_of_effects);
-      IM_STORE_TYPE give_basic_gray_level();
-      void set_basic_gray_level(IM_STORE_TYPE level);
+      IM_STORE_TYPE give_base_gray_level();
+      void set_base_gray_level(IM_STORE_TYPE level);
    protected:
       int number_of_curves;
       int number_of_effects;
       CCurve **curves;
       CEffect **effects;
-      IM_STORE_TYPE basic_gray_level;
+      IM_STORE_TYPE base_gray_level;
       void build_vertices();
    private:
 //      void give_vertices(CVector *vertices); // this is a candidate for deletion inlc. the implementation in the cxx file.
@@ -249,12 +249,12 @@ class CEffect{/*{{{*/
 
 class CEdgeEffect: public CEffect{/*{{{*/
    public:
-      CEdgeEffect(float coefficient, IM_STORE_TYPE top_edge_value_above_basic, DIST_TYPE thickness);
+      CEdgeEffect(float coefficient, IM_STORE_TYPE top_edge_value_above_base, DIST_TYPE thickness);
    protected:
    private:
       double fun(CFeature *fe, CVector v);
       float coefficient;
-      IM_STORE_TYPE top_edge_value_above_basic;
+      IM_STORE_TYPE top_edge_value_above_base;
       IM_STORE_TYPE center_feature_value;
       DIST_TYPE thickness;
 
