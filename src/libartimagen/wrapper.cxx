@@ -30,6 +30,11 @@
 
  */
 
+
+#include "artimagen.h"
+#include "artimagen_i.h"
+#include "../../config.h"
+
 /* missing functions */
 #ifndef HAVE_SRANDOM
  #ifdef WIN32
@@ -46,10 +51,6 @@
   #define random (long)lrand48
  #endif
 #endif
-
-#include "artimagen.h"
-#include "artimagen_i.h"
-#include "../../config.h"
 
 using namespace artimagen;
 
