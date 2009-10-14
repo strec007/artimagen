@@ -8,7 +8,7 @@
  *                  Gold-on-Carbon sample and saves it to an 8-bit uncompressed
  *                  TIFF file.
  *
- *    Compilation:  g++ -O3 -lartimagen -o basiceca basiceca.cxx
+ *    Compilation:  g++ -O3 -lartimagen -o basicexa basicexa.cxx
  *
  *
  *        Version:  1.0
