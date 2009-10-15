@@ -1,3 +1,10 @@
+0.4rc6: Memory leaks fixed.
+
+0.4rc5: Fixed the non-square-image generation bug in the FFT.
+	Fixed the first-row-first-column bug.
+
+0.4rc4: Fixed broken installation in Debian and Ubuntu
+
 0.4rc3: Added wrapper for C, added example of usage in C.
 	Also, added move_by function to the CSample class.
 

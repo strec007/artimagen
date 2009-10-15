@@ -1,3 +1,9 @@
+artimagen (0.4rc6-1) unstable; urgency=low
+
+  * Memory leaks fixed. 
+
+ -- Petr Cizmar <petr.cizmar@nist.gov>  Thu, 15 Oct 2009 13:22:14 -0400
+
 artimagen (0.4rc5-1) unstable; urgency=low
 
   * Fixed the non-square-image generation bug in the FFT.
