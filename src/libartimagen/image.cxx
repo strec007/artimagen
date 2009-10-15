@@ -72,6 +72,7 @@ CImage::CImage(CImage *im){/*{{{*/
 }/*}}}*/
 
 CImage::CImage(CImage *im, IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){/*{{{*/
+   // reszizing constructor
    this->sizex = sizex;
    this->sizey = sizey;
    this->fft_data = NULL;
@@ -119,11 +120,7 @@ CImage::CImage(CImage *im, IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){/*{{{*/
 
 CImage::~CImage(){/*{{{*/
    // This is the destructor, disposes the buffers and plans.
-   if (plan_initialized) destroy_fft_plan();
-   if (fft_data) {
-      fftw_free(fft_data);
-      fft_data = NULL;
-   }
+   destroy_fft_plan();
    delete [] this->buffer;
 }/*}}}*/
 
@@ -218,10 +215,13 @@ int CImage::make_fft_plan(){/*{{{*/
 
 int CImage::destroy_fft_plan(){/*{{{*/
    if (plan_initialized) {
-      fftw_destroy_plan(plan_im);
       fftw_destroy_plan(plan_imi);
+      fftw_destroy_plan(plan_im);
    }
-   if (fft_data) fftw_free(fft_data);
+   if (fft_data) {
+      fftw_free(fft_data);
+      fft_data = NULL;
+   }
    plan_initialized = 0;
    return 1;
 }/*}}}*/

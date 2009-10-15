@@ -486,7 +486,10 @@ CSample::~CSample(){/*{{{*/
       number_of_effects = 0;
       effects = NULL; // unnecessary - this is a destructor, but if it's moved... 
    }
-   if (map) delete [] map;
+   if (map) {
+      for (int i=0; i < map_division * map_division; i++) delete [] map[i];
+      delete [] map;
+   }
    map = NULL;
    if (map_counts) delete [] map_counts;
    map_counts = NULL; // unnecessary - this is a destructor, but if it's moved...
