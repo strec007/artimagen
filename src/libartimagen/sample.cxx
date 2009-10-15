@@ -478,14 +478,19 @@ CSample::~CSample(){/*{{{*/
       for (int i=0; i<number_of_features; i++) if (features[i]) delete features[i];
       delete [] features;
       number_of_features = 0;
-      features = NULL;
+      features = NULL; // unnecessary - this is a destructor, but if it's moved...
    }
    if (effects) {
       for (int i=0; i<number_of_effects; i++) if (effects[i]) delete effects[i];
       delete [] effects;
       number_of_effects = 0;
-      effects = NULL;
+      effects = NULL; // unnecessary - this is a destructor, but if it's moved... 
    }
+   if (map) delete [] map;
+   map = NULL;
+   if (map_counts) delete [] map_counts;
+   map_counts = NULL; // unnecessary - this is a destructor, but if it's moved...
+
 }/*}}}*/
 
 //////////////// CGoldOnCarbonSample /////////////////////
