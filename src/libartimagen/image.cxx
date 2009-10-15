@@ -400,6 +400,9 @@ CGaussianPsf::CGaussianPsf(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey, float sigma
 //////////////// CVibration /////////////////////////////////////
 
 CVibration::CVibration(t_vib_definition *def){/*{{{*/
+   motion_x = NULL;
+   motion_y = NULL;
+
    memcpy(&this->def, def, sizeof(t_vib_definition)); // stores the definitions
    int nf = def->number_of_frequencies;
    frequencies = new float[nf];
@@ -422,10 +425,13 @@ CVibration::~CVibration(){/*{{{*/
    delete [] phases;
    delete [] amplitudes_x;
    delete [] amplitudes_y;
+   if (motion_x) delete [] motion_x;
+   if (motion_y) delete [] motion_y;
 }/*}}}*/
 
 void CVibration::generate_curves(const int sizex, const int sizey, unsigned long time_shift){/*{{{*/
-
+   assert(!motion_x); // if the curves were already generated, this would cause a memory leak.
+   assert(!motion_y); // if you want to regenerate curves, delete the original  first.
    motion_x = new double[(int) (sizex * sizey)];
    motion_y = new double[(int) (sizex * sizey)];
 
