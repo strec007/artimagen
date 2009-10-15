@@ -628,12 +628,17 @@ void CPolygon::create_map(){/*{{{*/
 
 }/*}}}*/
 
+void CPolygon::destroy_map(){/*{{{*/
+   if (map) delete [] map;
+   map = NULL; 
+}/*}}}*/
+
 void CPolygon::set_map_division(int md){/*{{{*/
    map_division = md;
 }/*}}}*/
 
 CPolygon::~CPolygon(){/*{{{*/
-   if (map) delete [] map;
+   destroy_map();
 }/*}}}*/
 
 

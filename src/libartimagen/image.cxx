@@ -74,6 +74,7 @@ CImage::CImage(CImage *im){/*{{{*/
 CImage::CImage(CImage *im, IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){/*{{{*/
    this->sizex = sizex;
    this->sizey = sizey;
+   this->fft_data = NULL;
    this->buffer = new IM_STORE_TYPE[sizex * sizey];
 
    fft_valid = 0;
@@ -119,6 +120,10 @@ CImage::CImage(CImage *im, IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){/*{{{*/
 CImage::~CImage(){/*{{{*/
    // This is the destructor, disposes the buffers and plans.
    if (plan_initialized) destroy_fft_plan();
+   if (fft_data) {
+      fftw_free(fft_data);
+      fft_data = NULL;
+   }
    delete [] this->buffer;
 }/*}}}*/
 

@@ -163,6 +163,7 @@ class CPolygon:public CCurve{/*{{{*/
       bool overlaps(CPolygon *fe);
    protected:
       void create_map();
+      void destroy_map();
 
    private:
       char *map;

@@ -182,6 +182,7 @@ int main(int argc, char **argv){
       //generate_corner_structure_image(&sam);
       //generate_cross_structure_image(&sam);
       sam->paint(&im);
+      delete sam;
 
       im.set_ifft_blocking(IM_IFFT_BLOCK);
       CGaussianPsf psf(SIZEX,SIZEY,0.7,2,30); //sizex, sizey, sigma, astig. ratio, ast. angle.
