@@ -412,7 +412,7 @@ void CSample::occupies_map(CFeature *fe, int *map){/*{{{*/
    if (maxx > map_division) maxx = map_division;
    if (maxy > map_division) maxy = map_division;
 
-   for (int j = miny ; j < maxy; j++)
+   for (int j = miny; j < maxy; j++)
       for (int k = minx; k < maxx; k++){
 	 map[j * map_division + k] = 1;
       }
