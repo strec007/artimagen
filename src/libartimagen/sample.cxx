@@ -431,11 +431,14 @@ void CSample::rotate(CVector center, double angle){/*{{{*/
 }/*}}}*/
 
 void CSample::destroy_map(){/*{{{*/
+   if  ((map) && (map_counts)){ // map initialized and not yet destroyed
+      for (int i=0; i < map_division * map_division; i++) if (map_counts[i] > 0) delete [] map[i]; // zero all map counts
 
-   for (int i=0; i < map_division * map_division; i++) if (map_counts[i] > 0) delete map[i]; // zero all map counts
-
-   delete map;
-   delete map_counts;
+      delete [] map;
+      map = NULL;
+      delete [] map_counts;
+      map_counts = NULL;
+   }
 }/*}}}*/
 
 int CSample::overlaps(CFeature *fe){/*{{{*/
@@ -486,13 +489,7 @@ CSample::~CSample(){/*{{{*/
       number_of_effects = 0;
       effects = NULL; // unnecessary - this is a destructor, but if it's moved... 
    }
-   if (map) {
-      for (int i=0; i < map_division * map_division; i++) delete [] map[i];
-      delete [] map;
-   }
-   map = NULL;
-   if (map_counts) delete [] map_counts;
-   map_counts = NULL; // unnecessary - this is a destructor, but if it's moved...
+   destroy_map();
 
 }/*}}}*/
 
