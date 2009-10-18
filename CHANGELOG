@@ -1,3 +1,5 @@
+0.4rc6a: Crashes-causing illegal-free() bug fixed. 
+
 0.4rc6: Memory leaks fixed.
 
 0.4rc5: Fixed the non-square-image generation bug in the FFT.
