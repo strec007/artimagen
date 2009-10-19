@@ -150,6 +150,14 @@ typedef struct {/*{{{*/
    float fs_max_coe;
 } t_crs_definition;/*}}}*/
 
+// t_message definition
+typedef struct { // This is a type for messages sent by the individual classes to the application./*{{{*/
+   	  // It's good for progress bars and other progress or debug related
+	  // meters.
+   const char *sender_id;
+   int message;
+} t_message;/*}}}*/
+
 
 #ifdef __cplusplus
 extern "C" {

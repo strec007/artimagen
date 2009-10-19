@@ -55,6 +55,20 @@ T sq(T a){
    return (a*a);
 }
 
+class CApp{
+   public:
+      void set_message_call_back(void (*f)(void *));
+};
+
+class CObject{
+   public:
+      CObject();
+   protected:
+      void send_message(int message);
+   private:
+      string sender_id;
+};
+
 DIST_TYPE cross(CVector a, CVector b);
 DIST_TYPE dot(CVector a, CVector b);
 
