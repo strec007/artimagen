@@ -40,6 +40,8 @@ using namespace artimagen;
 ///////////////// CImage ////////////////////////////
 
 CImage::CImage(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){ /*{{{*/
+   sender_id = "CImage";
+   send_message(AIG_MSG_CREATING,"Empty image");
 
    //this is a constructor which allocates the buffer space and stores the x-
    //and y- sizes of the image.
@@ -53,7 +55,10 @@ CImage::CImage(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){ /*{{{*/
    block_ifft = IM_NO_IFFT_BLOCK;
 }/*}}}*/
 
+
 CImage::CImage(CImage *im){/*{{{*/
+   sender_id = "CImage";
+   send_message(AIG_MSG_CREATING,"Copying image");
    sizex = im->give_sizex();
    sizey = im->give_sizey();
    this->buffer = new IM_STORE_TYPE[sizex * sizey];
@@ -72,6 +77,8 @@ CImage::CImage(CImage *im){/*{{{*/
 }/*}}}*/
 
 CImage::CImage(CImage *im, IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){/*{{{*/
+   sender_id = "CImage";
+   send_message(AIG_MSG_CREATING,"Resizing image");
    // reszizing constructor
    this->sizex = sizex;
    this->sizey = sizey;
@@ -306,12 +313,14 @@ IM_STORE_TYPE CImage::give_mean_value(){/*{{{*/
 //////////////// CImageEffect ///////////////////////////
 
 int CImageEffect::apply(CImage *im){/*{{{*/
+   sender_id = "CImageEffect";
    return 0;
 }/*}}}*/
 
 //////////////// CPsf ///////////////////////////////////
 
 CPsf::CPsf(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){/*{{{*/
+   sender_id = "CPsf";
    psf_data = NULL;
    image_data = NULL;
    image_fft_data = NULL;
@@ -325,7 +334,7 @@ CPsf::CPsf(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){/*{{{*/
 }/*}}}*/
 
 int CPsf::calculate_fft_psf(){/*{{{*/
-
+   send_message(AIG_MSG_CREATING,"Calculating PSF");
    fft_psf_data = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) *sizex * sizey);
    for (int i=0; i<sizex*sizey; i++){
       fft_psf_data[i][0] = psf_data[i];	
@@ -341,7 +350,7 @@ int CPsf::calculate_fft_psf(){/*{{{*/
 
 int CPsf::convolve(CImage *im){/*{{{*/
    if ((im->give_sizex() != sizex) || (im->give_sizey() != sizey)){
-      cerr << "Wrong image size - cannot convolve, make a new PSF!!!" << endl;
+      send_message(AIG_MSG_FATAL_ERROR, "Wrong image size - cannot convolve, make a new PSF!!!");
       return -1;
    }
 
@@ -363,6 +372,7 @@ int CPsf::convolve(CImage *im){/*{{{*/
 }/*}}}*/
 
 int CPsf::apply(CImage *im){/*{{{*/
+   send_message(AIG_MSG_APPLYING,"Convolution");
    return convolve(im);
 }/*}}}*/
 
@@ -375,6 +385,7 @@ CPsf::~CPsf(){/*{{{*/
 
 CGaussianPsf::CGaussianPsf(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey, float sigma, float astigmatism_ratio, float astigmatism_angle):CPsf(sizex, sizey){/*{{{*/
 
+   sender_id = "CGaussianPsf";
    IM_COORD_TYPE psfsize = sigma * astigmatism_ratio*3;
 
    for (IM_COORD_TYPE j=-psfsize; j<psfsize; j++)
@@ -400,6 +411,8 @@ CGaussianPsf::CGaussianPsf(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey, float sigma
 //////////////// CVibration /////////////////////////////////////
 
 CVibration::CVibration(t_vib_definition *def){/*{{{*/
+   sender_id = "CVibration";
+   send_message(AIG_MSG_CREATING,"Calculating vibration functions");
    motion_x = NULL;
    motion_y = NULL;
 
@@ -466,6 +479,7 @@ void CVibration::destroy_curves(){/*{{{*/
 }/*}}}*/
 
 int CVibration::apply(CImage *im, unsigned long time_shift){/*{{{*/
+   send_message(AIG_MSG_APPLYING,"Applying vibration");
    const IM_COORD_TYPE sx = im->give_sizex();
    const IM_COORD_TYPE sy = im->give_sizey();
 
@@ -496,7 +510,12 @@ int CVibration::apply(CImage *im, unsigned long time_shift){/*{{{*/
 
 /////////////// CNoise /////////////////////////////////////////
 
+CNoise::CNoise(){/*{{{*/
+   sender_id = "CNoise";
+}/*}}}*/
+
 int CNoise::apply(CImage *im){/*{{{*/
+   send_message(AIG_MSG_APPLYING,"Applying");
    const IM_COORD_TYPE sx = im->give_sizex();
    const IM_COORD_TYPE sy = im->give_sizey();
 
@@ -517,6 +536,10 @@ double CNoise::noise_value(double n){/*{{{*/
 
 //////////////// CPoissonNoise /////////////////////////////////
 
+CPoissonNoise::CPoissonNoise(){/*{{{*/
+   sender_id = "CPoissonNoise";
+}/*}}}*/
+
 double CPoissonNoise::noise_value(double n){/*{{{*/
    double L = exp(-n);
    int k = 0;
@@ -531,6 +554,7 @@ double CPoissonNoise::noise_value(double n){/*{{{*/
 //////////////// CGaussianNoise ///////////////////////////////
 
 CGaussianNoise::CGaussianNoise(double sigma){/*{{{*/
+   sender_id = "CGaussianNoise";
    this->sigma = sigma;
 }/*}}}*/
 
@@ -547,6 +571,10 @@ double CGaussianNoise::noise_value(double n){/*{{{*/
 
 //////////////// CBackgroud //////////////////////////////////
 
+CBackgroud::CBackgroud(){/*{{{*/
+   sender_id = "CBackgroud";
+}/*}}}*/
+
 int CBackgroud::apply(CImage *im){ /*{{{*/
    return 0;
 }/*}}}*/
@@ -555,10 +583,12 @@ int CBackgroud::apply(CImage *im){ /*{{{*/
 //////////////// CEvenBackgroud //////////////////////////////
 
 CEvenBackgroud::CEvenBackgroud(IM_STORE_TYPE gl){/*{{{*/
+   sender_id = "CEvenBackgroud";
    bg_greylevel = gl;
 }/*}}}*/
 
 int CEvenBackgroud::apply(CImage *im){ /*{{{*/
+   send_message(AIG_MSG_APPLYING,"Applying");
    const IM_COORD_TYPE sx = im->give_sizex();
    const IM_COORD_TYPE sy = im->give_sizey();
 
@@ -574,7 +604,10 @@ IM_STORE_TYPE CEvenBackgroud::give_bg_greylevel(){/*{{{*/
    return bg_greylevel;
 }/*}}}*/
 
+//////////////// CWavyBackgroud //////////////////////////////
+
 CWavyBackgroud::CWavyBackgroud(IM_STORE_TYPE min_gl, IM_STORE_TYPE max_gl, int densx, int densy){/*{{{*/
+   sender_id = "CWavyBackgroud";
    this->densx = densx;
    this->densy = densy;
    this->min_gl = min_gl;
@@ -589,6 +622,7 @@ CWavyBackgroud::~CWavyBackgroud(){/*{{{*/
 }/*}}}*/
 
 int CWavyBackgroud::apply(CImage *im){/*{{{*/
+   send_message(AIG_MSG_APPLYING,"Applying");
    CImage *bg_im_big = new CImage(bg_im, im->give_sizex(), im->give_sizey());
    for (long int i=0; i< (im->give_sizex() * im->give_sizey()); i++) im->give_buffer()[i] = bg_im_big->give_buffer()[i]; 
    delete bg_im_big;

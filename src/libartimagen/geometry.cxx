@@ -56,6 +56,7 @@ using namespace artimagen;
 CVector::CVector(){/*{{{*/
    x = 0;
    y = 0;
+   sender_id = "CVector";
 }/*}}}*/
 
 /* CVector constructor with value initialization */
@@ -127,6 +128,7 @@ void CVector::rotate(CVector center, double angle){/*{{{*/
 CLine::CLine(){/*{{{*/
    p0 = CVector(0,0);
    p1 = CVector(1,1);
+   sender_id = "CLine";
 }/*}}}*/
 
 /* Constructor of a line from two vectors */
@@ -261,6 +263,7 @@ CTriangle::CTriangle(CVector va, CVector vb, CVector vc){/*{{{*/
    ea = CLine(vb, vc);
    eb = CLine(vc, va);
    ec = CLine(va, vb);
+   sender_id = "CTriangle";
 }/*}}}*/
 
 /////////////////// CCurve ///////////////////
@@ -270,6 +273,8 @@ CTriangle::CTriangle(CVector va, CVector vb, CVector vc){/*{{{*/
 CCurve::CCurve(){/*{{{*/
    number_of_vertices = 0; 
    vertices = NULL;
+   sender_id = "CCurve";
+
 }/*}}}*/
 
 /* initialization function; same for all curves */
@@ -464,6 +469,7 @@ CVector CStraightLine::parametrize(DIST_TYPE t){/*{{{*/
 
 CBezier::CBezier(CVector p1, CVector p2, CVector p3, CVector p4)/*{{{*/
 {
+   sender_id = "CBezier";
    // just set the control points and run init.
    control_points[0] = p1;
    control_points[1] = p2;
@@ -487,6 +493,7 @@ CVector CBezier::parametrize(DIST_TYPE t){/*{{{*/
  * segments, so polygon is the approximation of a closed curve*/
 
 CPolygon::CPolygon(){/*{{{*/
+   sender_id = "CPolygon";
    map_division = 5; // just a guess for now. :-)
    map = NULL;
 }/*}}}*/
@@ -646,6 +653,7 @@ CPolygon::~CPolygon(){/*{{{*/
 // NOT YET USED
 
 CVoronoi::CVoronoi(CPolygon *polygon, CVector *free_points, int num_of_free){/*{{{*/
+   sender_id = "CVoronoi";
    this->polygon = polygon;
    polygon->give_bounding_box(&bounding_box_tl, &bounding_box_br);
    this->free_points = free_points;

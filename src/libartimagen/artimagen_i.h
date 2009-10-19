@@ -40,6 +40,25 @@ enum {
 namespace artimagen {
 using namespace std;
 
+/* object */
+
+class CApp{/*{{{*/
+   public:
+      CApp();
+      void set_message_call_back(void (*f)(t_message *));
+      void broadcast_message(t_message message);
+   private:
+      void (*call_back)(t_message *);
+};/*}}}*/
+
+class CObject{/*{{{*/
+   public:
+      CObject();
+   protected:
+      virtual void send_message(int message, const char *comment);
+      const char* sender_id;
+};/*}}}*/
+
 /* geometry */
 
 class CCurve;
@@ -55,24 +74,10 @@ T sq(T a){
    return (a*a);
 }
 
-class CApp{
-   public:
-      void set_message_call_back(void (*f)(void *));
-};
-
-class CObject{
-   public:
-      CObject();
-   protected:
-      void send_message(int message);
-   private:
-      string sender_id;
-};
-
 DIST_TYPE cross(CVector a, CVector b);
 DIST_TYPE dot(CVector a, CVector b);
 
-class CVector{/*{{{*/
+class CVector:public CObject{/*{{{*/
    public:
       CVector();
       CVector(DIST_TYPE x, DIST_TYPE y);
@@ -89,7 +94,7 @@ class CVector{/*{{{*/
       void rotate(CVector center, double angle);
 };/*}}}*/
 
-class CLine{/*{{{*/
+class CLine:public CObject{/*{{{*/
    public:
       CLine();
       CLine(CVector p0, CVector p1);
@@ -109,7 +114,7 @@ class CLine{/*{{{*/
 
 };/*}}}*/
 
-class CTriangle{/*{{{*/
+class CTriangle:public CObject{/*{{{*/
    public:
       CTriangle(CVector va, CVector vb, CVector vc);
 
@@ -122,7 +127,7 @@ class CTriangle{/*{{{*/
       CLine ec;
 };/*}}}*/
 
-class CCurve{/*{{{*/
+class CCurve:public CObject{/*{{{*/
    public:
       CCurve();
       ~CCurve();
@@ -186,7 +191,7 @@ class CPolygon:public CCurve{/*{{{*/
 
 };/*}}}*/
 
-class CVoronoi{/*{{{*/
+class CVoronoi:public CObject{/*{{{*/
    public:
       CVoronoi(CPolygon *polygon, CVector *free_points, int num_of_free);
       ~CVoronoi();
@@ -253,7 +258,7 @@ class CCross:public CFeature{/*{{{*/
       CCross(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation);
 };/*}}}*/
 
-class CEffect{/*{{{*/
+class CEffect:public CObject{/*{{{*/
    public:
       CEffect();
       float give_amplification(CFeature *fe, CVector v); // effect amplifies the original value depenging on coordinates
@@ -299,7 +304,7 @@ class CFineStructureEffect: public CEffect{/*{{{*/
       virtual double fun(CFeature *fe, CVector v);
 };/*}}}*/
 
-class CSample{/*{{{*/
+class CSample:public CObject{/*{{{*/
    public:
       CSample(DIST_TYPE sizex, DIST_TYPE sizey);
       			// returns either SA_ADD_OK od SA_ADD_OVERLAP
@@ -361,7 +366,7 @@ class CSnakeSample:public CSample{/*{{{*/
 /* image */
 
 
-class CImage{/*{{{*/
+class CImage:public CObject{/*{{{*/
    public:
       CImage(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey); //create empty image of a certain size
       CImage(CImage *im); // copy image
@@ -407,7 +412,7 @@ class CImage{/*{{{*/
 };/*}}}*/
 
 template <class save_type>
-class CSaveBuffer{/*{{{*/
+class CSaveBuffer:public CObject{/*{{{*/
       public:
       CSaveBuffer(CImage *im);
       ~CSaveBuffer();
@@ -456,7 +461,7 @@ save_type CSaveBuffer<save_type>::convert_to_save_type(IM_STORE_TYPE x){/*{{{*/
 
 /*}}}*/
 
-class CImageEffect{/*{{{*/
+class CImageEffect:public CObject{/*{{{*/
    public:
 	virtual int apply(CImage *im);
 };/*}}}*/
@@ -521,6 +526,7 @@ class CVibration:public CImageEffect{/*{{{*/
 
 class CNoise:public CImageEffect{/*{{{*/
    public:
+      CNoise();
       virtual int apply(CImage *im);
    protected:
       virtual double noise_value(double n);
@@ -528,6 +534,7 @@ class CNoise:public CImageEffect{/*{{{*/
 
 class CPoissonNoise:public CNoise{/*{{{*/
    public:
+      CPoissonNoise();
    protected:
       virtual double noise_value(double n);
 };/*}}}*/
@@ -543,7 +550,8 @@ class CGaussianNoise:public CNoise{/*{{{*/
 
 class CBackgroud:public CImageEffect{/*{{{*/
    public:
-	virtual int apply(CImage *im);
+      CBackgroud();
+      virtual int apply(CImage *im);
 };/*}}}*/
 
 class CEvenBackgroud:public CBackgroud{/*{{{*/

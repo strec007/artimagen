@@ -165,8 +165,14 @@ void generate_snake_structure_image(CSample **sam){
    *sam = new CSnakeSample(&rctdef);
 }
 
+void message_call_back(t_message *msg){ // this is the call-vack function that will print messages
+   cout << msg->sender_id << ": " << msg->message << " and comments: " << msg->comment << endl;
+}
+
 int main(int argc, char **argv){
 
+   CApp app; // initialization of the generator
+   app.set_message_call_back(message_call_back); // set the call-back function
 
    CSample *sam = NULL;
    initialize();

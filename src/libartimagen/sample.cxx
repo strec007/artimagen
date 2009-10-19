@@ -43,6 +43,7 @@ using namespace artimagen;
  * are derived from this one */
 
 CFeature::CFeature(){/*{{{*/
+   sender_id = "CFeature";
    number_of_curves = 0;
    curves = NULL;
    number_of_effects = 0;
@@ -132,6 +133,7 @@ CFeature::~CFeature(){/*{{{*/
 //////////////////// CGoldenGrain /////////////////
 
 CGoldenGrain::CGoldenGrain(const CVector position, const DIST_TYPE size){/*{{{*/
+   sender_id = "CGoldenGrain";
    const int NOC = 7;
    number_of_curves = NOC;
    curves = new CCurve*[number_of_curves];
@@ -180,6 +182,7 @@ CGoldenGrain::CGoldenGrain(const CVector position, const DIST_TYPE size){/*{{{*/
 ///////////////////// CRectangle ////////////////
 
 CRectangle::CRectangle(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*{{{*/
+   sender_id = "CRectangle";
    number_of_curves = 4;
    curves = new CCurve*[number_of_curves];
    for (int i=0; i<number_of_curves; i++) curves[i]=NULL; // important if curve-constructor throws
@@ -198,6 +201,7 @@ CRectangle::CRectangle(const DIST_TYPE lsize, const DIST_TYPE tsize, double rota
 ///////////////////// CSnake ////////////////
 
 CSnake::CSnake(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DIST_TYPE c, double rotation){/*{{{*/
+   sender_id = "CSnake";
    number_of_curves = 8;
    curves = new CCurve*[number_of_curves];
    for (int i=0; i<number_of_curves; i++) curves[i]=NULL; // important if curve-constructor throws
@@ -219,6 +223,7 @@ CSnake::CSnake(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DI
 ///////////////////// CCorner ////////////////
 
 CCorner::CCorner(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*{{{*/
+   sender_id = "CCorner";
    number_of_curves = 6;
    curves = new CCurve*[number_of_curves];
    for (int i=0; i<number_of_curves; i++) curves[i]=NULL; // important if curve-constructor throws
@@ -237,6 +242,7 @@ CCorner::CCorner(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){
 ///////////////////// CCross ////////////////
 
 CCross::CCross(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*{{{*/
+   sender_id = "CCross";
    number_of_curves = 12;
    curves = new CCurve*[number_of_curves];
    for (int i=0; i<number_of_curves; i++) curves[i]=NULL; // important if curve-constructor throws
@@ -265,6 +271,7 @@ CCross::CCross(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*
 /* general feature-effect class */
 
 CEffect::CEffect(){/*{{{*/
+   sender_id = "CEffect";
 }/*}}}*/
 
 float CEffect::give_amplification(CFeature *fe, CVector v){/*{{{*/
@@ -275,6 +282,7 @@ float CEffect::give_amplification(CFeature *fe, CVector v){/*{{{*/
 //////////////////// CEdgeEffect /////////////////
 
 CEdgeEffect::CEdgeEffect(float coefficient, IM_STORE_TYPE top_edge_value_above_base, DIST_TYPE thickness):CEffect(){/*{{{*/
+   sender_id = "CEdgeEffect";
    this->coefficient = coefficient;
    this->top_edge_value_above_base = top_edge_value_above_base;
    this->thickness = thickness;
@@ -300,6 +308,7 @@ double CEdgeEffect::fun(CFeature *fe, CVector v){/*{{{*/
 /* makes little round spots on top of the features */
 
 CFineStructureEffect::CFineStructureEffect(float density, DIST_TYPE min_r, DIST_TYPE max_r, float min_coe, float max_coe):CEffect(){/*{{{*/
+   sender_id = "CFineStructureEffect";
    this->density = density;
    this->min_r = min_r; //minimum radius
    this->max_r = max_r; // maximum r
@@ -351,6 +360,7 @@ double CFineStructureEffect::fun(CFeature *fe, CVector v){/*{{{*/
 // general sample class
 
 CSample::CSample(DIST_TYPE sizex, DIST_TYPE sizey){/*{{{*/
+   sender_id = "CSample";
    map_division = 11;
    features = NULL;
    number_of_features = 0;
@@ -496,6 +506,8 @@ CSample::~CSample(){/*{{{*/
 //////////////// CGoldOnCarbonSample /////////////////////
 
 CGoldOnCarbonSample::CGoldOnCarbonSample(t_gc_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
+
+   sender_id = "CGoldOnCarbonSample";
    
    CGoldenGrain *gg; 
 
@@ -544,6 +556,7 @@ CGoldOnCarbonSample::CGoldOnCarbonSample(t_gc_definition *def):CSample(def->size
 /////////////////// CPeriodicCornerSample /////////////////
 
 CPeriodicCornerSample::CPeriodicCornerSample(t_cor_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
+   sender_id = "CPeriodicCornerSample";
    CCorner *cc;
 
    int countx = def->sizex / def->distance;
@@ -577,6 +590,7 @@ CPeriodicCornerSample::CPeriodicCornerSample(t_cor_definition *def):CSample(def-
 /////////////////// CSingleRectangleSample /////////////////
 
 CSingleRectangleSample::CSingleRectangleSample(t_rct_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
+   sender_id = "CSingleRectangleSample";
    CRectangle *cc;
 
    effects = new CEffect*[2];
@@ -602,6 +616,7 @@ CSingleRectangleSample::CSingleRectangleSample(t_rct_definition *def):CSample(de
 /////////////////// CSnakeSample /////////////////
 
 CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
+   sender_id = "CSnakeSample";
 
    effects = new CEffect*[1];
    number_of_effects = 1;
@@ -665,6 +680,7 @@ CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey
 /////////////////// CPeriodicCrossSample /////////////////
 
 CPeriodicCrossSample::CPeriodicCrossSample(t_crs_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
+   sender_id = "CPeriodicCrossSample";
    CCross *cc;
 
    int countx = def->sizex / def->distance;

@@ -150,12 +150,22 @@ typedef struct {/*{{{*/
    float fs_max_coe;
 } t_crs_definition;/*}}}*/
 
+enum{
+   AIG_MSG_PRINT_COMMENT=1000, // For debugging, these messages will mostly be supressed.
+   AIG_MSG_CREATING,
+   AIG_MSG_APPLYING,
+   AIG_MSG_SUCCESS,
+   AIG_MSG_OOPS,
+   AIG_MSG_FATAL_ERROR
+};
+
 // t_message definition
 typedef struct { // This is a type for messages sent by the individual classes to the application./*{{{*/
    	  // It's good for progress bars and other progress or debug related
 	  // meters.
    const char *sender_id;
    int message;
+   const char *comment;
 } t_message;/*}}}*/
 
 
