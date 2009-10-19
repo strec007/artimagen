@@ -19,7 +19,7 @@ of samples was added. In order to make the generator more flexible, it was
 rewritten to C++. The users now may take advantage of the modular object
 structure of the program.
 
-At this time, also C and programs may be linlked with the library, which is
+At this time, also C and programs may be linked with the library, which is
 enabled by the C wrapper. The basic usage of the library is quite easy.
 
 The scientific background of this software is described in the following
