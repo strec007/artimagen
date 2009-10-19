@@ -54,9 +54,12 @@ class CApp{/*{{{*/
 class CObject{/*{{{*/
    public:
       CObject();
+      void disable_messages();
+      void enable_messages();
    protected:
       virtual void send_message(int message, const char *comment);
       const char* sender_id;
+      char messaging_enabled;
 };/*}}}*/
 
 /* geometry */

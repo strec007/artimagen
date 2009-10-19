@@ -34,13 +34,26 @@ void CApp::broadcast_message(t_message message){/*{{{*/
 
 CObject::CObject(){/*{{{*/
    sender_id = "ILLEGAL"; // each class must rewrite this.
+   messaging_enabled = 1;
 }/*}}}*/
 
-void CObject::send_message(int message, const char *comment){
-   t_message mes;
-   mes.sender_id = sender_id; // build the message
-   mes.message = message;
-   mes.comment = comment;
-   if (AIGApp) AIGApp->broadcast_message(mes); // broadcast it
-}
+void CObject::send_message(int message, const char *comment){/*{{{*/
+   if (messaging_enabled){
+      t_message mes;
+      mes.sender_id = sender_id; // build the message
+      mes.message = message;
+      mes.comment = comment;
+      if (AIGApp) AIGApp->broadcast_message(mes); // broadcast it
+   }
+}/*}}}*/
+
+void CObject::enable_messages(){/*{{{*/
+   messaging_enabled = 1;
+}/*}}}*/
+
+void CObject::disable_messages(){/*{{{*/
+   messaging_enabled = 0;
+}/*}}}*/
+
+//
 // vim: cindent
