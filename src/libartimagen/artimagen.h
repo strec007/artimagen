@@ -154,6 +154,7 @@ enum{
    AIG_MSG_PRINT_COMMENT=1000, // For debugging, these messages will mostly be supressed.
    AIG_MSG_CREATING,
    AIG_MSG_APPLYING,
+   AIG_MSG_PAINTING,
    AIG_MSG_SUCCESS,
    AIG_MSG_OOPS,
    AIG_MSG_FATAL_ERROR

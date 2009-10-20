@@ -584,6 +584,7 @@ int CBackgroud::apply(CImage *im){ /*{{{*/
 
 CEvenBackgroud::CEvenBackgroud(IM_STORE_TYPE gl){/*{{{*/
    sender_id = "CEvenBackgroud";
+   send_message(AIG_MSG_CREATING,"Creating even background");
    bg_greylevel = gl;
 }/*}}}*/
 
@@ -608,6 +609,7 @@ IM_STORE_TYPE CEvenBackgroud::give_bg_greylevel(){/*{{{*/
 
 CWavyBackgroud::CWavyBackgroud(IM_STORE_TYPE min_gl, IM_STORE_TYPE max_gl, int densx, int densy){/*{{{*/
    sender_id = "CWavyBackgroud";
+   send_message(AIG_MSG_CREATING,"Creating wavy background");
    this->densx = densx;
    this->densy = densy;
    this->min_gl = min_gl;

@@ -87,6 +87,7 @@ void CFeature::paint(CImage *im){/*{{{*/
    CVector bbtl, bbbr; // bounding box
    IM_STORE_TYPE val;
 
+   send_message(AIG_MSG_PAINTING,"Painting feature");
    give_bounding_box(&bbtl, &bbbr);
 
    for (y=bbtl.y; y<=bbbr.y; y++) // go thru the bounding box
@@ -134,6 +135,7 @@ CFeature::~CFeature(){/*{{{*/
 
 CGoldenGrain::CGoldenGrain(const CVector position, const DIST_TYPE size){/*{{{*/
    sender_id = "CGoldenGrain";
+   send_message(AIG_MSG_CREATING,"Creating gold-grain");
    const int NOC = 7;
    number_of_curves = NOC;
    curves = new CCurve*[number_of_curves];
@@ -183,6 +185,7 @@ CGoldenGrain::CGoldenGrain(const CVector position, const DIST_TYPE size){/*{{{*/
 
 CRectangle::CRectangle(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*{{{*/
    sender_id = "CRectangle";
+   send_message(AIG_MSG_CREATING,"Creating rectangle");
    number_of_curves = 4;
    curves = new CCurve*[number_of_curves];
    for (int i=0; i<number_of_curves; i++) curves[i]=NULL; // important if curve-constructor throws
@@ -202,6 +205,8 @@ CRectangle::CRectangle(const DIST_TYPE lsize, const DIST_TYPE tsize, double rota
 
 CSnake::CSnake(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DIST_TYPE c, double rotation){/*{{{*/
    sender_id = "CSnake";
+   send_message(AIG_MSG_CREATING,"Creating snake");
+
    number_of_curves = 8;
    curves = new CCurve*[number_of_curves];
    for (int i=0; i<number_of_curves; i++) curves[i]=NULL; // important if curve-constructor throws
@@ -224,6 +229,7 @@ CSnake::CSnake(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DI
 
 CCorner::CCorner(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*{{{*/
    sender_id = "CCorner";
+   send_message(AIG_MSG_CREATING,"Creating corner");
    number_of_curves = 6;
    curves = new CCurve*[number_of_curves];
    for (int i=0; i<number_of_curves; i++) curves[i]=NULL; // important if curve-constructor throws
@@ -243,6 +249,7 @@ CCorner::CCorner(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){
 
 CCross::CCross(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*{{{*/
    sender_id = "CCross";
+   send_message(AIG_MSG_CREATING,"Creating cross");
    number_of_curves = 12;
    curves = new CCurve*[number_of_curves];
    for (int i=0; i<number_of_curves; i++) curves[i]=NULL; // important if curve-constructor throws
@@ -508,6 +515,7 @@ CSample::~CSample(){/*{{{*/
 CGoldOnCarbonSample::CGoldOnCarbonSample(t_gc_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
 
    sender_id = "CGoldOnCarbonSample";
+   send_message(AIG_MSG_CREATING,"Creating Gold-on-Carbon sample");
    
    CGoldenGrain *gg; 
 
@@ -539,6 +547,7 @@ CGoldOnCarbonSample::CGoldOnCarbonSample(t_gc_definition *def):CSample(def->size
       do {
 	 adding_res = add_feature(gg);
 	 if (adding_res == SA_ADD_OVERLAP) { // if the new structure overlaps, 
+	    send_message(AIG_MSG_OOPS,"grains overlap");
 	    CVector npos(rand()*sizex/RAND_MAX, rand()*sizey/RAND_MAX); // make a new random position
 	    gg->move_by(npos-pos); // move it there
 	    pos = npos;
@@ -546,8 +555,10 @@ CGoldOnCarbonSample::CGoldOnCarbonSample(t_gc_definition *def):CSample(def->size
 	 }
 	 if (fails > 1000) throw (int) AIG_EX_GOLDONCARBON_TOO_MANY_FAILS;
       } while (adding_res == SA_ADD_OVERLAP); // repeat until the placement succeeds
+      send_message(AIG_MSG_SUCCESS,"Grain created and placed");
+
       if (adding_res == SA_ADD_FULL) {
-	 cout << "Feature array full - You should never see this message" << cout;
+	 send_message(AIG_MSG_FATAL_ERROR,"Feature array full - You should never see this message");
       }
    }
    //IF_CO cout << "]" << endl;
@@ -557,6 +568,7 @@ CGoldOnCarbonSample::CGoldOnCarbonSample(t_gc_definition *def):CSample(def->size
 
 CPeriodicCornerSample::CPeriodicCornerSample(t_cor_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
    sender_id = "CPeriodicCornerSample";
+   send_message(AIG_MSG_CREATING,"Creating Periodic-Corner sample");
    CCorner *cc;
 
    int countx = def->sizex / def->distance;
@@ -591,6 +603,7 @@ CPeriodicCornerSample::CPeriodicCornerSample(t_cor_definition *def):CSample(def-
 
 CSingleRectangleSample::CSingleRectangleSample(t_rct_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
    sender_id = "CSingleRectangleSample";
+   send_message(AIG_MSG_CREATING,"Creating Single-Rectangle sample");
    CRectangle *cc;
 
    effects = new CEffect*[2];
@@ -617,6 +630,7 @@ CSingleRectangleSample::CSingleRectangleSample(t_rct_definition *def):CSample(de
 
 CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
    sender_id = "CSnakeSample";
+   send_message(AIG_MSG_CREATING,"Creating Snake sample");
 
    effects = new CEffect*[1];
    number_of_effects = 1;
@@ -681,6 +695,8 @@ CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey
 
 CPeriodicCrossSample::CPeriodicCrossSample(t_crs_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
    sender_id = "CPeriodicCrossSample";
+   send_message(AIG_MSG_CREATING,"Creating Periodic-Cross sample");
+
    CCross *cc;
 
    int countx = def->sizex / def->distance;
@@ -706,9 +722,7 @@ CPeriodicCrossSample::CPeriodicCrossSample(t_crs_definition *def):CSample(def->s
 
 	 cc->add_effect_chain(effects,2);
 	 if (add_feature(cc) == SA_ADD_OVERLAP) throw (int) AIG_EX_FEATURE_OVERLAP;
-	 //IF_CO cout << "@";
       }
-   //IF_CO cout << "]" << endl;
 }/*}}}*/
 
 
