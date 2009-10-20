@@ -11,29 +11,10 @@
 
 #include <iostream>
 #include <cmath>
-#include <ctime>
-#include <cstdlib>
 #include "libartimagen/artimagen_i.h"
 #include "libartimagen/artimagen.h"
 #include "../config.h"
 
-/* missing functions */
-#ifndef HAVE_SRANDOM
- #ifdef WIN32
-  #define srandom srand
- #else
-  #define srandom srand48
- #endif
-#endif
-
-#ifndef HAVE_RANDOM
- #ifdef WIN32
-  #define random (long)rand
- #else
-  #define random (long)lrand48
- #endif
-#endif
- 
 #define SIZEX 1124
 #define SIZEY 868
 
@@ -45,7 +26,6 @@ void print_version_info(){
 }
 
 void initialize(){
-   srandom(time(0));
    print_version_info();
 }
 

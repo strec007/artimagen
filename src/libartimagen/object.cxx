@@ -10,8 +10,27 @@
  */
 #include "artimagen_i.h"
 #include <cassert>
+#include <ctime>
+#include <cstdlib>
 #include "../../config.h"
 
+/* missing functions */
+#ifndef HAVE_SRANDOM
+ #ifdef WIN32
+  #define srandom srand
+ #else
+  #define srandom srand48
+ #endif
+#endif
+
+#ifndef HAVE_RANDOM
+ #ifdef WIN32
+  #define random (long)rand
+ #else
+  #define random (long)lrand48
+ #endif
+#endif
+ 
 using namespace std;
 using namespace artimagen;
 
@@ -21,6 +40,8 @@ CApp::CApp(){/*{{{*/
    assert(!AIGApp); // Attempt to create another CApp class. Only once CApp instance is allowed per application.
    AIGApp = this;
    call_back = NULL; // the call_back function is not set (later used as indicator of being set)
+
+   srandom(time(0)); // initialize the random generator.
 }/*}}}*/
 
 void CApp::set_message_call_back(void (*f)(t_message *)){/*{{{*/
