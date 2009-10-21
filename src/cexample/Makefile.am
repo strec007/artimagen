@@ -5,4 +5,4 @@ artcexample_SOURCES=artcexample.c
 artcexample_LDADD=../libartimagen.la
 CC=$(CXX)
 
-CXXFLAGS=-O3 -ggdb -fomit-frame-pointer -malign-double -fstrict-aliasing -ffast-math -Wall
+CXXFLAGS=-O3 -ggdb -ffast-math -Wall 

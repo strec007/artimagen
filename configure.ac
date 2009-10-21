@@ -20,7 +20,7 @@ LT_LANG([C++])
 
 # Compilation options
 AC_ARG_WITH(lua, 
-  AS_HELP_STRING([--without-lua],[Disable LUA support. (needed for saving)]),
+  AS_HELP_STRING([--without-lua],[disable LUA support (needed for saving)]),
  [],
  [with_lua=yes])
 
@@ -35,9 +35,9 @@ AC_SUBST([FFTW3LIB])
 
 LUALIB=
 AS_IF([test "x$with_lua" != xno],
-    [AC_CHECK_LIB([lua50], [main],
-     [AC_SUBST([LUALIB], ["-llua50"])
-       AC_DEFINE([HAVE_LUA], [1], [Define if you have liblua50])],
+    [AC_CHECK_LIB([lua5.1], [main],
+     [AC_SUBST([LUALIB], ["-llua5.1"])
+       AC_DEFINE([HAVE_LUA], [1], [Define if you have liblua5.1])],
      [AC_MSG_FAILURE([lua test failed (--without-lua to disable)])],
      [])
     ]

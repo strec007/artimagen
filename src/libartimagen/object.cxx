@@ -8,6 +8,8 @@
     Note that according to Gnu.org public domain is compatible with GPL.
 
  */
+#define AIGAPP_DECLARATION 1  // this file declares the global AIGApp variable
+
 #include "artimagen_i.h"
 #include <cassert>
 #include <ctime>
@@ -34,7 +36,7 @@
 using namespace std;
 using namespace artimagen;
 
-CApp *AIGApp = NULL; // Global variable.
+CApp *AIGApp = NULL; // global variable.
 
 CApp::CApp(){/*{{{*/
    assert(!AIGApp); // Attempt to create another CApp class. Only once CApp instance is allowed per application.

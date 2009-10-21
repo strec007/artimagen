@@ -37,6 +37,7 @@ enum {
    AIG_EX_GOLDONCARBON_TOO_MANY_FAILS
 };
 
+
 namespace artimagen {
 using namespace std;
 
@@ -50,6 +51,10 @@ class CApp{/*{{{*/
    private:
       void (*call_back)(t_message *);
 };/*}}}*/
+
+#ifndef AIGAPP_DECLARATION
+extern CApp *AIGApp;
+#endif
 
 class CObject{/*{{{*/
    public:

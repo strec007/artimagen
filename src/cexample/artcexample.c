@@ -1,21 +1,3 @@
-/*
- * =====================================================================================
- *
- *       Filename:  artcexample.c
- *
- *    Description:  This program is an example code to demonstrate how to use
- *    		    the Artimagen library in C.
- *
- *        Version:  1.0
- *        Created:  09/29/2009 12:41:55 PM
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  Dr. Petr Cizmar (pc), petr.cizmar@nist.gov
- *        Company:  National Institute od Standards and Technology
- *
- * =====================================================================================
- */
 
 /* 
     Artificial SEM Image Generator (ArtImaGen)

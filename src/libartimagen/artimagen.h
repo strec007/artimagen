@@ -27,9 +27,22 @@
     Note that according to Gnu.org public domain is compatible with GPL.
 
  */
+
+
+/*
+ * IMPORTANT NOTE: include ../../config.h before this file, or define HAVE_LUA,
+ * if you are compiling with LUA support.
+ */
+
 #ifndef ARTIMAGEN_H
 #define ARTIMAGEN_H
 
+#ifdef HAVE_LUA
+extern "C" {
+#include <lua5.1/lualib.h>
+#include <lua5.1/lauxlib.h>
+}
+#endif 
 
 // definition of distance types
 #define DIST_TYPE double
@@ -157,7 +170,8 @@ enum{
    AIG_MSG_PAINTING,
    AIG_MSG_SUCCESS,
    AIG_MSG_OOPS,
-   AIG_MSG_FATAL_ERROR
+   AIG_MSG_FATAL_ERROR,
+   AIG_MSG_LUA_ERROR
 };
 
 // t_message definition
@@ -174,16 +188,18 @@ typedef struct { // This is a type for messages sent by the individual classes t
 extern "C" {
 #endif
 void *generate_gc_sample(t_gc_definition *def);
-
 void destroy_gc_sample(void *poi);
-
 void *generate_standard_image(void *sample, t_std_image_def_struct *def);
-
 void destroy_image(void *poi);
-
 void save_image(void *image, char* filename, char *comment);
 #ifdef __cplusplus
 }
+#endif
+
+#ifdef HAVE_LUA
+int exec_lua_file(const char *fn);
+static int aig_new_image(lua_State *L);
+static int aig_save_image(lua_State *L);
 #endif
 
 /////////////// Footer - do not write below this line //////////////

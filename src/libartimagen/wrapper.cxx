@@ -1,24 +1,3 @@
-/*
- * =====================================================================================
- *
- *       Filename:  wrapper.cxx
- *
- *    Description:  This file is a part of the artimagen library. It serves as a
- *    		    wrapper, so some basic artimagen methods could be called
- *    		    from C programs.  The wrapper functions are available to C++
- *    		    applications.
- *
- *        Version:  1.0
- *        Created:  09/28/2009 01:31:00 PM
- *       Revision:  none
- *       Compiler:  g++
- *
- *         Author:  Dr. Petr Cizmar (pc), petr.cizmar@nist.gov
- *        Company:  National Institute od Standards and Technology
- *
- * =====================================================================================
- */
-
 /* 
     Artificial SEM Image Generator (ArtImaGen)
     2009  Petr Cizmar @ National Institute of Standards and Technology
@@ -31,9 +10,15 @@
  */
 
 
-#include "artimagen.h"
-#include "artimagen_i.h"
 #include "../../config.h"
+#include "artimagen_i.h"
+
+#ifdef HAVE_LUA
+extern "C" {
+#include <lua5.1/lualib.h>
+#include <lua5.1/lauxlib.h>
+}
+#endif
 
 /* missing functions */
 #ifndef HAVE_SRANDOM
@@ -118,5 +103,94 @@ extern "C" void save_image(void *image, char* filename, char *comment){/*{{{*/
    im->tiff_write(filename, comment, BI_8B);
 }/*}}}*/
 
-//TODO add get_image data function.
- // vim: cindent
+class CLuaMessenger : public CObject{/*{{{*/
+   public:
+      CLuaMessenger(const char *comment);
+};
+
+CLuaMessenger::CLuaMessenger(const char *comment){
+   sender_id = "LUA";
+   send_message(AIG_MSG_LUA_ERROR, comment);
+}/*}}}*/
+
+#ifdef HAVE_LUA
+static int aig_new_image(lua_State *L){/*{{{*/
+   try{
+      if (lua_gettop(L) != 2) throw -1;
+      if (!lua_isnumber(L, 1)) throw -2;
+      if (!lua_isnumber(L, 2)) throw -2;
+
+      DIST_TYPE sizex = lua_tonumber(L, 1);
+      DIST_TYPE sizey = lua_tonumber(L, 2);
+
+      CImage *im = new CImage(sizex, sizey);
+
+      lua_pushlightuserdata(L, (void *) im);
+      return 1;
+   }
+   
+   catch (int ex){
+
+      const char *comment;
+      switch (ex){
+	 case -1:
+	    comment = "aig_new_image - invalid number of arguments";
+	    break;
+	 case -2:
+	    comment = "aig_new_image - invalid type of arguments";
+	    break;
+      }
+   CLuaMessenger m((const char *)comment);
+      lua_error(L);
+   }
+}/*}}}*/
+
+static int aig_save_image(lua_State *L){/*{{{*/
+   try{
+      if (lua_gettop(L) != 3) throw -1;
+      if (!lua_islightuserdata(L, 1)) throw -2; // pointer to image
+      if (!lua_isstring(L, 2)) throw -2; // filename
+      if (!lua_isstring(L, 3)) throw -2; // comment
+
+      CImage *im = (CImage *) lua_topointer(L, 1);
+      if (!im) throw -99;
+      const char *fn = lua_tolstring(L, 2, NULL);
+      const char *comment = lua_tolstring(L, 3, NULL);
+
+      im->tiff_write(fn, comment, BI_8B);
+
+      return 0;
+   }
+   
+   catch (int ex){
+
+      const char *comment;
+      switch (ex){
+	 case -1:
+	    comment = "aig_save_image - invalid number of arguments";
+	    break;
+	 case -2:
+	    comment = "aig_save_image - invalid type of arguments";
+	    break;
+	 case -99:
+	    comment = "aig_save_image - invalid image pointer";
+	    break;
+      }
+      CLuaMessenger m((const char *)comment);
+      lua_error(L);
+   }
+}/*}}}*/
+
+int exec_lua_file(const char *fn){/*{{{*/
+   lua_State *L = lua_open();
+   luaL_openlibs(L);
+   lua_register(L, "aig_new_image", aig_new_image);
+   lua_register(L, "aig_save_image", aig_save_image);
+   int err = luaL_dofile(L, fn);
+   lua_close(L);
+   return err;
+}/*}}}*/
+
+#endif
+
+// vim: cindent
