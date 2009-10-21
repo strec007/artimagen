@@ -18,6 +18,11 @@ dnl initialize libtool
 LT_INIT([win32-dll])
 LT_LANG([C++])
 
+# Compilation options
+AC_ARG_WITH(lua, 
+  AS_HELP_STRING([--without-lua],[Disable LUA support. (needed for saving)]),
+ [],
+ [with_lua=yes])
 
 # Checks for libraries.
 AC_CHECK_LIB([tiff], [TIFFOpen], [TIFFLIB=-ltiff],
@@ -27,6 +32,16 @@ AC_SUBST([TIFFLIB])
 AC_CHECK_LIB([fftw3], [fftw_execute], [FFTW3LIB=-lfftw3],
 AC_MSG_ERROR([fftw3 check failed]))
 AC_SUBST([FFTW3LIB])
+
+LUALIB=
+AS_IF([test "x$with_lua" != xno],
+    [AC_CHECK_LIB([lua50], [main],
+     [AC_SUBST([LUALIB], ["-llua50"])
+       AC_DEFINE([HAVE_LUA], [1], [Define if you have liblua50])],
+     [AC_MSG_FAILURE([lua test failed (--without-lua to disable)])],
+     [])
+    ]
+)
 
 
 # Checks for header files.
