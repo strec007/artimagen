@@ -198,8 +198,6 @@ void save_image(void *image, char* filename, char *comment);
 
 #ifdef HAVE_LUA
 int exec_lua_file(const char *fn);
-static int aig_new_image(lua_State *L);
-static int aig_save_image(lua_State *L);
 #endif
 
 /////////////// Footer - do not write below this line //////////////

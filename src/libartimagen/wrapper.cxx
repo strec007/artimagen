@@ -140,13 +140,56 @@ static int aig_new_image(lua_State *L){/*{{{*/
 	    comment = "aig_new_image - invalid type of arguments";
 	    break;
       }
-   CLuaMessenger m((const char *)comment);
+      CLuaMessenger m((const char *)comment);
       lua_error(L);
    }
 }/*}}}*/
 
 static int aig_save_image(lua_State *L){/*{{{*/
    try{
+      if (lua_gettop(L) != 3) throw -1;
+      if (!lua_islightuserdata(L, 1)) throw -2; // pointer to image
+      if (!lua_isstring(L, 2)) throw -2; // filename
+      if (!lua_isstring(L, 3)) throw -2; // comment
+
+      CImage *im = (CImage *) lua_topointer(L, 1);
+      if (!im) throw -99;
+      const char *fn = lua_tolstring(L, 2, NULL);
+      const char *comment = lua_tolstring(L, 3, NULL);
+
+      im->tiff_write(fn, comment, BI_8B);
+
+      return 0;
+   }
+   
+   catch (int ex){
+
+      const char *comment;
+      switch (ex){
+	 case -1:
+	    comment = "aig_save_image - invalid number of arguments";
+	    break;
+	 case -2:
+	    comment = "aig_save_image - invalid type of arguments";
+	    break;
+	 case -99:
+	    comment = "aig_save_image - invalid image pointer";
+	    break;
+      }
+      CLuaMessenger m((const char *)comment);
+      lua_error(L);
+   }
+}/*}}}*/
+
+static int aig_create_curve(lua_State *L){/*{{{*/
+   try{
+      if (lua_gettop(L) < 1) throw -1;
+      if (!lua_isstring(L, 1)) throw -2; // curve type ("bezier" or "straight")
+
+      if (!strcmp(lua_tolstring(L,1,NULL),"bezier")) {  // bezier curve will be created
+
+      }
+
       if (lua_gettop(L) != 3) throw -1;
       if (!lua_islightuserdata(L, 1)) throw -2; // pointer to image
       if (!lua_isstring(L, 2)) throw -2; // filename
