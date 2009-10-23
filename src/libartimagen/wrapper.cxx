@@ -149,7 +149,7 @@ static int l_new_image(lua_State *L){/*{{{*/
 	    break;
       }
       CLuaMessenger m((const char *)comment);
-      lua_error(L);
+      luaL_error(L,"%s",comment);
    }
    return 0;
 }/*}}}*/
@@ -182,7 +182,7 @@ static int l_delete_image(lua_State *L){/*{{{*/
 	    break;
       }
       CLuaMessenger m((const char *)comment);
-      lua_error(L);
+      luaL_error(L,"%s",comment);
    }
    return 0;
 }/*}}}*/
@@ -224,7 +224,7 @@ static int l_save_image(lua_State *L){/*{{{*/
 	    break;
       }
       CLuaMessenger m((const char *)comment);
-      lua_error(L);
+      luaL_error(L,"%s",comment);
    }
    return 0;
 }/*}}}*/
@@ -307,7 +307,7 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	    break;
       }
       CLuaMessenger m(comment);
-      lua_error(L);
+      luaL_error(L,"%s",comment);
    }
    return 0;
 }/*}}}*/
@@ -356,7 +356,7 @@ static int l_new_feature(lua_State *L){/*{{{*/
 	    break;
       }
       CLuaMessenger m(comment);
-      lua_error(L);
+      luaL_error(L,"%s",comment);
    }
    return 0;
 }/*}}}*/
@@ -403,7 +403,7 @@ static int l_paint_feature(lua_State *L){/*{{{*/
 	    break;
       }
       CLuaMessenger m((const char *)comment);
-      lua_error(L);
+      luaL_error(L,"%s",comment);
    }
    return 0;
 }/*}}}*/
@@ -455,7 +455,7 @@ static int l_move_feature(lua_State *L){/*{{{*/
 	    break;
       }
       CLuaMessenger m((const char *)comment);
-      lua_error(L);
+      luaL_error(L,"%s",comment);
    }
    return 0;
 }/*}}}*/
