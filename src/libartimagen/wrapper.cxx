@@ -12,6 +12,8 @@
 
 #include "../../config.h"
 #include "artimagen_i.h"
+#include <vector>
+
 
 #ifdef HAVE_LUA
 extern "C" {
@@ -106,11 +108,17 @@ extern "C" void save_image(void *image, char* filename, char *comment){/*{{{*/
 class CLuaMessenger : public CObject{/*{{{*/
    public:
       CLuaMessenger(const char *comment);
+      CLuaMessenger(int msg_id, const char *comment);
 };
 
 CLuaMessenger::CLuaMessenger(const char *comment){
    sender_id = "LUA";
    send_message(AIG_MSG_LUA_ERROR, comment);
+}/*}}}*/
+
+CLuaMessenger::CLuaMessenger(int msg_id, const char *comment){
+   sender_id = "LUA";
+   send_message(msg_id, comment);
 }/*}}}*/
 
 #ifdef HAVE_LUA
@@ -138,6 +146,39 @@ static int l_new_image(lua_State *L){/*{{{*/
 	    break;
 	 case -2:
 	    comment = "aig_new_image - invalid type of arguments";
+	    break;
+      }
+      CLuaMessenger m((const char *)comment);
+      lua_error(L);
+   }
+   return 0;
+}/*}}}*/
+
+static int l_delete_image(lua_State *L){/*{{{*/
+   try{
+      if (lua_gettop(L) != 1) throw -1;
+      if (!lua_islightuserdata(L, 1)) throw -2; // pointer to image
+
+      CImage *im = (CImage *) lua_topointer(L, 1);
+      if (!im) throw -99;
+
+      delete im;
+
+      return 0;
+   }
+   
+   catch (int ex){
+
+      const char *comment = "";
+      switch (ex){
+	 case -1:
+	    comment = "aig_save_image - invalid number of arguments";
+	    break;
+	 case -2:
+	    comment = "aig_save_image - invalid type of arguments";
+	    break;
+	 case -99:
+	    comment = "aig_save_image - invalid image pointer";
 	    break;
       }
       CLuaMessenger m((const char *)comment);
@@ -185,13 +226,13 @@ static int l_save_image(lua_State *L){/*{{{*/
 
 static int l_new_curve(lua_State *L){/*{{{*/
    try{
-      if (lua_gettop(L) < 1) throw -1;
+      if (lua_gettop(L) != 2) throw -1;
       if (!lua_isstring(L, 1)) throw -2; // curve type ("bezier" or "straight")
 
       //////////////////////// STRAIGHT SEGMENT ////////////////////////
       if (!strcmp(lua_tolstring(L,1,NULL),"segment")) {  // straight line will be created
-	 // the next parameter must be table of four tables of two numbers
-	 // e.g.: aig_create_curve("bezier",{{1,2},{3,4},{5,6},{7,8}})
+	 // the next parameter must be table of two tables of two numbers
+	 // e.g.: aig_create_curve("segment",{{1,2},{3,4}})
 
 	 if (!lua_istable(L,2)) throw -2; // bad parameters
 	 DIST_TYPE coords[2][2];
@@ -201,8 +242,11 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	       lua_gettable(L,2); // the coordinate table is the second parameter
 	       lua_pushnumber(L,i); // get the i-th item of the table which is
 	       // the j-th item of the outer table
+	       if (!lua_istable(L,-2)) throw -2;
+	       lua_gettable(L,-2); // the coordinate table is the second parameter
 	       if (!lua_isnumber(L, -1)) throw -2; // the item must be a number or else throw
 	       coords[j-1][i-1] = (DIST_TYPE) lua_tonumber(L, -1);
+	       lua_pop(L,2);
 	    }
 	 CCurve *curve = new CStraightLine(CLine(
 	       CVector(coords[0][0],coords[0][1]),
@@ -218,6 +262,7 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	 // the next parameter must be table of four tables of two numbers
 	 // e.g.: aig_create_curve("bezier",{{1,2},{3,4},{5,6},{7,8}})
 
+	 CLuaMessenger("aig-new-curve Creating Bezier");
 	 if (!lua_istable(L,2)) throw -2; // bad parameters
 	 DIST_TYPE coords[4][2];
 	 for (int j=1; j<=4; j++)
@@ -226,8 +271,11 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	       lua_gettable(L,2); // the coordinate table is the second parameter
 	       lua_pushnumber(L,i); // get the i-th item of the table which is
 	       // the j-th item of the outer table
+	       if (!lua_istable(L,-2)) throw -2;
+	       lua_gettable(L,-2); // the coordinate table is the second parameter
 	       if (!lua_isnumber(L, -1)) throw -2; // the item must be a number or else throw
 	       coords[j-1][i-1] = (DIST_TYPE) lua_tonumber(L, -1);
+	       lua_pop(L,2);
 	    }
 	 CCurve *curve = new CBezier(
 	       CVector(coords[0][0],coords[0][1]),
@@ -247,13 +295,52 @@ static int l_new_curve(lua_State *L){/*{{{*/
       const char *comment = "";
       switch (ex){
 	 case -1:
-	    comment = "aig_save_image - invalid number of arguments";
+	    comment = "aig_new_curve - invalid number of arguments";
 	    break;
 	 case -2:
-	    comment = "aig_save_image - invalid type of arguments";
+	    comment = "aig_new_curve - invalid type of arguments";
 	    break;
       }
-      CLuaMessenger m((const char *)comment);
+      CLuaMessenger m(comment);
+      lua_error(L);
+   }
+   return 0;
+}/*}}}*/
+
+static int l_new_feature(lua_State *L){/*{{{*/
+   try{
+      if (lua_gettop(L) != 1) throw -1;
+      if (!lua_istable(L, 1)) throw -2; // parameter is the table of curves
+
+      lua_pushnil(L);  /* first key */
+      vector <CCurve *> curves;
+      while (lua_next(L, 1) != 0) { // table is at index 1
+	 if (!lua_islightuserdata(L,-1)) throw -2; // bad agrument type
+	 CObject *ob = (CObject *) lua_topointer(L, -1);
+
+	 if (!ob->check_id(AIG_ID_CURVE)) throw -3; // non-curve object
+	 curves.push_back((CCurve *)ob);
+	 lua_pop(L, 1); // clean up
+      }
+
+      return 0;
+   }
+
+   catch (int ex){
+
+      const char *comment = "";
+      switch (ex){
+	 case -1:
+	    comment = "aig_new_feature - invalid number of arguments";
+	    break;
+	 case -2:
+	    comment = "aig_new_feature - invalid type of arguments";
+	    break;
+	 case -3:
+	    comment = "aig_new_feature - non-curve object in table";
+	    break;
+      }
+      CLuaMessenger m(comment);
       lua_error(L);
    }
    return 0;
@@ -263,13 +350,14 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_State *L = lua_open();
    luaL_openlibs(L);
    lua_register(L, "aig_new_image", l_new_image);
+   lua_register(L, "aig_delete_image", l_delete_image);
    lua_register(L, "aig_save_image", l_save_image);
    lua_register(L, "aig_new_curve", l_new_curve);
+   lua_register(L, "aig_new_feature", l_new_feature);
    int err = luaL_dofile(L, fn);
    lua_close(L);
    return err;
 }/*}}}*/
-
 #endif
 
 // vim: cindent

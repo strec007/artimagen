@@ -171,7 +171,8 @@ enum{
    AIG_MSG_SUCCESS,
    AIG_MSG_OOPS,
    AIG_MSG_FATAL_ERROR,
-   AIG_MSG_LUA_ERROR
+   AIG_MSG_LUA_ERROR,
+   AIG_MSG_SAVING
 };
 
 enum{ // object IDs.
@@ -184,6 +185,7 @@ enum{ // object IDs.
    AIG_ID_BEZIER,
    AIG_ID_VORONOI,
    AIG_ID_FEATURE,
+   AIG_ID_GENERICFEATURE,
    AIG_ID_GOLDENGRAIN,
    AIG_ID_RECTANGLE,
    AIG_ID_SNAKE,
@@ -209,6 +211,12 @@ enum{ // object IDs.
    AIG_ID_BACKGROUND,
    AIG_ID_EVENBACKGROUND,
    AIG_ID_WAVYBACKGROUND
+};
+
+enum {
+   AIG_CHECK_ID_NO_MATCH = 0,
+   AIG_CHECK_ID_INHERITED,
+   AIG_CHECK_ID_EXACT
 };
 
 // t_message definition

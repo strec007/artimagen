@@ -14,6 +14,7 @@
 #include <cassert>
 #include <ctime>
 #include <cstdlib>
+#include <vector>
 #include "../../config.h"
 
 /* missing functions */
@@ -78,6 +79,20 @@ void CObject::enable_messages(){/*{{{*/
 void CObject::disable_messages(){/*{{{*/
    messaging_enabled = 0;
 }/*}}}*/
+
+int CObject::check_id(int id){/*{{{*/
+   if (id == object_id) return AIG_CHECK_ID_EXACT;
+   for (int i=0; i < inherited_ids.size(); i++){
+      if(inherited_ids[i] == id) return AIG_CHECK_ID_INHERITED;
+   }
+   return AIG_CHECK_ID_NO_MATCH;
+}/*}}}*/
+
+void CObject::ident(int id){
+   object_id = id;
+   inherited_ids.push_back(id);
+
+}
 
 //
 // vim: cindent

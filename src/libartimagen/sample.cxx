@@ -44,7 +44,7 @@ using namespace artimagen;
 
 CFeature::CFeature(){/*{{{*/
    sender_id = "CFeature";
-   object_id = AIG_ID_FEATURE;
+   ident(AIG_ID_FEATURE);
    number_of_curves = 0;
    curves = NULL;
    number_of_effects = 0;
@@ -132,11 +132,18 @@ CFeature::~CFeature(){/*{{{*/
    }
 }/*}}}*/
 
+//////////////////// CGenericFeature /////////////////
+
+CGenericFeature::CGenericFeature(){
+   sender_id = "CGenericFeature";
+   ident(AIG_ID_GENERICFEATURE);
+}
+
 //////////////////// CGoldenGrain /////////////////
 
 CGoldenGrain::CGoldenGrain(const CVector position, const DIST_TYPE size){/*{{{*/
    sender_id = "CGoldenGrain";
-   object_id = AIG_ID_GOLDENGRAIN;
+   ident(AIG_ID_GOLDENGRAIN);
    send_message(AIG_MSG_CREATING,"Creating gold-grain");
    const int NOC = 7;
    number_of_curves = NOC;
@@ -187,7 +194,7 @@ CGoldenGrain::CGoldenGrain(const CVector position, const DIST_TYPE size){/*{{{*/
 
 CRectangle::CRectangle(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*{{{*/
    sender_id = "CRectangle";
-   object_id = AIG_ID_RECTANGLE;
+   ident(AIG_ID_RECTANGLE);
    send_message(AIG_MSG_CREATING,"Creating rectangle");
    number_of_curves = 4;
    curves = new CCurve*[number_of_curves];
@@ -208,7 +215,7 @@ CRectangle::CRectangle(const DIST_TYPE lsize, const DIST_TYPE tsize, double rota
 
 CSnake::CSnake(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DIST_TYPE c, double rotation){/*{{{*/
    sender_id = "CSnake";
-   object_id = AIG_ID_SNAKE;
+   ident(AIG_ID_SNAKE);
    send_message(AIG_MSG_CREATING,"Creating snake");
 
    number_of_curves = 8;
@@ -233,7 +240,7 @@ CSnake::CSnake(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DI
 
 CCorner::CCorner(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*{{{*/
    sender_id = "CCorner";
-   object_id = AIG_ID_CORNER;
+   ident(AIG_ID_CORNER);
    send_message(AIG_MSG_CREATING,"Creating corner");
    number_of_curves = 6;
    curves = new CCurve*[number_of_curves];
@@ -254,7 +261,7 @@ CCorner::CCorner(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){
 
 CCross::CCross(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*{{{*/
    sender_id = "CCross";
-   object_id = AIG_ID_CROSS;
+   ident(AIG_ID_CROSS);
    send_message(AIG_MSG_CREATING,"Creating cross");
    number_of_curves = 12;
    curves = new CCurve*[number_of_curves];
@@ -285,7 +292,7 @@ CCross::CCross(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation){/*
 
 CEffect::CEffect(){/*{{{*/
    sender_id = "CEffect";
-   object_id = AIG_ID_EFFECT;
+   ident(AIG_ID_EFFECT);
 }/*}}}*/
 
 float CEffect::give_amplification(CFeature *fe, CVector v){/*{{{*/
@@ -297,7 +304,7 @@ float CEffect::give_amplification(CFeature *fe, CVector v){/*{{{*/
 
 CEdgeEffect::CEdgeEffect(float coefficient, IM_STORE_TYPE top_edge_value_above_base, DIST_TYPE thickness):CEffect(){/*{{{*/
    sender_id = "CEdgeEffect";
-   object_id = AIG_ID_EDGEEFFECT;
+   ident(AIG_ID_EDGEEFFECT);
    this->coefficient = coefficient;
    this->top_edge_value_above_base = top_edge_value_above_base;
    this->thickness = thickness;
@@ -324,7 +331,7 @@ double CEdgeEffect::fun(CFeature *fe, CVector v){/*{{{*/
 
 CFineStructureEffect::CFineStructureEffect(float density, DIST_TYPE min_r, DIST_TYPE max_r, float min_coe, float max_coe):CEffect(){/*{{{*/
    sender_id = "CFineStructureEffect";
-   object_id = AIG_ID_FINESTRUCTUREEFFECT;
+   ident(AIG_ID_FINESTRUCTUREEFFECT);
    this->density = density;
    this->min_r = min_r; //minimum radius
    this->max_r = max_r; // maximum r
@@ -377,7 +384,7 @@ double CFineStructureEffect::fun(CFeature *fe, CVector v){/*{{{*/
 
 CSample::CSample(DIST_TYPE sizex, DIST_TYPE sizey){/*{{{*/
    sender_id = "CSample";
-   object_id = AIG_ID_SAMPLE;
+   ident(AIG_ID_SAMPLE);
    map_division = 11;
    features = NULL;
    number_of_features = 0;
@@ -525,7 +532,7 @@ CSample::~CSample(){/*{{{*/
 CGoldOnCarbonSample::CGoldOnCarbonSample(t_gc_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
 
    sender_id = "CGoldOnCarbonSample";
-   object_id = AIG_ID_GOLDONCARBONSAMPLE;
+   ident(AIG_ID_GOLDONCARBONSAMPLE);
    send_message(AIG_MSG_CREATING,"Creating Gold-on-Carbon sample");
    
    CGoldenGrain *gg; 
@@ -579,7 +586,7 @@ CGoldOnCarbonSample::CGoldOnCarbonSample(t_gc_definition *def):CSample(def->size
 
 CPeriodicCornerSample::CPeriodicCornerSample(t_cor_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
    sender_id = "CPeriodicCornerSample";
-   object_id = AIG_ID_PERIODICCORNERSAMPLE;
+   ident(AIG_ID_PERIODICCORNERSAMPLE);
    send_message(AIG_MSG_CREATING,"Creating Periodic-Corner sample");
    CCorner *cc;
 
@@ -615,7 +622,7 @@ CPeriodicCornerSample::CPeriodicCornerSample(t_cor_definition *def):CSample(def-
 
 CSingleRectangleSample::CSingleRectangleSample(t_rct_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
    sender_id = "CSingleRectangleSample";
-   object_id = AIG_ID_SINGLERECTANGLESAMPLE;
+   ident(AIG_ID_SINGLERECTANGLESAMPLE);
    send_message(AIG_MSG_CREATING,"Creating Single-Rectangle sample");
    CRectangle *cc;
 
@@ -643,7 +650,7 @@ CSingleRectangleSample::CSingleRectangleSample(t_rct_definition *def):CSample(de
 
 CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
    sender_id = "CSnakeSample";
-   object_id = AIG_ID_SNAKESAMPLE;
+   ident(AIG_ID_SNAKESAMPLE);
    send_message(AIG_MSG_CREATING,"Creating Snake sample");
 
    effects = new CEffect*[1];
@@ -709,7 +716,7 @@ CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey
 
 CPeriodicCrossSample::CPeriodicCrossSample(t_crs_definition *def):CSample(def->sizex, def->sizey){/*{{{*/
    sender_id = "CPeriodicCrossSample";
-   object_id = AIG_ID_PERIODICCROSSSAMPLE;
+   ident(AIG_ID_PERIODICCROSSSAMPLE);
    send_message(AIG_MSG_CREATING,"Creating Periodic-Cross sample");
 
    CCross *cc;

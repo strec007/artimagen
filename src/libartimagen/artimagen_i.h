@@ -17,6 +17,7 @@
 #include <fftw3.h>
 #include <tiffio.h>
 #include <cmath>
+#include <vector>
 #include "artimagen.h"
 
 #define IM_NO_IFFT_BLOCK 0
@@ -61,11 +62,15 @@ class CObject{/*{{{*/
       CObject();
       void disable_messages();
       void enable_messages();
+      int check_id(int id);
    protected:
       virtual void send_message(int message, const char *comment);
       const char* sender_id;
-      int object_id;
       char messaging_enabled;
+      std::vector<int> inherited_ids;
+      void ident(int); // make yourself an ID;
+   private:
+      int object_id;
 };/*}}}*/
 
 /* geometry */
@@ -241,6 +246,12 @@ class CFeature:public CPolygon{/*{{{*/
 //      void give_vertices(CVector *vertices); // this is a candidate for deletion inlc. the implementation in the cxx file.
 };/*}}}*/
 
+class CGenericFeature:public CFeature{/*{{{*/
+   public:
+      CGenericFeature();
+      int add_curve(CCurve *);
+};/*}}}*/
+
 class CGoldenGrain:public CFeature{/*{{{*/
    public:
       CGoldenGrain(const CVector position, const DIST_TYPE size);
@@ -320,6 +331,7 @@ class CSample:public CObject{/*{{{*/
       ~CSample();
       void paint(CImage *im);
       void move_by(CVector mv);
+      int add_feature(CFeature *fe); //adds feature if it does not conflict with others 
    protected:
       CFeature **features; // list of features
       int number_of_features;
@@ -333,7 +345,6 @@ class CSample:public CObject{/*{{{*/
       void add_feature_to_map(int i);
       int overlaps(CFeature *fe);
       int actual_number_of_features;
-      int add_feature(CFeature *fe); //adds feature if it does not conflict with others 
       virtual void rotate(CVector center, double angle);
    private:
       int map_division;
