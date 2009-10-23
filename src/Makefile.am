@@ -19,4 +19,4 @@ artimagen_SOURCES=artimagen.cxx
 artimagen_LDADD=libartimagen.la
 
 #CXXFLAGS=-O3 -ggdb -fomit-frame-pointer -fstrict-aliasing -ffast-math -Wall
-CXXFLAGS=-O3 -ggdb -fstrict-aliasing -ffast-math -Wall
+CXXFLAGS=-O0 -ggdb -fstrict-aliasing -ffast-math -Wall

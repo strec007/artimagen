@@ -194,8 +194,10 @@ static int l_save_image(lua_State *L){/*{{{*/
       if (!lua_isstring(L, 2)) throw -2; // filename
       if (!lua_isstring(L, 3)) throw -2; // comment
 
-      CImage *im = (CImage *) lua_topointer(L, 1);
-      if (!im) throw -99;
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw -99;
+      if (!ob->check_id(AIG_ID_IMAGE)) throw -3; // non-curve object
+      CImage *im = (CImage *) ob;
       const char *fn = lua_tolstring(L, 2, NULL);
       const char *comment = lua_tolstring(L, 3, NULL);
 
@@ -213,6 +215,9 @@ static int l_save_image(lua_State *L){/*{{{*/
 	    break;
 	 case -2:
 	    comment = "aig_save_image - invalid type of arguments";
+	    break;
+	 case -3:
+	    comment = "aig_save_image - wrong image object";
 	    break;
 	 case -99:
 	    comment = "aig_save_image - invalid image pointer";
@@ -327,7 +332,7 @@ static int l_new_feature(lua_State *L){/*{{{*/
       for (unsigned int i=0; i<curves.size(); i++){
 	 if (fe->add_curve(curves[i]) != AIG_FE_CURVE_INSERTED_OK) throw -4;
       }
-
+      fe->init();
 
       lua_pushlightuserdata(L, (void *) fe);
       return 1;
@@ -356,6 +361,54 @@ static int l_new_feature(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+static int l_paint_feature(lua_State *L){/*{{{*/
+   // this function is mostly for debugging.
+   // parameters: image, feature
+
+   try{
+      if (lua_gettop(L) != 2) throw -1;
+      if (!lua_islightuserdata(L, 1)) throw -2; // pointer to image
+      if (!lua_islightuserdata(L, 2)) throw -2; // pointer to feature
+
+	 CObject *ob = (CObject *) lua_topointer(L, 1);
+	 if (!ob) throw -99;
+	 if (!ob->check_id(AIG_ID_IMAGE)) throw -3; // bad object
+	 CImage *im = (CImage *) ob;
+
+	 ob = (CObject *) lua_topointer(L, 2);
+	 if (!ob) throw -99;
+	 if (!ob->check_id(AIG_ID_FEATURE)) throw -3; // bad object
+	 CFeature *fe = (CFeature *) ob;
+
+	 fe->paint(im);
+	 return 0;
+   }
+
+
+   catch (int ex){
+
+      const char *comment = "";
+      switch (ex){
+	 case -1:
+	    comment = "aig_paint_feature - invalid number of arguments";
+	    break;
+	 case -2:
+	    comment = "aig_paint_feature - invalid type of arguments";
+	    break;
+	 case -3:
+	    comment = "aig_paint_feature - wrong or damaged object used";
+	    break;
+	 case -99:
+	    comment = "aig_paint_feature - invalid image pointer";
+	    break;
+      }
+      CLuaMessenger m((const char *)comment);
+      lua_error(L);
+   }
+   return 0;
+}/*}}}*/
+
+
 int exec_lua_file(const char *fn){/*{{{*/
    lua_State *L = lua_open();
    luaL_openlibs(L);
@@ -364,6 +417,7 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_save_image", l_save_image);
    lua_register(L, "aig_new_curve", l_new_curve);
    lua_register(L, "aig_new_feature", l_new_feature);
+   lua_register(L, "aig_paint_feature", l_paint_feature);
    int err = luaL_dofile(L, fn);
    lua_close(L);
    return err;
