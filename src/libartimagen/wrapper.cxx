@@ -116,17 +116,40 @@ CLuaMessenger::CLuaMessenger(const char *comment){
    send_message(AIG_MSG_LUA_ERROR, comment);
 }/*}}}*/
 
-CLuaMessenger::CLuaMessenger(int msg_id, const char *comment){
+
+CLuaMessenger::CLuaMessenger(int msg_id, const char *comment){ /*{{{*/
    sender_id = "LUA";
    send_message(msg_id, comment);
+}/*}}}*/
+
+static void report_lua_error(lua_State *L, int exc){/*{{{*/
+      const char *comment = "";
+      switch (exc){
+	 case AIG_LUA_ERR_NUMBER_OF_ARGUMENTS:
+	    comment = "invalid number of arguments";
+	    break;
+	 case AIG_LUA_ERR_ARGUMET_TYPE:
+	    comment = "invalid type of arguments";
+	    break;
+	 case AIG_LUA_ERR_INVALID_POINTER:
+	    comment = "invalid pointer";
+	    break;
+	 case AIG_LUA_ERR_INCOMPATIBLE_OBJECT:
+	    comment = "incompatible object";
+	    break;
+	 case AIG_LUA_ERR_CURVE_INSERTION_ERROR:
+	    comment = "curve insertion error";
+	    break;
+      }
+      luaL_error(L,"%s",comment);
 }/*}}}*/
 
 #ifdef HAVE_LUA
 static int l_new_image(lua_State *L){/*{{{*/
    try{
-      if (lua_gettop(L) != 2) throw -1;
-      if (!lua_isnumber(L, 1)) throw -2;
-      if (!lua_isnumber(L, 2)) throw -2;
+      if (lua_gettop(L) != 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_isnumber(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE;
+      if (!lua_isnumber(L, 2)) throw AIG_LUA_ERR_ARGUMET_TYPE;
 
       DIST_TYPE sizex = lua_tonumber(L, 1);
       DIST_TYPE sizey = lua_tonumber(L, 2);
@@ -138,29 +161,18 @@ static int l_new_image(lua_State *L){/*{{{*/
    }
    
    catch (int ex){
-
-      const char *comment = "";
-      switch (ex){
-	 case -1:
-	    comment = "aig_new_image - invalid number of arguments";
-	    break;
-	 case -2:
-	    comment = "aig_new_image - invalid type of arguments";
-	    break;
-      }
-      CLuaMessenger m((const char *)comment);
-      luaL_error(L,"%s",comment);
+      report_lua_error(L, ex);
    }
    return 0;
 }/*}}}*/
 
 static int l_delete_image(lua_State *L){/*{{{*/
    try{
-      if (lua_gettop(L) != 1) throw -1;
-      if (!lua_islightuserdata(L, 1)) throw -2; // pointer to image
+      if (lua_gettop(L) != 1) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // pointer to image
 
       CImage *im = (CImage *) lua_topointer(L, 1);
-      if (!im) throw -99;
+      if (!im) throw AIG_LUA_ERR_INVALID_POINTER;
 
       delete im;
 
@@ -168,35 +180,21 @@ static int l_delete_image(lua_State *L){/*{{{*/
    }
    
    catch (int ex){
-
-      const char *comment = "";
-      switch (ex){
-	 case -1:
-	    comment = "aig_save_image - invalid number of arguments";
-	    break;
-	 case -2:
-	    comment = "aig_save_image - invalid type of arguments";
-	    break;
-	 case -99:
-	    comment = "aig_save_image - invalid image pointer";
-	    break;
-      }
-      CLuaMessenger m((const char *)comment);
-      luaL_error(L,"%s",comment);
+      report_lua_error(L, ex);
    }
    return 0;
 }/*}}}*/
 
 static int l_save_image(lua_State *L){/*{{{*/
    try{
-      if (lua_gettop(L) != 3) throw -1;
-      if (!lua_islightuserdata(L, 1)) throw -2; // pointer to image
-      if (!lua_isstring(L, 2)) throw -2; // filename
-      if (!lua_isstring(L, 3)) throw -2; // comment
+      if (lua_gettop(L) != 3) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // pointer to image
+      if (!lua_isstring(L, 2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // filename
+      if (!lua_isstring(L, 3)) throw AIG_LUA_ERR_ARGUMET_TYPE; // comment
 
       CObject *ob = (CObject *) lua_topointer(L, 1);
-      if (!ob) throw -99;
-      if (!ob->check_id(AIG_ID_IMAGE)) throw -3; // non-curve object
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-curve object
       CImage *im = (CImage *) ob;
       const char *fn = lua_tolstring(L, 2, NULL);
       const char *comment = lua_tolstring(L, 3, NULL);
@@ -207,39 +205,22 @@ static int l_save_image(lua_State *L){/*{{{*/
    }
    
    catch (int ex){
-
-      const char *comment = "";
-      switch (ex){
-	 case -1:
-	    comment = "aig_save_image - invalid number of arguments";
-	    break;
-	 case -2:
-	    comment = "aig_save_image - invalid type of arguments";
-	    break;
-	 case -3:
-	    comment = "aig_save_image - wrong image object";
-	    break;
-	 case -99:
-	    comment = "aig_save_image - invalid image pointer";
-	    break;
-      }
-      CLuaMessenger m((const char *)comment);
-      luaL_error(L,"%s",comment);
+      report_lua_error(L, ex);
    }
    return 0;
 }/*}}}*/
 
 static int l_new_curve(lua_State *L){/*{{{*/
    try{
-      if (lua_gettop(L) != 2) throw -1;
-      if (!lua_isstring(L, 1)) throw -2; // curve type ("bezier" or "straight")
+      if (lua_gettop(L) != 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_isstring(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // curve type ("bezier" or "straight")
 
       //////////////////////// STRAIGHT SEGMENT ////////////////////////
       if (!strcmp(lua_tolstring(L,1,NULL),"segment")) {  // straight line will be created
 	 // the next parameter must be table of two tables of two numbers
 	 // e.g.: aig_create_curve("segment",{{1,2},{3,4}})
 
-	 if (!lua_istable(L,2)) throw -2; // bad parameters
+	 if (!lua_istable(L,2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // bad parameters
 	 DIST_TYPE coords[2][2];
 	 for (int j=1; j<=2; j++)
 	    for (int i=1; i<=2; i++){
@@ -247,9 +228,9 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	       lua_gettable(L,2); // the coordinate table is the second parameter
 	       lua_pushnumber(L,i); // get the i-th item of the table which is
 	       // the j-th item of the outer table
-	       if (!lua_istable(L,-2)) throw -2;
+	       if (!lua_istable(L,-2)) throw AIG_LUA_ERR_ARGUMET_TYPE;
 	       lua_gettable(L,-2);
-	       if (!lua_isnumber(L, -1)) throw -2; // the item must be a number or else throw
+	       if (!lua_isnumber(L, -1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // the item must be a number or else throw
 	       coords[j-1][i-1] = (DIST_TYPE) lua_tonumber(L, -1);
 	       lua_pop(L,2);
 	    }
@@ -268,7 +249,7 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	 // e.g.: aig_create_curve("bezier",{{1,2},{3,4},{5,6},{7,8}})
 
 	 CLuaMessenger("aig-new-curve Creating Bezier");
-	 if (!lua_istable(L,2)) throw -2; // bad parameters
+	 if (!lua_istable(L,2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // bad parameters
 	 DIST_TYPE coords[4][2];
 	 for (int j=1; j<=4; j++)
 	    for (int i=1; i<=2; i++){
@@ -276,9 +257,9 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	       lua_gettable(L,2); // the coordinate table is the second parameter
 	       lua_pushnumber(L,i); // get the i-th item of the table which is
 	       // the j-th item of the outer table
-	       if (!lua_istable(L,-2)) throw -2;
+	       if (!lua_istable(L,-2)) throw AIG_LUA_ERR_ARGUMET_TYPE;
 	       lua_gettable(L,-2); 
-	       if (!lua_isnumber(L, -1)) throw -2; // the item must be a number or else throw
+	       if (!lua_isnumber(L, -1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // the item must be a number or else throw
 	       coords[j-1][i-1] = (DIST_TYPE) lua_tonumber(L, -1);
 	       lua_pop(L,2);
 	    }
@@ -296,41 +277,30 @@ static int l_new_curve(lua_State *L){/*{{{*/
    }
    
    catch (int ex){
-
-      const char *comment = "";
-      switch (ex){
-	 case -1:
-	    comment = "aig_new_curve - invalid number of arguments";
-	    break;
-	 case -2:
-	    comment = "aig_new_curve - invalid type of arguments";
-	    break;
-      }
-      CLuaMessenger m(comment);
-      luaL_error(L,"%s",comment);
+      report_lua_error(L, ex);
    }
    return 0;
 }/*}}}*/
 
 static int l_new_feature(lua_State *L){/*{{{*/
    try{
-      if (lua_gettop(L) != 1) throw -1;
-      if (!lua_istable(L, 1)) throw -2; // parameter is the table of curves
+      if (lua_gettop(L) != 1) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_istable(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // parameter is the table of curves
 
       lua_pushnil(L);  /* first key */
       vector <CCurve *> curves;
       while (lua_next(L, 1) != 0) { // table is at index 1
-	 if (!lua_islightuserdata(L,-1)) throw -2; // bad agrument type
+	 if (!lua_islightuserdata(L,-1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // bad agrument type
 	 CObject *ob = (CObject *) lua_topointer(L, -1);
 
-	 if (!ob->check_id(AIG_ID_CURVE)) throw -3; // non-curve object
+	 if (!ob->check_id(AIG_ID_CURVE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-curve object
 	 curves.push_back((CCurve *)ob);
 	 lua_pop(L, 1); // clean up
       }
 
       CGenericFeature *fe = new CGenericFeature(curves.size());
       for (unsigned int i=0; i<curves.size(); i++){
-	 if (fe->add_curve(curves[i]) != AIG_FE_CURVE_INSERTED_OK) throw -4;
+	 if (fe->add_curve(curves[i]) != AIG_FE_CURVE_INSERTED_OK) throw AIG_LUA_ERR_CURVE_INSERTION_ERROR;
       }
       fe->init();
 
@@ -339,24 +309,7 @@ static int l_new_feature(lua_State *L){/*{{{*/
    }
 
    catch (int ex){
-
-      const char *comment = "";
-      switch (ex){
-	 case -1:
-	    comment = "aig_new_feature - invalid number of arguments";
-	    break;
-	 case -2:
-	    comment = "aig_new_feature - invalid type of arguments";
-	    break;
-	 case -3:
-	    comment = "aig_new_feature - non-curve object in table";
-	    break;
-	 case -4:
-	    comment = "aig_new_feature - curve insertion error";
-	    break;
-      }
-      CLuaMessenger m(comment);
-      luaL_error(L,"%s",comment);
+      report_lua_error(L, ex);
    }
    return 0;
 }/*}}}*/
@@ -366,18 +319,18 @@ static int l_paint_feature(lua_State *L){/*{{{*/
    // parameters: image, feature
 
    try{
-      if (lua_gettop(L) != 2) throw -1;
-      if (!lua_islightuserdata(L, 1)) throw -2; // pointer to image
-      if (!lua_islightuserdata(L, 2)) throw -2; // pointer to feature
+      if (lua_gettop(L) != 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // pointer to image
+      if (!lua_islightuserdata(L, 2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // pointer to feature
 
 	 CObject *ob = (CObject *) lua_topointer(L, 1);
-	 if (!ob) throw -99;
-	 if (!ob->check_id(AIG_ID_IMAGE)) throw -3; // bad object
+	 if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+	 if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // bad object
 	 CImage *im = (CImage *) ob;
 
 	 ob = (CObject *) lua_topointer(L, 2);
-	 if (!ob) throw -99;
-	 if (!ob->check_id(AIG_ID_FEATURE)) throw -3; // bad object
+	 if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+	 if (!ob->check_id(AIG_ID_FEATURE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // bad object
 	 CFeature *fe = (CFeature *) ob;
 
 	 fe->paint(im);
@@ -386,24 +339,7 @@ static int l_paint_feature(lua_State *L){/*{{{*/
 
 
    catch (int ex){
-
-      const char *comment = "";
-      switch (ex){
-	 case -1:
-	    comment = "aig_paint_feature - invalid number of arguments";
-	    break;
-	 case -2:
-	    comment = "aig_paint_feature - invalid type of arguments";
-	    break;
-	 case -3:
-	    comment = "aig_paint_feature - wrong or damaged object used";
-	    break;
-	 case -99:
-	    comment = "aig_paint_feature - invalid image pointer";
-	    break;
-      }
-      CLuaMessenger m((const char *)comment);
-      luaL_error(L,"%s",comment);
+      report_lua_error(L, ex);
    }
    return 0;
 }/*}}}*/
@@ -413,20 +349,20 @@ static int l_move_feature(lua_State *L){/*{{{*/
    // parameters: image, feature
 
    try{
-      if (lua_gettop(L) != 2) throw -1;
-      if (!lua_islightuserdata(L, 1)) throw -2; // pointer to feature
-      if (!lua_istable(L, 2)) throw -2; // shift vector (table)
+      if (lua_gettop(L) != 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // pointer to feature
+      if (!lua_istable(L, 2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // shift vector (table)
 
       CObject *ob = (CObject *) lua_topointer(L, 1);
-      if (!ob) throw -99;
-      if (!ob->check_id(AIG_ID_FEATURE)) throw -3; // bad object
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_FEATURE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // bad object
       CFeature *fe = (CFeature *) ob;
 
       DIST_TYPE coords[2];
       for (int i=1; i<=2; i++){
 	 lua_pushnumber(L,i); // get the i-th item of the table 
 	 lua_gettable(L,2); // the coordinate table is the second parameter
-	 if (!lua_isnumber(L, -1)) throw -2; // the item must be a number or else throw
+	 if (!lua_isnumber(L, -1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // the item must be a number or else throw
 	 coords[i-1] = (DIST_TYPE) lua_tonumber(L, -1);
 	 lua_pop(L,1);
       }
@@ -454,7 +390,7 @@ static int l_move_feature(lua_State *L){/*{{{*/
 	    comment = "aig_move_feature - invalid image pointer";
 	    break;
       }
-      CLuaMessenger m((const char *)comment);
+      
       luaL_error(L,"%s",comment);
    }
    return 0;

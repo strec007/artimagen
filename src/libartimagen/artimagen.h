@@ -219,6 +219,14 @@ enum {
    AIG_CHECK_ID_EXACT
 };
 
+enum {
+   AIG_LUA_ERR_NUMBER_OF_ARGUMENTS,
+   AIG_LUA_ERR_ARGUMET_TYPE,
+   AIG_LUA_ERR_INVALID_POINTER,
+   AIG_LUA_ERR_INCOMPATIBLE_OBJECT,
+   AIG_LUA_ERR_CURVE_INSERTION_ERROR
+};
+
 // t_message definition
 typedef struct { // This is a type for messages sent by the individual classes to the application./*{{{*/
    	  // It's good for progress bars and other progress or debug related
