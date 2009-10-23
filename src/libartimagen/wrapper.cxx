@@ -160,7 +160,7 @@ static int l_new_image(lua_State *L){/*{{{*/
       return 1;
    }
    
-   catch (int ex){
+   catch (t_aig_lua_err ex){
       report_lua_error(L, ex);
    }
    return 0;
@@ -179,7 +179,7 @@ static int l_delete_image(lua_State *L){/*{{{*/
       return 0;
    }
    
-   catch (int ex){
+   catch (t_aig_lua_err ex){
       report_lua_error(L, ex);
    }
    return 0;
@@ -204,7 +204,7 @@ static int l_save_image(lua_State *L){/*{{{*/
       return 0;
    }
    
-   catch (int ex){
+   catch (t_aig_lua_err ex){
       report_lua_error(L, ex);
    }
    return 0;
@@ -248,7 +248,6 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	 // the next parameter must be table of four tables of two numbers
 	 // e.g.: aig_create_curve("bezier",{{1,2},{3,4},{5,6},{7,8}})
 
-	 CLuaMessenger("aig-new-curve Creating Bezier");
 	 if (!lua_istable(L,2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // bad parameters
 	 DIST_TYPE coords[4][2];
 	 for (int j=1; j<=4; j++)
@@ -276,7 +275,7 @@ static int l_new_curve(lua_State *L){/*{{{*/
 
    }
    
-   catch (int ex){
+   catch (t_aig_lua_err ex){
       report_lua_error(L, ex);
    }
    return 0;
@@ -308,7 +307,7 @@ static int l_new_feature(lua_State *L){/*{{{*/
       return 1;
    }
 
-   catch (int ex){
+   catch (t_aig_lua_err ex){
       report_lua_error(L, ex);
    }
    return 0;
@@ -338,7 +337,7 @@ static int l_paint_feature(lua_State *L){/*{{{*/
    }
 
 
-   catch (int ex){
+   catch (t_aig_lua_err ex){
       report_lua_error(L, ex);
    }
    return 0;
@@ -373,25 +372,8 @@ static int l_move_feature(lua_State *L){/*{{{*/
    }
 
 
-   catch (int ex){
-
-      const char *comment = "";
-      switch (ex){
-	 case -1:
-	    comment = "aig_move_feature - invalid number of arguments";
-	    break;
-	 case -2:
-	    comment = "aig_move_feature - invalid type of arguments";
-	    break;
-	 case -3:
-	    comment = "aig_move_feature - wrong or damaged object used";
-	    break;
-	 case -99:
-	    comment = "aig_move_feature - invalid image pointer";
-	    break;
-      }
-      
-      luaL_error(L,"%s",comment);
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
    }
    return 0;
 }/*}}}*/
