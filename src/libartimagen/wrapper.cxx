@@ -140,6 +140,8 @@ static void report_lua_error(lua_State *L, int exc){/*{{{*/
 	 case AIG_LUA_ERR_CURVE_INSERTION_ERROR:
 	    comment = "curve insertion error";
 	    break;
+	 default:
+	    comment = "undescribed error - This is a bug, please report it.";
       }
       luaL_error(L,"%s",comment);
 }/*}}}*/
