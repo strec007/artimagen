@@ -581,6 +581,7 @@ double CGaussianNoise::noise_value(double n){/*{{{*/
 
 CBackgroud::CBackgroud(){/*{{{*/
    sender_id = "CBackgroud";
+   object_id = AIG_ID_BACKGROUND;
 }/*}}}*/
 
 int CBackgroud::apply(CImage *im){ /*{{{*/
@@ -592,6 +593,7 @@ int CBackgroud::apply(CImage *im){ /*{{{*/
 
 CEvenBackgroud::CEvenBackgroud(IM_STORE_TYPE gl){/*{{{*/
    sender_id = "CEvenBackgroud";
+   object_id = AIG_ID_EVENBACKGROUND;
    send_message(AIG_MSG_CREATING,"Creating even background");
    bg_greylevel = gl;
 }/*}}}*/
@@ -617,6 +619,7 @@ IM_STORE_TYPE CEvenBackgroud::give_bg_greylevel(){/*{{{*/
 
 CWavyBackgroud::CWavyBackgroud(IM_STORE_TYPE min_gl, IM_STORE_TYPE max_gl, int densx, int densy){/*{{{*/
    sender_id = "CWavyBackgroud";
+   object_id = AIG_ID_WAVYBACKGROUND;
    send_message(AIG_MSG_CREATING,"Creating wavy background");
    this->densx = densx;
    this->densy = densy;
