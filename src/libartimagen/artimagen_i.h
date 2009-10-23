@@ -23,10 +23,18 @@
 #define IM_NO_IFFT_BLOCK 0
 #define IM_IFFT_BLOCK 1
 
-#define CU_SEGMENT_NOT_HIT 0
-#define CU_SEGMENT_HIT 1
-#define CU_SEGMENT_HIT_ERR 2
-#define CU_SEGMENT_HIT_VERTEX 3
+enum {
+CU_SEGMENT_NOT_HIT, 
+CU_SEGMENT_HIT, 
+CU_SEGMENT_HIT_ERR,
+CU_SEGMENT_HIT_VERTEX
+};
+
+enum {
+   AIG_FE_ARRAY_FULL,
+   AIG_FE_CURVE_INSERTED_OK
+};
+
 
 #define SA_ADD_OVERLAP 0
 #define SA_ADD_OK 1
@@ -248,8 +256,10 @@ class CFeature:public CPolygon{/*{{{*/
 
 class CGenericFeature:public CFeature{/*{{{*/
    public:
-      CGenericFeature();
-      int add_curve(CCurve *);
+      CGenericFeature(int curves_total);
+      int add_curve(CCurve *cu);
+   private:
+      int curves_total;
 };/*}}}*/
 
 class CGoldenGrain:public CFeature{/*{{{*/

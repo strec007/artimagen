@@ -134,10 +134,21 @@ CFeature::~CFeature(){/*{{{*/
 
 //////////////////// CGenericFeature /////////////////
 
-CGenericFeature::CGenericFeature(){
+CGenericFeature::CGenericFeature(int curves_total){/*{{{*/
    sender_id = "CGenericFeature";
    ident(AIG_ID_GENERICFEATURE);
-}
+
+   this->curves_total = curves_total;
+   curves = new CCurve*[curves_total];
+   number_of_curves = 0;
+   for (int i=0; i<curves_total; i++) curves[i] = NULL; // to be on the save side
+}/*}}}*/
+
+int CGenericFeature::add_curve(CCurve *cu){/*{{{*/
+   if (number_of_curves == curves_total) return AIG_FE_ARRAY_FULL;
+   curves[number_of_curves++] = cu;
+   return AIG_FE_CURVE_INSERTED_OK;
+}/*}}}*/
 
 //////////////////// CGoldenGrain /////////////////
 

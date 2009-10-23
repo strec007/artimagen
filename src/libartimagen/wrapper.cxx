@@ -323,7 +323,14 @@ static int l_new_feature(lua_State *L){/*{{{*/
 	 lua_pop(L, 1); // clean up
       }
 
-      return 0;
+      CGenericFeature *fe = new CGenericFeature(curves.size());
+      for (unsigned int i=0; i<curves.size(); i++){
+	 if (fe->add_curve(curves[i]) != AIG_FE_CURVE_INSERTED_OK) throw -4;
+      }
+
+
+      lua_pushlightuserdata(L, (void *) fe);
+      return 1;
    }
 
    catch (int ex){
@@ -338,6 +345,9 @@ static int l_new_feature(lua_State *L){/*{{{*/
 	    break;
 	 case -3:
 	    comment = "aig_new_feature - non-curve object in table";
+	    break;
+	 case -4:
+	    comment = "aig_new_feature - curve insertion error";
 	    break;
       }
       CLuaMessenger m(comment);
