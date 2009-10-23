@@ -64,6 +64,7 @@ class CObject{/*{{{*/
    protected:
       virtual void send_message(int message, const char *comment);
       const char* sender_id;
+      int object_id;
       char messaging_enabled;
 };/*}}}*/
 

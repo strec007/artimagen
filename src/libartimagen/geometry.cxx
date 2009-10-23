@@ -57,6 +57,7 @@ CVector::CVector(){/*{{{*/
    x = 0;
    y = 0;
    sender_id = "CVector";
+   object_id = AIG_ID_VECTOR;
 }/*}}}*/
 
 /* CVector constructor with value initialization */
@@ -129,6 +130,7 @@ CLine::CLine(){/*{{{*/
    p0 = CVector(0,0);
    p1 = CVector(1,1);
    sender_id = "CLine";
+   object_id = AIG_ID_LINE;
 }/*}}}*/
 
 /* Constructor of a line from two vectors */
@@ -264,6 +266,8 @@ CTriangle::CTriangle(CVector va, CVector vb, CVector vc){/*{{{*/
    eb = CLine(vc, va);
    ec = CLine(va, vb);
    sender_id = "CTriangle";
+   object_id = AIG_ID_TRIANGLE;
+
 }/*}}}*/
 
 /////////////////// CCurve ///////////////////
@@ -274,6 +278,7 @@ CCurve::CCurve(){/*{{{*/
    number_of_vertices = 0; 
    vertices = NULL;
    sender_id = "CCurve";
+   object_id = AIG_ID_CURVE;
 
 }/*}}}*/
 
@@ -456,6 +461,8 @@ void CCurve::rotate(CVector center, double angle){/*{{{*/
 /* Straight line is a simplest curve */
 
 CStraightLine::CStraightLine(CLine l){/*{{{*/
+   sender_id = "CStraightLine";
+   object_id = AIG_ID_STRAIGHTLINE;
    line = l;
    number_of_vertices = 3; // whatever, 3 is OK for subdivision of a straight line.
    init();
@@ -470,6 +477,7 @@ CVector CStraightLine::parametrize(DIST_TYPE t){/*{{{*/
 CBezier::CBezier(CVector p1, CVector p2, CVector p3, CVector p4)/*{{{*/
 {
    sender_id = "CBezier";
+   object_id = AIG_ID_BEZIER;
    // just set the control points and run init.
    control_points[0] = p1;
    control_points[1] = p2;
@@ -654,6 +662,7 @@ CPolygon::~CPolygon(){/*{{{*/
 
 CVoronoi::CVoronoi(CPolygon *polygon, CVector *free_points, int num_of_free){/*{{{*/
    sender_id = "CVoronoi";
+   object_id = AIG_ID_VORONOI;
    this->polygon = polygon;
    polygon->give_bounding_box(&bounding_box_tl, &bounding_box_br);
    this->free_points = free_points;

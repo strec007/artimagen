@@ -174,6 +174,43 @@ enum{
    AIG_MSG_LUA_ERROR
 };
 
+enum{ // object IDs.
+   AIG_ID_OBJECT = 9000,
+   AIG_ID_VECTOR,
+   AIG_ID_LINE,
+   AIG_ID_TRIANGLE,
+   AIG_ID_CURVE,
+   AIG_ID_STRAIGHTLINE,
+   AIG_ID_BEZIER,
+   AIG_ID_VORONOI,
+   AIG_ID_FEATURE,
+   AIG_ID_GOLDENGRAIN,
+   AIG_ID_RECTANGLE,
+   AIG_ID_SNAKE,
+   AIG_ID_CORNER,
+   AIG_ID_CROSS,
+   AIG_ID_EFFECT,
+   AIG_ID_EDGEEFFECT,
+   AIG_ID_FINESTRUCTUREEFFECT,
+   AIG_ID_SAMPLE,
+   AIG_ID_GOLDONCARBONSAMPLE,
+   AIG_ID_PERIODICCORNERSAMPLE,
+   AIG_ID_SINGLERECTANGLESAMPLE,
+   AIG_ID_SNAKESAMPLE,
+   AIG_ID_PERIODICCROSSSAMPLE,
+   AIG_ID_IMAGE,
+   AIG_ID_IMAGEEFFECT,
+   AIG_ID_PSF,
+   AIG_ID_GAUSSIANPSF,
+   AIG_ID_VIBRATION,
+   AIG_ID_NOISE,
+   AIG_ID_POISSONNOISE,
+   AIG_ID_GAUSSIANNOISE,
+   AIG_ID_BACKGROUND,
+   AIG_ID_EVENBACKGROUND,
+   AIG_ID_WAVYBACKGROUND
+};
+
 // t_message definition
 typedef struct { // This is a type for messages sent by the individual classes to the application./*{{{*/
    	  // It's good for progress bars and other progress or debug related

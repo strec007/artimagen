@@ -41,6 +41,7 @@ using namespace artimagen;
 
 CImage::CImage(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){ /*{{{*/
    sender_id = "CImage";
+   object_id = AIG_ID_IMAGE;
    send_message(AIG_MSG_CREATING,"Empty image");
 
    //this is a constructor which allocates the buffer space and stores the x-
@@ -314,6 +315,7 @@ IM_STORE_TYPE CImage::give_mean_value(){/*{{{*/
 
 int CImageEffect::apply(CImage *im){/*{{{*/
    sender_id = "CImageEffect";
+   object_id = AIG_ID_IMAGEEFFECT;
    return 0;
 }/*}}}*/
 
@@ -321,6 +323,7 @@ int CImageEffect::apply(CImage *im){/*{{{*/
 
 CPsf::CPsf(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){/*{{{*/
    sender_id = "CPsf";
+   object_id = AIG_ID_PSF;
    psf_data = NULL;
    image_data = NULL;
    image_fft_data = NULL;
@@ -386,6 +389,7 @@ CPsf::~CPsf(){/*{{{*/
 CGaussianPsf::CGaussianPsf(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey, float sigma, float astigmatism_ratio, float astigmatism_angle):CPsf(sizex, sizey){/*{{{*/
 
    sender_id = "CGaussianPsf";
+   object_id = AIG_ID_GAUSSIANPSF;
    IM_COORD_TYPE psfsize = sigma * astigmatism_ratio*3;
 
    for (IM_COORD_TYPE j=-psfsize; j<psfsize; j++)
@@ -412,6 +416,7 @@ CGaussianPsf::CGaussianPsf(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey, float sigma
 
 CVibration::CVibration(t_vib_definition *def){/*{{{*/
    sender_id = "CVibration";
+   object_id = AIG_ID_VIBRATION;
    send_message(AIG_MSG_CREATING,"Calculating vibration functions");
    motion_x = NULL;
    motion_y = NULL;
@@ -512,6 +517,7 @@ int CVibration::apply(CImage *im, unsigned long time_shift){/*{{{*/
 
 CNoise::CNoise(){/*{{{*/
    sender_id = "CNoise";
+   object_id = AIG_ID_NOISE;
 }/*}}}*/
 
 int CNoise::apply(CImage *im){/*{{{*/
@@ -538,6 +544,7 @@ double CNoise::noise_value(double n){/*{{{*/
 
 CPoissonNoise::CPoissonNoise(){/*{{{*/
    sender_id = "CPoissonNoise";
+   object_id = AIG_ID_POISSONNOISE;
 }/*}}}*/
 
 double CPoissonNoise::noise_value(double n){/*{{{*/
@@ -555,6 +562,7 @@ double CPoissonNoise::noise_value(double n){/*{{{*/
 
 CGaussianNoise::CGaussianNoise(double sigma){/*{{{*/
    sender_id = "CGaussianNoise";
+   object_id = AIG_ID_GAUSSIANNOISE;
    this->sigma = sigma;
 }/*}}}*/
 
