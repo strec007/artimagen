@@ -37,11 +37,15 @@ LUALIB=
 AS_IF([test "x$with_lua" != xno],
     [AC_CHECK_LIB([lua5.1], [main],
      [AC_SUBST([LUALIB], ["-llua5.1"])
-       AC_DEFINE([HAVE_LUA], [1], [Define if you have liblua5.1])],
+       AC_DEFINE([HAVE_LUA], [1], [Define if you have liblua5.1])
+        [have_lua=yes]
+       ],
      [AC_MSG_FAILURE([lua test failed (--without-lua to disable)])],
      [])
     ]
 )
+
+AM_CONDITIONAL(HAVE_LUA, test x$have_lua = xyes)
 
 
 # Checks for header files.

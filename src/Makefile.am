@@ -9,10 +9,11 @@ include_HEADERS=libartimagen/artimagen.h libartimagen/artimagen_i.h
 libartimagen_la_LIBADD=$(TIFFLIB) $(FFTW3LIB) $(LUALIB)
 libartimagen_la_LDFLAGS= -version-info $(ARTIMAGEN_LIBRARY_VERSION) -no-undefined
 
+if HAVE_LUA
 bin_PROGRAMS=artimagenl
 artimagenl_SOURCES=artimagenl.cxx
 artimagenl_LDADD=libartimagen.la
-
+endif
 
 noinst_PROGRAMS=artimagen
 artimagen_SOURCES=artimagen.cxx

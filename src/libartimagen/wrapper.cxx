@@ -122,6 +122,7 @@ CLuaMessenger::CLuaMessenger(int msg_id, const char *comment){ /*{{{*/
    send_message(msg_id, comment);
 }/*}}}*/
 
+#ifdef HAVE_LUA
 static void report_lua_error(lua_State *L, int exc){/*{{{*/
       const char *comment = "";
       switch (exc){
@@ -146,7 +147,6 @@ static void report_lua_error(lua_State *L, int exc){/*{{{*/
       luaL_error(L,"%s",comment);
 }/*}}}*/
 
-#ifdef HAVE_LUA
 static int l_new_image(lua_State *L){/*{{{*/
    try{
       if (lua_gettop(L) != 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
