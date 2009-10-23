@@ -248,7 +248,7 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	       lua_pushnumber(L,i); // get the i-th item of the table which is
 	       // the j-th item of the outer table
 	       if (!lua_istable(L,-2)) throw -2;
-	       lua_gettable(L,-2); // the coordinate table is the second parameter
+	       lua_gettable(L,-2);
 	       if (!lua_isnumber(L, -1)) throw -2; // the item must be a number or else throw
 	       coords[j-1][i-1] = (DIST_TYPE) lua_tonumber(L, -1);
 	       lua_pop(L,2);
@@ -277,7 +277,7 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	       lua_pushnumber(L,i); // get the i-th item of the table which is
 	       // the j-th item of the outer table
 	       if (!lua_istable(L,-2)) throw -2;
-	       lua_gettable(L,-2); // the coordinate table is the second parameter
+	       lua_gettable(L,-2); 
 	       if (!lua_isnumber(L, -1)) throw -2; // the item must be a number or else throw
 	       coords[j-1][i-1] = (DIST_TYPE) lua_tonumber(L, -1);
 	       lua_pop(L,2);
@@ -408,6 +408,57 @@ static int l_paint_feature(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+static int l_move_feature(lua_State *L){/*{{{*/
+   // this function is mostly for debugging.
+   // parameters: image, feature
+
+   try{
+      if (lua_gettop(L) != 2) throw -1;
+      if (!lua_islightuserdata(L, 1)) throw -2; // pointer to feature
+      if (!lua_istable(L, 2)) throw -2; // shift vector (table)
+
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw -99;
+      if (!ob->check_id(AIG_ID_FEATURE)) throw -3; // bad object
+      CFeature *fe = (CFeature *) ob;
+
+      DIST_TYPE coords[2];
+      for (int i=1; i<=2; i++){
+	 lua_pushnumber(L,i); // get the i-th item of the table 
+	 lua_gettable(L,2); // the coordinate table is the second parameter
+	 if (!lua_isnumber(L, -1)) throw -2; // the item must be a number or else throw
+	 coords[i-1] = (DIST_TYPE) lua_tonumber(L, -1);
+	 lua_pop(L,1);
+      }
+
+      CVector shv(coords[0],coords[1]);
+      fe->move_by(shv);
+      return 0;
+   }
+
+
+   catch (int ex){
+
+      const char *comment = "";
+      switch (ex){
+	 case -1:
+	    comment = "aig_move_feature - invalid number of arguments";
+	    break;
+	 case -2:
+	    comment = "aig_move_feature - invalid type of arguments";
+	    break;
+	 case -3:
+	    comment = "aig_move_feature - wrong or damaged object used";
+	    break;
+	 case -99:
+	    comment = "aig_move_feature - invalid image pointer";
+	    break;
+      }
+      CLuaMessenger m((const char *)comment);
+      lua_error(L);
+   }
+   return 0;
+}/*}}}*/
 
 int exec_lua_file(const char *fn){/*{{{*/
    lua_State *L = lua_open();
@@ -418,6 +469,7 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_new_curve", l_new_curve);
    lua_register(L, "aig_new_feature", l_new_feature);
    lua_register(L, "aig_paint_feature", l_paint_feature);
+   lua_register(L, "aig_move_feature", l_move_feature);
    int err = luaL_dofile(L, fn);
    lua_close(L);
    return err;
