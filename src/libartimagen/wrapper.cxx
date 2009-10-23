@@ -471,6 +471,7 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_paint_feature", l_paint_feature);
    lua_register(L, "aig_move_feature", l_move_feature);
    int err = luaL_dofile(L, fn);
+   if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));
    lua_close(L);
    return err;
 }/*}}}*/

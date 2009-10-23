@@ -11,7 +11,6 @@ rawset(curves, 2, aig_new_curve("segment",{{0,100},{100,100}}))
 rawset(curves, 3, aig_new_curve("bezier",{{100,100},{130,80},{130,20},{100,0}}))
 rawset(curves, 4, aig_new_curve("segment",{{100,0},{0,0}}))
 
-
 print("Feature")
 --fe = aig_new_feature({curves[1],curves[2],curves[3],curves[4]});
 fe = aig_new_feature(curves);
