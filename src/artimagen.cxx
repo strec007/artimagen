@@ -36,7 +36,6 @@ void generate_gold_on_carbon_image(CSample **sam){
    gcdef.sizey=SIZEY;
    gcdef.ee_coefficient=0.2;
    gcdef.ee_top_above_base=0.3;
-   gcdef.ee_thickness=10;
    gcdef.base_level=0.5;
    gcdef.base_level_variation=0.1;
    gcdef.grain_min_size=5;
@@ -57,7 +56,6 @@ void generate_corner_structure_image(CSample **sam){
    cordef.sizey=SIZEY;
    cordef.ee_coefficient=0.01;
    cordef.ee_top_above_base=0.1;
-   cordef.ee_thickness=20;
    cordef.base_level=0.5;
    cordef.base_level_variation=0.2;
    cordef.lsize=50;
@@ -78,7 +76,6 @@ void generate_cross_structure_image(CSample **sam){
    crsdef.sizey=SIZEY;
    crsdef.ee_coefficient=0.2;
    crsdef.ee_top_above_base=0.5;
-   crsdef.ee_thickness=10;
    crsdef.base_level=0.3;
    crsdef.base_level_variation=0.2;
    crsdef.lsize=70;
@@ -109,7 +106,6 @@ void generate_rectangle_structure_image(CSample **sam){
    rctdef.sizey=SIZEY;
    rctdef.ee_coefficient=0.2;
    rctdef.ee_top_above_base=0.5;
-   rctdef.ee_thickness=10;
    rctdef.base_level=0.3;
    rctdef.base_level_variation=0.2;
    rctdef.lsize=300;
@@ -131,7 +127,6 @@ void generate_snake_structure_image(CSample **sam){
    rctdef.sizey=SIZEY;
    rctdef.ee_coefficient=0.2;
    rctdef.ee_top_above_base=0.5;
-   rctdef.ee_thickness=10;
    rctdef.base_level=0.3;
    rctdef.base_level_variation=0.02;
    rctdef.lsize=1200;

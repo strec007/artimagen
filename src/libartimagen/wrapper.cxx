@@ -123,6 +123,31 @@ CLuaMessenger::CLuaMessenger(int msg_id, const char *comment){ /*{{{*/
 }/*}}}*/
 
 #ifdef HAVE_LUA
+
+void print_lua_stack(lua_State *L){
+   int i;
+   
+   printf("\n ********* LUA STACK *********\n");
+
+   for (i = lua_gettop(L); i>=-100; i--){
+      int typ = lua_type(L,i);
+      if (typ == LUA_TFUNCTION) break;
+      printf ("type of [%d]: %s = ", i, lua_typename(L, typ));
+      switch (typ) {
+         case LUA_TNUMBER:
+            printf("%g\n", lua_tonumber(L,i));
+            break;
+         case LUA_TSTRING:
+            printf("%s\n", lua_tostring(L,i));
+            break;
+         default:
+            printf("(unknown)\n");
+      }
+   }
+   printf("\n ***** LUA STACK END *********\n");
+}
+
+
 static void report_lua_error(lua_State *L, int exc){/*{{{*/
       const char *comment = "";
       switch (exc){
@@ -140,6 +165,15 @@ static void report_lua_error(lua_State *L, int exc){/*{{{*/
 	    break;
 	 case AIG_LUA_ERR_CURVE_INSERTION_ERROR:
 	    comment = "curve insertion error";
+	    break;
+	 case AIG_LUA_ERR_ILLEGAL_OVERLAP:
+	    comment = "features overlap";
+	    break;
+	 case AIG_LUA_ERR_INVALID_QUALIFIER:
+	    comment = "invalid qualifier";
+	    break;
+	 case AIG_LUA_ERR_FATAL:
+	    comment = "unspecified fatal error";
 	    break;
 	 default:
 	    comment = "undescribed error - This is a bug, please report it.";
@@ -277,6 +311,7 @@ static int l_new_curve(lua_State *L){/*{{{*/
 	 lua_pushlightuserdata(L, (void *) curve);
 	 return 1;
       }
+      throw AIG_LUA_ERR_INVALID_QUALIFIER;
 
    }
    
@@ -287,11 +322,15 @@ static int l_new_curve(lua_State *L){/*{{{*/
 }/*}}}*/
 
 static int l_new_feature(lua_State *L){/*{{{*/
-   // pars: array of pointers to curve
+   // pars: array of pointers to curve, array of pointers to effect
    try{
-      if (lua_gettop(L) != 1) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
-      if (!lua_istable(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // parameter is the table of curves
+      if (lua_gettop(L) != 3) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_istable(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // table of curves
+      if (!lua_istable(L, 2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // table of effects
+      if (!lua_isnumber(L, 3)) throw AIG_LUA_ERR_ARGUMET_TYPE; // base graylevel
 
+      IM_STORE_TYPE base_gl = lua_tonumber(L, 3);
+      
       lua_pushnil(L);  /* first key */
       vector <CCurve *> curves;
       while (lua_next(L, 1) != 0) { // table is at index 1
@@ -304,7 +343,20 @@ static int l_new_feature(lua_State *L){/*{{{*/
 	 lua_pop(L, 1); // clean up
       }
 
-      CFeature *fe = new CFeature(curves);
+      lua_pushnil(L);  /* first key */
+      vector <CEffect *> effects;
+      while (lua_next(L, 2) != 0) { // table is at index 2
+	 if (!lua_islightuserdata(L,-1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // bad agrument type
+	 CObject *ob = (CObject *) lua_topointer(L, -1);
+	 if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+
+	 if (!ob->check_id(AIG_ID_EFFECT)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-curve object
+	 effects.push_back((CEffect *)ob);
+	 lua_pop(L, 1); // clean up
+      }
+
+      CFeature *fe = new CFeature(curves, effects);
+      fe->set_base_gray_level(base_gl);
       lua_pushlightuserdata(L, (void *) fe);
       return 1;
    }
@@ -422,7 +474,16 @@ static int l_new_sample(lua_State *L){/*{{{*/
 }/*}}}*/
  
 static int l_delete_sample(lua_State *L){/*{{{*/
+   // arg: pointer to sample
    try{
+      if (lua_gettop(L) != 1) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // pointer to sample
+
+      CSample *sa = (CSample *) lua_topointer(L, 1);
+      if (!sa) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (((CObject *)sa)->check_id(AIG_ID_SAMPLE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT;
+
+      delete sa;
       return 0;
    }
 
@@ -434,7 +495,59 @@ static int l_delete_sample(lua_State *L){/*{{{*/
 
 static int l_paint_sample(lua_State *L){/*{{{*/
    try{
+      if (lua_gettop(L) != 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // pointer to image
+      if (!lua_islightuserdata(L, 2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // pointer to sample
+
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // bad object
+      CImage *im = (CImage *) ob;
+
+      ob = (CObject *) lua_topointer(L, 2);
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_SAMPLE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // bad object
+      CSample *sa = (CSample *) ob;
+
+      sa->paint(im);
       return 0;
+   }
+
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+}/*}}}*/
+
+static int l_new_effect(lua_State *L){/*{{{*/
+   try{
+      CEffect *ee = NULL;
+      if (lua_gettop(L) < 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_isstring(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // type qualifier 
+      // ( at this moment only "edge", "finestructure")
+
+      if (!strcmp(lua_tolstring(L, 1, NULL), "edge")){
+	 // generating edge effect
+	 if (!lua_isnumber(L, 2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // ee coefficient
+	 if (!lua_isnumber(L, 3)) throw AIG_LUA_ERR_ARGUMET_TYPE; // edge top gray level - base
+
+	 float coef = (float) lua_tonumber(L, 2);
+	 IM_STORE_TYPE edge_top_gl = (IM_STORE_TYPE) lua_tonumber(L, 3);
+
+	 ee = new CEdgeEffect(coef, edge_top_gl);
+	 if (!ee) throw AIG_LUA_ERR_FATAL;
+	 lua_pushlightuserdata(L, (void *) ee);
+	 return 1;
+      }
+
+      if (!strcmp(lua_tolstring(L, 1, NULL), "finestructure")){
+	 // generating fine stricture effect
+	 lua_pushlightuserdata(L, (void *) ee);
+	 return 1;
+      }
+
+      throw AIG_LUA_ERR_INVALID_QUALIFIER;
+
    }
 
    catch (t_aig_lua_err ex){
@@ -456,6 +569,7 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_new_sample", l_new_sample);
    lua_register(L, "aig_delete_sample", l_new_sample);
    lua_register(L, "aig_paint_sample", l_paint_sample);
+   lua_register(L, "aig_new_effect", l_new_effect);
    int err = luaL_dofile(L, fn);
    if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));
    lua_close(L);

@@ -90,7 +90,6 @@ typedef struct {/*{{{*/
    int sizey;
    float ee_coefficient;
    IM_STORE_TYPE ee_top_above_base;
-   DIST_TYPE ee_thickness;
    IM_STORE_TYPE base_level;
    IM_STORE_TYPE base_level_variation;
    DIST_TYPE grain_min_size;
@@ -110,7 +109,6 @@ typedef struct {/*{{{*/
    int sizey;
    float ee_coefficient;
    IM_STORE_TYPE ee_top_above_base;
-   DIST_TYPE ee_thickness;
    IM_STORE_TYPE base_level;
    IM_STORE_TYPE base_level_variation;
    DIST_TYPE lsize;
@@ -130,7 +128,6 @@ typedef struct {/*{{{*/
    int sizey;
    float ee_coefficient;
    IM_STORE_TYPE ee_top_above_base;
-   DIST_TYPE ee_thickness;
    IM_STORE_TYPE base_level;
    IM_STORE_TYPE base_level_variation;
    DIST_TYPE lsize;
@@ -149,7 +146,6 @@ typedef struct {/*{{{*/
    int sizey;
    float ee_coefficient;
    IM_STORE_TYPE ee_top_above_base;
-   DIST_TYPE ee_thickness;
    IM_STORE_TYPE base_level;
    IM_STORE_TYPE base_level_variation;
    DIST_TYPE lsize;
@@ -226,7 +222,9 @@ enum t_aig_lua_err {
    AIG_LUA_ERR_INVALID_POINTER,
    AIG_LUA_ERR_INCOMPATIBLE_OBJECT,
    AIG_LUA_ERR_CURVE_INSERTION_ERROR,
-   AIG_LUA_ERR_ILLEGAL_OVERLAP
+   AIG_LUA_ERR_ILLEGAL_OVERLAP,
+   AIG_LUA_ERR_INVALID_QUALIFIER,
+   AIG_LUA_ERR_FATAL
 };
 
 // t_message definition

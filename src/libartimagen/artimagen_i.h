@@ -42,6 +42,7 @@ enum {
 
 enum {
    AIG_EX_ZERO_LINE,
+   AIG_EX_READD_EFFECT_CHAIN_ATTEMPT,
    AIG_EX_FEATURE_OVERLAP,
    AIG_EX_GOLDONCARBON_TOO_MANY_FAILS
 };
@@ -237,7 +238,7 @@ class CEffect;
 class CFeature:public CPolygon{/*{{{*/
    public:
       CFeature();
-      CFeature(vector <CCurve *> curve_vec);
+      CFeature(vector <CCurve *> curve_vec, vector<CEffect *> effect_vec);
       virtual void init();
       ~CFeature();
       virtual void paint(CImage *im);
@@ -294,14 +295,13 @@ class CEffect:public CObject{/*{{{*/
 
 class CEdgeEffect: public CEffect{/*{{{*/
    public:
-      CEdgeEffect(float coefficient, IM_STORE_TYPE top_edge_value_above_base, DIST_TYPE thickness);
+      CEdgeEffect(float coefficient, IM_STORE_TYPE top_edge_value_above_base);
    protected:
    private:
       double fun(CFeature *fe, CVector v);
       float coefficient;
       IM_STORE_TYPE top_edge_value_above_base;
       IM_STORE_TYPE center_feature_value;
-      DIST_TYPE thickness;
 
 };/*}}}*/
 

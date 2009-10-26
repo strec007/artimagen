@@ -46,7 +46,7 @@ CFeature::CFeature(){/*{{{*/
    const_init();
 }/*}}}*/
 
-CFeature::CFeature(vector <CCurve *> curve_vec){/*{{{*/
+CFeature::CFeature(vector <CCurve *> curve_vec, vector<CEffect *> effect_vec){/*{{{*/
    const_init();
 
    number_of_curves = curve_vec.size();
@@ -54,7 +54,14 @@ CFeature::CFeature(vector <CCurve *> curve_vec){/*{{{*/
    for (int i=0; i< number_of_curves; i++){
       add_curve(curve_vec[i]);
    }
+   
+   number_of_effects = effect_vec.size();
+   effects = new CEffect*[number_of_effects];
+   for (int i=0; i< number_of_effects; i++){
+      effects[i]=effect_vec[i];
+   }
    init();
+
 
 }/*}}}*/
 
@@ -140,6 +147,7 @@ void CFeature::set_base_gray_level(IM_STORE_TYPE level){/*{{{*/
 }/*}}}*/
 
 void CFeature::add_effect_chain(CEffect **effects, int number_of_effects){/*{{{*/
+   if (number_of_effects > 0) throw (int) AIG_EX_READD_EFFECT_CHAIN_ATTEMPT;
    this->effects = effects;
    this->number_of_effects = number_of_effects;
 }/*}}}*/
@@ -318,12 +326,11 @@ float CEffect::give_amplification(CFeature *fe, CVector v){/*{{{*/
 
 //////////////////// CEdgeEffect /////////////////
 
-CEdgeEffect::CEdgeEffect(float coefficient, IM_STORE_TYPE top_edge_value_above_base, DIST_TYPE thickness):CEffect(){/*{{{*/
+CEdgeEffect::CEdgeEffect(float coefficient, IM_STORE_TYPE top_edge_value_above_base):CEffect(){/*{{{*/
    sender_id = "CEdgeEffect";
    ident(AIG_ID_EDGEEFFECT);
    this->coefficient = coefficient;
    this->top_edge_value_above_base = top_edge_value_above_base;
-   this->thickness = thickness;
 }/*}}}*/
 
 double CEdgeEffect::fun(CFeature *fe, CVector v){/*{{{*/
@@ -586,7 +593,7 @@ CGoldOnCarbonSample::CGoldOnCarbonSample(t_gc_definition *def):CSample(def->size
       effects = new CEffect*[2];
       number_of_effects = 2;
       for (int i=0; i<number_of_effects; i++) effects[i] = NULL; // important if effect constructor throws
-      effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base, def->ee_thickness);
+      effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base);
       effects[1] = new CFineStructureEffect(def->fs_density, def->fs_min_r, def->fs_max_r, def->fs_min_coe, def->fs_max_coe);
 
       gg->add_effect_chain(effects, number_of_effects);
@@ -637,7 +644,7 @@ CPeriodicCornerSample::CPeriodicCornerSample(t_cor_definition *def):CSample(def-
 	 effects = new CEffect*[2];
 	 number_of_effects = 2;
 	 for (int i=0; i<number_of_effects; i++) effects[i] = NULL; // important if effect constructor throws
-	 effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base, def->ee_thickness);
+	 effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base);
 	 effects[1] = new CFineStructureEffect(def->fs_density, def->fs_min_r, def->fs_max_r, def->fs_min_coe, def->fs_max_coe);
 
 	 cc->add_effect_chain(effects,2);
@@ -658,7 +665,7 @@ CSingleRectangleSample::CSingleRectangleSample(t_rct_definition *def):CSample(de
    effects = new CEffect*[2];
    number_of_effects = 2;
    for (int i=0; i<number_of_effects; i++) effects[i] = NULL; // important if effect constructor throws
-   effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base, def->ee_thickness);
+   effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base);
    effects[1] = new CFineStructureEffect(def->fs_density, def->fs_min_r, def->fs_max_r, def->fs_min_coe, def->fs_max_coe);
 
    number_of_features = 1;
@@ -685,7 +692,7 @@ CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey
    effects = new CEffect*[1];
    number_of_effects = 1;
    for (int i=0; i<number_of_effects; i++) effects[i] = NULL; // important if effect constructor throws
-   effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base, def->ee_thickness);
+   effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base);
    //effects[1] = new CFineStructureEffect(def->fs_density, def->fs_min_r, def->fs_max_r, def->fs_min_coe, def->fs_max_coe);
 
    number_of_features = 9;
@@ -768,7 +775,7 @@ CPeriodicCrossSample::CPeriodicCrossSample(t_crs_definition *def):CSample(def->s
 	 effects = new CEffect*[2];
 	 number_of_effects = 2;
 	 for (int i=0; i<number_of_effects; i++) effects[i] = NULL; // important if effect constructor throws
-	 effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base, def->ee_thickness);
+	 effects[0] = new CEdgeEffect(def->ee_coefficient, def->ee_top_above_base);
 	 effects[1] = new CFineStructureEffect(def->fs_density, def->fs_min_r, def->fs_max_r, def->fs_min_coe, def->fs_max_coe);
 
 	 cc->add_effect_chain(effects,2);
