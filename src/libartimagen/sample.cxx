@@ -43,13 +43,36 @@ using namespace artimagen;
  * are derived from this one */
 
 CFeature::CFeature(){/*{{{*/
+   const_init();
+}/*}}}*/
+
+CFeature::CFeature(vector <CCurve *> curve_vec){/*{{{*/
+   const_init();
+
+   number_of_curves = curve_vec.size();
+   curves = new CCurve*[number_of_curves];
+   for (int i=0; i< number_of_curves; i++){
+      add_curve(curve_vec[i]);
+   }
+   init();
+
+}/*}}}*/
+
+void CFeature::const_init(){/*{{{*/
    sender_id = "CFeature";
    ident(AIG_ID_FEATURE);
    number_of_curves = 0;
+   actual_number_of_curves = 0;
    curves = NULL;
    number_of_effects = 0;
    effects = NULL;
    base_gray_level = 0.6; // default value
+}/*}}}*/
+
+int CFeature::add_curve(CCurve *cu){/*{{{*/
+   if (actual_number_of_curves >= number_of_curves) return AIG_FE_ARRAY_FULL;
+   curves[actual_number_of_curves++] = cu;
+   return AIG_FE_CURVE_INSERTED_OK;
 }/*}}}*/
 
 // global initialization function
@@ -130,24 +153,6 @@ CFeature::~CFeature(){/*{{{*/
       delete [] curves;
       curves = NULL;
    }
-}/*}}}*/
-
-//////////////////// CGenericFeature /////////////////
-
-CGenericFeature::CGenericFeature(int curves_total){/*{{{*/
-   sender_id = "CGenericFeature";
-   ident(AIG_ID_GENERICFEATURE);
-
-   this->curves_total = curves_total;
-   curves = new CCurve*[curves_total];
-   number_of_curves = 0;
-   for (int i=0; i<curves_total; i++) curves[i] = NULL; // to be on the save side
-}/*}}}*/
-
-int CGenericFeature::add_curve(CCurve *cu){/*{{{*/
-   if (number_of_curves == curves_total) return AIG_FE_ARRAY_FULL;
-   curves[number_of_curves++] = cu;
-   return AIG_FE_CURVE_INSERTED_OK;
 }/*}}}*/
 
 //////////////////// CGoldenGrain /////////////////
@@ -394,6 +399,19 @@ double CFineStructureEffect::fun(CFeature *fe, CVector v){/*{{{*/
 // general sample class
 
 CSample::CSample(DIST_TYPE sizex, DIST_TYPE sizey){/*{{{*/
+   const_init(sizex, sizey);
+}/*}}}*/
+
+CSample::CSample(DIST_TYPE sizex, DIST_TYPE sizey, vector<CFeature *> feature_vec){/*{{{*/
+   const_init(sizex, sizey);
+   number_of_features = feature_vec.size();
+   features = new CFeature*[number_of_features];
+   for (int i=0; i<number_of_features; i++) {
+      if (add_feature(feature_vec[i]) == SA_ADD_OVERLAP) throw (int) AIG_EX_FEATURE_OVERLAP;
+   }
+}/*}}}*/
+
+void CSample::const_init(DIST_TYPE sizex, DIST_TYPE sizey){/*{{{*/
    sender_id = "CSample";
    ident(AIG_ID_SAMPLE);
    map_division = 11;

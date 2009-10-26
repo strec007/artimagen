@@ -237,6 +237,7 @@ class CEffect;
 class CFeature:public CPolygon{/*{{{*/
    public:
       CFeature();
+      CFeature(vector <CCurve *> curve_vec);
       virtual void init();
       ~CFeature();
       virtual void paint(CImage *im);
@@ -245,21 +246,15 @@ class CFeature:public CPolygon{/*{{{*/
       void set_base_gray_level(IM_STORE_TYPE level);
    protected:
       int number_of_curves;
+      int actual_number_of_curves;
       int number_of_effects;
       CCurve **curves;
       CEffect **effects;
       IM_STORE_TYPE base_gray_level;
       void build_vertices();
    private:
-//      void give_vertices(CVector *vertices); // this is a candidate for deletion inlc. the implementation in the cxx file.
-};/*}}}*/
-
-class CGenericFeature:public CFeature{/*{{{*/
-   public:
-      CGenericFeature(int curves_total);
       int add_curve(CCurve *cu);
-   private:
-      int curves_total;
+      void const_init();
 };/*}}}*/
 
 class CGoldenGrain:public CFeature{/*{{{*/
@@ -337,7 +332,7 @@ class CFineStructureEffect: public CEffect{/*{{{*/
 class CSample:public CObject{/*{{{*/
    public:
       CSample(DIST_TYPE sizex, DIST_TYPE sizey);
-      			// returns either SA_ADD_OK od SA_ADD_OVERLAP
+      CSample(DIST_TYPE sizex, DIST_TYPE sizey, vector<CFeature *> feature_vec);
       ~CSample();
       void paint(CImage *im);
       void move_by(CVector mv);
@@ -361,6 +356,7 @@ class CSample:public CObject{/*{{{*/
       unsigned int **map; // map of layout - to speed up the overlapping detection 
       int *map_counts; // count of features liying in each map segment
       void add_feature_chain(CFeature **features, int number_of_features);//debug only
+      void const_init(DIST_TYPE sizex, DIST_TYPE sizey);
 };/*}}}*/
 
 class CGoldOnCarbonSample:public CSample{/*{{{*/

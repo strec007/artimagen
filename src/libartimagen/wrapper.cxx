@@ -148,6 +148,7 @@ static void report_lua_error(lua_State *L, int exc){/*{{{*/
 }/*}}}*/
 
 static int l_new_image(lua_State *L){/*{{{*/
+   // pars: sizex, sizey
    try{
       if (lua_gettop(L) != 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
       if (!lua_isnumber(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE;
@@ -169,6 +170,7 @@ static int l_new_image(lua_State *L){/*{{{*/
 }/*}}}*/
 
 static int l_delete_image(lua_State *L){/*{{{*/
+   // pars: image pointer
    try{
       if (lua_gettop(L) != 1) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
       if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // pointer to image
@@ -188,6 +190,7 @@ static int l_delete_image(lua_State *L){/*{{{*/
 }/*}}}*/
 
 static int l_save_image(lua_State *L){/*{{{*/
+   // pars: image pointer, filename, comment
    try{
       if (lua_gettop(L) != 3) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
       if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // pointer to image
@@ -284,6 +287,7 @@ static int l_new_curve(lua_State *L){/*{{{*/
 }/*}}}*/
 
 static int l_new_feature(lua_State *L){/*{{{*/
+   // pars: array of pointers to curve
    try{
       if (lua_gettop(L) != 1) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
       if (!lua_istable(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // parameter is the table of curves
@@ -293,18 +297,14 @@ static int l_new_feature(lua_State *L){/*{{{*/
       while (lua_next(L, 1) != 0) { // table is at index 1
 	 if (!lua_islightuserdata(L,-1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // bad agrument type
 	 CObject *ob = (CObject *) lua_topointer(L, -1);
+	 if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
 
 	 if (!ob->check_id(AIG_ID_CURVE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-curve object
 	 curves.push_back((CCurve *)ob);
 	 lua_pop(L, 1); // clean up
       }
 
-      CGenericFeature *fe = new CGenericFeature(curves.size());
-      for (unsigned int i=0; i<curves.size(); i++){
-	 if (fe->add_curve(curves[i]) != AIG_FE_CURVE_INSERTED_OK) throw AIG_LUA_ERR_CURVE_INSERTION_ERROR;
-      }
-      fe->init();
-
+      CFeature *fe = new CFeature(curves);
       lua_pushlightuserdata(L, (void *) fe);
       return 1;
    }
@@ -317,7 +317,7 @@ static int l_new_feature(lua_State *L){/*{{{*/
 
 static int l_paint_feature(lua_State *L){/*{{{*/
    // this function is mostly for debugging.
-   // parameters: image, feature
+   // parameters: image pointer, feature pinter
 
    try{
       if (lua_gettop(L) != 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
@@ -347,7 +347,7 @@ static int l_paint_feature(lua_State *L){/*{{{*/
 
 static int l_move_feature(lua_State *L){/*{{{*/
    // this function is mostly for debugging.
-   // parameters: image, feature
+   // parameters: feature pointer, {dx, dy}
 
    try{
       if (lua_gettop(L) != 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
@@ -380,6 +380,69 @@ static int l_move_feature(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+static int l_new_sample(lua_State *L){/*{{{*/
+   // args: sizex, sizey, array of pointers to feature
+   try{
+      if (lua_gettop(L) != 3) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_isnumber(L, 1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // parameter is sizex
+      if (!lua_isnumber(L, 2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // parameter is sizex
+      if (!lua_istable(L, 3)) throw AIG_LUA_ERR_ARGUMET_TYPE; // parameter is the table of features
+
+
+      DIST_TYPE sizex = lua_tonumber(L, 1);
+      DIST_TYPE sizey = lua_tonumber(L, 2);
+
+      lua_pushnil(L);  /* first key */
+      vector <CFeature *> features;
+      while (lua_next(L, 3) != 0) { // table is at index 3
+	 if (!lua_islightuserdata(L,-1)) throw AIG_LUA_ERR_ARGUMET_TYPE; // bad agrument type
+	 CObject *ob = (CObject *) lua_topointer(L, -1);
+	 if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+
+	 if (!ob->check_id(AIG_ID_FEATURE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-feature object
+	 features.push_back((CFeature *)ob);
+	 lua_pop(L, 1); // clean up
+      }
+
+      CSample *sa;
+      try {
+	 sa = new CSample(sizex, sizey, features);
+      }
+      catch (int sample_exception) {
+	 if (sample_exception == AIG_EX_FEATURE_OVERLAP) throw AIG_LUA_ERR_ILLEGAL_OVERLAP;
+      }
+      lua_pushlightuserdata(L, (void *) sa);
+      return 1;
+   }
+
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+}/*}}}*/
+ 
+static int l_delete_sample(lua_State *L){/*{{{*/
+   try{
+      return 0;
+   }
+
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+}/*}}}*/
+
+static int l_paint_sample(lua_State *L){/*{{{*/
+   try{
+      return 0;
+   }
+
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+}/*}}}*/
+
 int exec_lua_file(const char *fn){/*{{{*/
    lua_State *L = lua_open();
    luaL_openlibs(L);
@@ -390,6 +453,9 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_new_feature", l_new_feature);
    lua_register(L, "aig_paint_feature", l_paint_feature);
    lua_register(L, "aig_move_feature", l_move_feature);
+   lua_register(L, "aig_new_sample", l_new_sample);
+   lua_register(L, "aig_delete_sample", l_new_sample);
+   lua_register(L, "aig_paint_sample", l_paint_sample);
    int err = luaL_dofile(L, fn);
    if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));
    lua_close(L);

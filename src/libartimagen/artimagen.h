@@ -165,6 +165,7 @@ typedef struct {/*{{{*/
 
 enum{
    AIG_MSG_PRINT_COMMENT=1000, // For debugging, these messages will mostly be supressed.
+   AIG_MSG_DEBUG, // For debugging, these messages will mostly be supressed.
    AIG_MSG_CREATING,
    AIG_MSG_APPLYING,
    AIG_MSG_PAINTING,
@@ -224,7 +225,8 @@ enum t_aig_lua_err {
    AIG_LUA_ERR_ARGUMET_TYPE,
    AIG_LUA_ERR_INVALID_POINTER,
    AIG_LUA_ERR_INCOMPATIBLE_OBJECT,
-   AIG_LUA_ERR_CURVE_INSERTION_ERROR
+   AIG_LUA_ERR_CURVE_INSERTION_ERROR,
+   AIG_LUA_ERR_ILLEGAL_OVERLAP
 };
 
 // t_message definition
