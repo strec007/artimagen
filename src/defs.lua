@@ -12,14 +12,16 @@ rawset(curves, 2, aig_new_curve("segment",{{0,100},{100,100}}))
 rawset(curves, 3, aig_new_curve("bezier",{{100,100},{130,80},{130,20},{100,0}}))
 rawset(curves, 4, aig_new_curve("segment",{{100,0},{0,0}}))
 
-fe = aig_new_feature(curves,{ee},0.3)
-aig_move_feature(fe,{100,100})
+fs = aig_new_effect("finestructure", 70e-4, 6, 10, 0.95, 1.05)
+
+fe = aig_new_feature(curves, {ee,fs}, 0.3)
+aig_move_feature(fe, {100,100})
 
 curves2 = {}
-curves2[1] = aig_new_curve("segment",{{0,0},{50,0}})
-curves2[2] = aig_new_curve("segment",{{50,0},{25,25}})
-curves2[3] = aig_new_curve("segment",{{25,25},{0,0}})
-fe2  = aig_new_feature(curves2,{ee},0.2)
+curves2[1] = aig_new_curve("segment", {{0,0}, {50,0}})
+curves2[2] = aig_new_curve("segment", {{50,0}, {25,25}})
+curves2[3] = aig_new_curve("segment", {{25,25}, {0,0}})
+fe2  = aig_new_feature(curves2, {ee, fs}, 0.2)
 aig_move_feature(fe2, {50,50})
 
 

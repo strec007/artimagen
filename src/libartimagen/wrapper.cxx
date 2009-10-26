@@ -456,7 +456,7 @@ static int l_new_sample(lua_State *L){/*{{{*/
 	 lua_pop(L, 1); // clean up
       }
 
-      CSample *sa;
+      CSample *sa = NULL;
       try {
 	 sa = new CSample(sizex, sizey, features);
       }
@@ -528,6 +528,9 @@ static int l_new_effect(lua_State *L){/*{{{*/
 
       if (!strcmp(lua_tolstring(L, 1, NULL), "edge")){
 	 // generating edge effect
+	 // args: "edge", ee_coe, ee_top_gl
+	 
+	 if (lua_gettop(L) != 3) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
 	 if (!lua_isnumber(L, 2)) throw AIG_LUA_ERR_ARGUMET_TYPE; // ee coefficient
 	 if (!lua_isnumber(L, 3)) throw AIG_LUA_ERR_ARGUMET_TYPE; // edge top gray level - base
 
@@ -542,6 +545,19 @@ static int l_new_effect(lua_State *L){/*{{{*/
 
       if (!strcmp(lua_tolstring(L, 1, NULL), "finestructure")){
 	 // generating fine stricture effect
+	 // args: "finestructure", density, min_r, max_r, min_coe, max_coe
+
+	 if (lua_gettop(L) != 6) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+	 for (int i=2; i<=6; i++) if (!lua_isnumber(L, i)) throw AIG_LUA_ERR_ARGUMET_TYPE;
+	 
+	 float density = lua_tonumber(L, 2);
+	 DIST_TYPE min_r = lua_tonumber(L, 3);
+	 DIST_TYPE max_r = lua_tonumber(L, 4);
+	 float min_coe = lua_tonumber(L, 5);
+	 float max_coe = lua_tonumber(L, 6);
+
+	 ee = new CFineStructureEffect(density, min_r, max_r, min_coe, max_coe);
+
 	 lua_pushlightuserdata(L, (void *) ee);
 	 return 1;
       }
@@ -567,7 +583,7 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_paint_feature", l_paint_feature);
    lua_register(L, "aig_move_feature", l_move_feature);
    lua_register(L, "aig_new_sample", l_new_sample);
-   lua_register(L, "aig_delete_sample", l_new_sample);
+   lua_register(L, "aig_delete_sample", l_delete_sample);
    lua_register(L, "aig_paint_sample", l_paint_sample);
    lua_register(L, "aig_new_effect", l_new_effect);
    int err = luaL_dofile(L, fn);
