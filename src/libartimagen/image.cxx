@@ -415,12 +415,7 @@ CGaussianPsf::CGaussianPsf(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey, float sigma
 //////////////// CVibration /////////////////////////////////////
 
 CVibration::CVibration(t_vib_definition *def){/*{{{*/
-   sender_id = "CVibration";
-   ident(AIG_ID_VIBRATION);
-   send_message(AIG_MSG_CREATING,"Calculating vibration functions");
-   motion_x = NULL;
-   motion_y = NULL;
-
+   const_init();
    memcpy(&this->def, def, sizeof(t_vib_definition)); // stores the definitions
    int nf = def->number_of_frequencies;
    frequencies = new float[nf];
@@ -436,6 +431,34 @@ CVibration::CVibration(t_vib_definition *def){/*{{{*/
       amplitudes_x[i] = amp * cos(ang);
       amplitudes_y[i] = amp * sin(ang);
    }
+}/*}}}*/
+
+CVibration::CVibration(t_vib_definition *def, vector <float*> vibs){/*{{{*/
+   const_init();
+   int nf = vibs.size();
+   this->def.number_of_frequencies = nf;
+
+   frequencies = new float[nf];
+   phases = new float[nf];
+   amplitudes_x = new float[nf];
+   amplitudes_y = new float[nf];
+
+   cout << "nf: " << nf << endl;
+   for (int i=0; i<nf; i++){
+      cout << "vibs: " << vibs[i][0] << ", " << vibs[i][1] << ", " << vibs[i][2] << ", " << vibs[i][3] << ", " << endl;
+      frequencies[i] = vibs[i][2];
+      phases[i] = vibs[i][3];
+      amplitudes_x[i] = vibs[i][0];
+      amplitudes_y[i] = vibs[i][1];
+   }
+}/*}}}*/
+
+void CVibration::const_init(){/*{{{*/
+   sender_id = "CVibration";
+   ident(AIG_ID_VIBRATION);
+   send_message(AIG_MSG_CREATING,"Calculating vibration functions");
+   motion_x = NULL;
+   motion_y = NULL;
 }/*}}}*/
 
 CVibration::~CVibration(){/*{{{*/

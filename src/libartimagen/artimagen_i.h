@@ -529,10 +529,10 @@ typedef struct {/*{{{*/
    unsigned int line_dead_time;
 } t_vib_definition;/*}}}*/
 
-
 class CVibration:public CImageEffect{/*{{{*/
    public:
       CVibration(t_vib_definition *def);
+      CVibration(t_vib_definition *def, vector <float*> vibs);
       ~CVibration();
       virtual int apply(CImage *im, unsigned long time_shift);
    protected:
@@ -546,7 +546,7 @@ class CVibration:public CImageEffect{/*{{{*/
       double *motion_x;
       double *motion_y;
       t_vib_definition def;
-
+      void const_init();
 
 };/*}}}*/
 

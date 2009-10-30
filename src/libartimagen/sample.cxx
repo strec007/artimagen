@@ -147,7 +147,7 @@ void CFeature::set_base_gray_level(IM_STORE_TYPE level){/*{{{*/
 }/*}}}*/
 
 void CFeature::add_effect_chain(CEffect **effects, int number_of_effects){/*{{{*/
-   if (number_of_effects > 0) throw (int) AIG_EX_READD_EFFECT_CHAIN_ATTEMPT;
+   if (this->number_of_effects > 0) throw (int) AIG_EX_READD_EFFECT_CHAIN_ATTEMPT;
    this->effects = effects;
    this->number_of_effects = number_of_effects;
 }/*}}}*/
@@ -737,7 +737,7 @@ CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey
 
    for (int i=0; i<number_of_features; i++) if (fes[i]){
       fes[i]->set_base_gray_level(def->base_level*(1+rand()*def->base_level_variation/RAND_MAX));
-      fes[i]->add_effect_chain(effects,number_of_effects);
+      fes[i]->add_effect_chain(effects, number_of_effects);
       if (add_feature(fes[i]) == SA_ADD_OVERLAP) {
 	 cout << i << " overlaps!!!" << cout;
 	 throw (int) AIG_EX_FEATURE_OVERLAP;

@@ -176,7 +176,7 @@ int main(int argc, char **argv){
       vibdef.pixel_dwell_time = 100;
       vibdef.min_frequency = 1;
       vibdef.max_frequency = 100;
-      vibdef.max_amplitude = 0.2;
+      vibdef.max_amplitude = 1;
       vibdef.number_of_frequencies = 10;
       vibdef.pixel_dead_time = 25; //estimate values
       vibdef.line_dead_time = 200; //estimate

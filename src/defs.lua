@@ -40,6 +40,9 @@ features[2] = fe2;
 sa = aig_new_sample(256,256, features)
 aig_paint_sample(im, sa)
 
-aig_apply_gaussian_psf(im, 2,2,30)
+aig_apply_gaussian_psf(im, 1,1,30)
+
+aig_apply_vib(im,50000,0,0,0,{{1,0.5,1000,0}, {1,2,60,100,50}, {0.3,0.8,5,80,50}})
+
 aig_save_image(im,"test.tiff","Yo, man!")
 aig_delete_image(im)

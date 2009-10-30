@@ -661,6 +661,59 @@ static int l_apply_gaussian_psf(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+static int l_apply_vib(lua_State *L){/*{{{*/
+   // pars: image pointer, pix_dwell_time, pixel_dead_time, line_dead_time, time_shift, {{ampx, ampy, freq, phase}, {ampx, ampy, freq, phase}, .... }
+   try{
+      if (lua_gettop(L) != 6) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pointer to image
+      if (!lua_isnumber(L, 2)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pix_dw_time
+      if (!lua_isnumber(L, 3)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pix_dead_time
+      if (!lua_isnumber(L, 4)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // line_dead_time
+      if (!lua_isnumber(L, 5)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // time_shift
+      if (!lua_istable(L, 6)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // sines (see above)
+
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-curve object
+      CImage *im = (CImage *) ob;
+
+
+      t_vib_definition vibdef;
+
+      vector <float *> vibs;
+      lua_pushnil(L);  /* first key */
+      while (lua_next(L, 6) != 0) { // table is at index 6
+	 if (!lua_istable(L,-1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // bad agrument type
+	 float *vib = new float[4];
+	 for (int i=0; i<4; i++){
+	    lua_pushnumber(L,i+1); // get the i-th item of the table
+	    lua_gettable(L,-2);
+	    vib[i] = (float) lua_tonumber(L, -1);
+	    lua_pop(L,1);
+	 }
+	 vibs.push_back(vib);
+	 lua_pop(L, 1); // clean up
+      }
+
+      vibdef.number_of_frequencies = vibs.size();
+      vibdef.pixel_dwell_time = (unsigned int) lua_tonumber(L, 2);
+      vibdef.pixel_dead_time = (unsigned int) lua_tonumber(L, 3);
+      vibdef.line_dead_time =  (unsigned int) lua_tonumber(L, 4);
+      unsigned long time_shift = (unsigned long) lua_tonumber(L, 5);
+
+      CVibration vibration(&vibdef, vibs);
+      vibration.apply(im, time_shift);
+
+      for (unsigned int i=0; i<vibs.size(); i++) delete [] vibs[i];
+      return 0;
+   }
+
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+}/*}}}*/
+
 // lua function registration and lua code execution
 int exec_lua_file(const char *fn){/*{{{*/
    lua_State *L = lua_open();
@@ -679,6 +732,7 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_save_image", l_save_image);
    lua_register(L, "aig_apply_background_image", l_apply_background_image);
    lua_register(L, "aig_apply_gaussian_psf", l_apply_gaussian_psf);
+   lua_register(L, "aig_apply_vib", l_apply_vib);
 
    int err = luaL_dofile(L, fn);
    if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));
