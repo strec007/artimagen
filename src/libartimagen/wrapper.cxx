@@ -176,6 +176,9 @@ static void report_lua_error(lua_State *L, int exc){/*{{{*/
 	 case AIG_LUA_ERR_FATAL:
 	    comment = "unspecified fatal error";
 	    break;
+	 case AIG_LUA_ERR_BG_IM_TOO_SMALL:
+	    comment = "background density too small. minimum is 4x4";
+	    break;
 	 default:
 	    comment = "undescribed error - This is a bug, please report it.";
       }
@@ -603,6 +606,7 @@ static int l_add_background_image(lua_State *L){/*{{{*/
 
       int densx = densities[0];
       int densy = densities[1];
+      if ((densx < 4) || (densy < 4)) throw AIG_LUA_ERR_BG_IM_TOO_SMALL;
 
       // getting values {v_1, ......., v_x*y}
       
