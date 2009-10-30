@@ -57,8 +57,8 @@ void CApp::broadcast_message(t_message message){/*{{{*/
 }/*}}}*/
 
 CObject::CObject(){/*{{{*/
-   sender_id = "ILLEGAL"; // each class must rewrite this.
-   object_id = AIG_ID_OBJECT;
+//   sender_id = "ILLEGAL"; // each class must rewrite this.
+//   object_id = AIG_ID_OBJECT;
    messaging_enabled = 1;
 }/*}}}*/
 

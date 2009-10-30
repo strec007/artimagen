@@ -100,7 +100,7 @@ T sq(T a){
 DIST_TYPE cross(CVector a, CVector b);
 DIST_TYPE dot(CVector a, CVector b);
 
-class CVector:public CObject{/*{{{*/
+class CVector{/*{{{*/
    public:
       CVector();
       CVector(DIST_TYPE x, DIST_TYPE y);
@@ -117,7 +117,7 @@ class CVector:public CObject{/*{{{*/
       void rotate(CVector center, double angle);
 };/*}}}*/
 
-class CLine:public CObject{/*{{{*/
+class CLine{/*{{{*/
    public:
       CLine();
       CLine(CVector p0, CVector p1);

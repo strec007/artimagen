@@ -56,8 +56,6 @@ using namespace artimagen;
 CVector::CVector(){/*{{{*/
    x = 0;
    y = 0;
-   sender_id = "CVector";
-   ident(AIG_ID_VECTOR);
 }/*}}}*/
 
 /* CVector constructor with value initialization */
@@ -129,8 +127,6 @@ void CVector::rotate(CVector center, double angle){/*{{{*/
 CLine::CLine(){/*{{{*/
    p0 = CVector(0,0);
    p1 = CVector(1,1);
-   sender_id = "CLine";
-   ident(AIG_ID_LINE);
 }/*}}}*/
 
 /* Constructor of a line from two vectors */
@@ -275,11 +271,10 @@ CTriangle::CTriangle(CVector va, CVector vb, CVector vc){/*{{{*/
  * dreived from it. */
 
 CCurve::CCurve(){/*{{{*/
-   number_of_vertices = 0; 
-   vertices = NULL;
    sender_id = "CCurve";
    ident(AIG_ID_CURVE);
-
+   number_of_vertices = 0; 
+   vertices = NULL;
 }/*}}}*/
 
 /* initialization function; same for all curves */
@@ -463,6 +458,7 @@ void CCurve::rotate(CVector center, double angle){/*{{{*/
 CStraightLine::CStraightLine(CLine l){/*{{{*/
    sender_id = "CStraightLine";
    ident(AIG_ID_STRAIGHTLINE);
+
    line = l;
    number_of_vertices = 3; // whatever, 3 is OK for subdivision of a straight line.
    init();
@@ -478,6 +474,7 @@ CBezier::CBezier(CVector p1, CVector p2, CVector p3, CVector p4)/*{{{*/
 {
    sender_id = "CBezier";
    ident(AIG_ID_BEZIER);
+
    // just set the control points and run init.
    control_points[0] = p1;
    control_points[1] = p2;
@@ -502,6 +499,8 @@ CVector CBezier::parametrize(DIST_TYPE t){/*{{{*/
 
 CPolygon::CPolygon(){/*{{{*/
    sender_id = "CPolygon";
+   ident(AIG_ID_POLYGON);
+
    map_division = 5; // just a guess for now. :-)
    map = NULL;
 }/*}}}*/
