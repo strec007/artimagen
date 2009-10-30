@@ -7,7 +7,7 @@ im = aig_new_image(256,256)
 bg = {}
 dens = 4
 for i = 1, dens*dens, 1 do
-  table.insert(bg,math.random()*(0.5-0.3) + 0.3)
+  table.insert(bg,math.random()*(0.3-0.1) + 0.1)
 end
 
 aig_apply_background_image(im,{dens,dens},bg)
@@ -40,5 +40,6 @@ features[2] = fe2;
 sa = aig_new_sample(256,256, features)
 aig_paint_sample(im, sa)
 
+aig_apply_gaussian_psf(im, 2,2,30)
 aig_save_image(im,"test.tiff","Yo, man!")
 aig_delete_image(im)

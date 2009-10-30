@@ -585,8 +585,8 @@ static int l_apply_background_image(lua_State *L){/*{{{*/
    try{
       if (lua_gettop(L) != 3) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
       if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pointer to image
-      if (!lua_istable(L, 2)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // filename
-      if (!lua_istable(L, 3)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // comment
+      if (!lua_istable(L, 2)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // densities
+      if (!lua_istable(L, 3)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // values
 
       CObject *ob = (CObject *) lua_topointer(L, 1);
       if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
@@ -632,6 +632,34 @@ static int l_apply_background_image(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+static int l_apply_gaussian_psf(lua_State *L){/*{{{*/
+   // pars: image pointer, sigma, astigmatism_ratio, astigmatism_angle
+   try{
+      if (lua_gettop(L) != 4) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pointer to image
+      if (!lua_isnumber(L, 2)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // sigma
+      if (!lua_isnumber(L, 3)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // astig ratio
+      if (!lua_isnumber(L, 4)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // astig angle
+
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-curve object
+      CImage *im = (CImage *) ob;
+
+      float sigma = lua_tonumber(L, 2);
+      float astigmatism_ratio = lua_tonumber(L, 3);
+      float astigmatism_angle = lua_tonumber(L, 4);
+
+      CGaussianPsf gpsf(im->give_sizex(), im->give_sizey(), sigma, astigmatism_ratio, astigmatism_angle);
+      gpsf.apply(im);
+      return 0;
+   }
+
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+}/*}}}*/
 
 // lua function registration and lua code execution
 int exec_lua_file(const char *fn){/*{{{*/
@@ -650,6 +678,7 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_delete_image", l_delete_image);
    lua_register(L, "aig_save_image", l_save_image);
    lua_register(L, "aig_apply_background_image", l_apply_background_image);
+   lua_register(L, "aig_apply_gaussian_psf", l_apply_gaussian_psf);
 
    int err = luaL_dofile(L, fn);
    if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));
