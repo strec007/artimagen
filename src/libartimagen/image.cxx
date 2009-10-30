@@ -618,16 +618,27 @@ IM_STORE_TYPE CEvenBackgroud::give_bg_greylevel(){/*{{{*/
 //////////////// CWavyBackgroud //////////////////////////////
 
 CWavyBackgroud::CWavyBackgroud(IM_STORE_TYPE min_gl, IM_STORE_TYPE max_gl, int densx, int densy){/*{{{*/
+   const_init(densx, densy);
+   this->min_gl = min_gl;
+   this->max_gl = max_gl;
+   for (int i=0; i< densx*densy; i++) bg_im->give_buffer()[i] = min_gl + rand() * (max_gl - min_gl) / RAND_MAX;
+}/*}}}*/
+
+CWavyBackgroud::CWavyBackgroud(int densx, int densy, vector <IM_STORE_TYPE> values){/*{{{*/
+   this->const_init(densx, densy);
+   int j = 0;
+   for (int i=0; i< densx*densy; i++) {
+      bg_im->give_buffer()[i] = values[j++];
+   }
+}/*}}}*/
+
+void CWavyBackgroud::const_init(int densx, int densy){/*{{{*/
    sender_id = "CWavyBackgroud";
    ident(AIG_ID_WAVYBACKGROUND);
    send_message(AIG_MSG_CREATING,"Creating wavy background");
    this->densx = densx;
    this->densy = densy;
-   this->min_gl = min_gl;
-   this->max_gl = max_gl;
-
    bg_im = new CImage(densx,densy);
-   for (int i=0; i< densx*densy; i++) bg_im->give_buffer()[i] = min_gl + rand() * (max_gl - min_gl) / RAND_MAX;
 }/*}}}*/
 
 CWavyBackgroud::~CWavyBackgroud(){/*{{{*/
@@ -642,4 +653,4 @@ int CWavyBackgroud::apply(CImage *im){/*{{{*/
    return 0;
 }/*}}}*/
 
-// vim: set cindent
+// vim: cindent

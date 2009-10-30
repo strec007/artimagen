@@ -593,12 +593,14 @@ class CEvenBackgroud:public CBackgroud{/*{{{*/
 class CWavyBackgroud:public CBackgroud{/*{{{*/
    public:
       CWavyBackgroud(IM_STORE_TYPE min_gl, IM_STORE_TYPE max_gl, int densx, int densy);
+      CWavyBackgroud(int densx, int densy, vector <IM_STORE_TYPE> values);
       ~CWavyBackgroud();
       virtual int apply(CImage *im);
    private:
       int densx, densy; // density values for both axes
       IM_STORE_TYPE min_gl, max_gl; // min and max gray levels
       CImage *bg_im;
+      void const_init(int densx, int densy);
 };/*}}}*/
 
 }
