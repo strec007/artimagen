@@ -580,7 +580,7 @@ static int l_save_image(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
-static int l_add_background_image(lua_State *L){/*{{{*/
+static int l_apply_background_image(lua_State *L){/*{{{*/
    // pars: image pointer, {xdnesity,ydensity}, {x*y values}
    try{
       if (lua_gettop(L) != 3) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
@@ -604,8 +604,8 @@ static int l_add_background_image(lua_State *L){/*{{{*/
       }
       if (densities.size() != 2 ) throw AIG_LUA_ERR_ARGUMENT_TYPE;
 
-      int densx = densities[0];
-      int densy = densities[1];
+      unsigned int densx = densities[0];
+      unsigned int densy = densities[1];
       if ((densx < 4) || (densy < 4)) throw AIG_LUA_ERR_BG_IM_TOO_SMALL;
 
       // getting values {v_1, ......., v_x*y}
@@ -649,7 +649,7 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_new_image", l_new_image);
    lua_register(L, "aig_delete_image", l_delete_image);
    lua_register(L, "aig_save_image", l_save_image);
-   lua_register(L, "aig_add_background_image", l_add_background_image);
+   lua_register(L, "aig_apply_background_image", l_apply_background_image);
 
    int err = luaL_dofile(L, fn);
    if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));

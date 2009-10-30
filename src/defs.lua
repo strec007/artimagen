@@ -10,7 +10,7 @@ for i = 1, dens*dens, 1 do
   table.insert(bg,math.random()*(0.5-0.3) + 0.3)
 end
 
-aig_add_background_image(im,{dens,dens},bg)
+aig_apply_background_image(im,{dens,dens},bg)
 
 ee = aig_new_effect("edge", 0.2, 0.3)
 
