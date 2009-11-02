@@ -158,10 +158,10 @@ int main(int argc, char **argv){
       CWavyBackgroud back(0.2,0.4,5,5);
       back.apply(&im);
 
-      generate_snake_structure_image(&sam);
+      //generate_snake_structure_image(&sam);
       //generate_rectangle_structure_image(&sam);
       //generate_corner_structure_image(&sam);
-      //generate_cross_structure_image(&sam);
+      generate_cross_structure_image(&sam);
       sam->paint(&im);
       delete sam;
 
@@ -173,7 +173,7 @@ int main(int argc, char **argv){
 
       // create the drift-distortion function and apply it
       t_vib_definition vibdef;
-      vibdef.pixel_dwell_time = 100;
+      vibdef.pixel_dwell_time = 10000;
       vibdef.min_frequency = 1;
       vibdef.max_frequency = 100;
       vibdef.max_amplitude = 1;

@@ -435,6 +435,7 @@ CVibration::CVibration(t_vib_definition *def){/*{{{*/
 
 CVibration::CVibration(t_vib_definition *def, vector <float*> vibs){/*{{{*/
    const_init();
+   memcpy(&this->def, def, sizeof(t_vib_definition)); // stores the definitions
    int nf = vibs.size();
    this->def.number_of_frequencies = nf;
 
@@ -443,9 +444,7 @@ CVibration::CVibration(t_vib_definition *def, vector <float*> vibs){/*{{{*/
    amplitudes_x = new float[nf];
    amplitudes_y = new float[nf];
 
-   cout << "nf: " << nf << endl;
    for (int i=0; i<nf; i++){
-      cout << "vibs: " << vibs[i][0] << ", " << vibs[i][1] << ", " << vibs[i][2] << ", " << vibs[i][3] << ", " << endl;
       frequencies[i] = vibs[i][2];
       phases[i] = vibs[i][3];
       amplitudes_x[i] = vibs[i][0];
@@ -491,7 +490,6 @@ void CVibration::generate_curves(const int sizex, const int sizey, unsigned long
 	 // Part of debug output // debfile << motion_x[index(i,j,sizex)] << ", " << motion_y[index(i,j,sizex)] << endl;
       }
    }
-
    // Part of debug output // debfile.close();
 }/*}}}*/
 
