@@ -735,6 +735,14 @@ static int l_apply_noise(lua_State *L){/*{{{*/
 
 	 CGaussianNoise noi(sigma);
 	 noi.apply(im);
+      } else if (noise_type == (string) "poisson"){
+	 if (lua_gettop(L) != 3) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS; // with gaussian 3 pars reqd.
+	 if (!lua_isnumber(L, 3)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // particles per intensity unit
+
+	 double ppu = lua_tonumber(L,3);
+
+	 CPoissonNoise noi(ppu);
+	 noi.apply(im);
       } else {
 	 throw	AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // unknown type of noise FIXME dedicated error constant
       }

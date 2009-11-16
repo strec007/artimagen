@@ -549,7 +549,7 @@ int CNoise::apply(CImage *im){/*{{{*/
    for (IM_COORD_TYPE j=0; j<sy; j++)
       for (IM_COORD_TYPE i=0; i<sx; i++){
 	 IM_STORE_TYPE v = im->give_buffer()[index(i,j,sx)];
-	 v += noise_value(v);
+	 v = noise_value(v);
 	 if (v>1) v=1;  // clipping is better than overflow
 	 if (v<0) v=0; 
 	 im->dot(i, j, v);
@@ -563,20 +563,21 @@ double CNoise::noise_value(double n){/*{{{*/
 
 //////////////// CPoissonNoise /////////////////////////////////
 
-CPoissonNoise::CPoissonNoise(){/*{{{*/
+CPoissonNoise::CPoissonNoise(double particles_per_unit){/*{{{*/
    sender_id = "CPoissonNoise";
    ident(AIG_ID_POISSONNOISE);
+   this->particles_per_unit = particles_per_unit;
 }/*}}}*/
 
 double CPoissonNoise::noise_value(double n){/*{{{*/
-   double L = exp(-n);
+   double L = exp(-(n*particles_per_unit));
    int k = 0;
    double p = 1;
    do {
       k++;
       p *= (double)rand()/RAND_MAX;
    } while (p >= L);
-   return (k-1);
+   return (k-1)/particles_per_unit;
 }/*}}}*/
 
 //////////////// CGaussianNoise ///////////////////////////////
@@ -594,7 +595,7 @@ double CGaussianNoise::noise_value(double n){/*{{{*/
    } while (u1 == 0);
    double u2 = (double) rand() / RAND_MAX;
 
-   return sigma * sqrt(-2 * log(u1)) * cos(2*M_PI*u2);
+   return n + sigma * sqrt(-2 * log(u1)) * cos(2*M_PI*u2);
 }/*}}}*/
 
 

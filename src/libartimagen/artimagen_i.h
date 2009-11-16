@@ -560,9 +560,10 @@ class CNoise:public CImageEffect{/*{{{*/
 
 class CPoissonNoise:public CNoise{/*{{{*/
    public:
-      CPoissonNoise();
+      CPoissonNoise(double particles_per_unit);
    protected:
       virtual double noise_value(double n);
+      double particles_per_unit;
 };/*}}}*/
 
 class CGaussianNoise:public CNoise{/*{{{*/
