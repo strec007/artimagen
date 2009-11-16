@@ -674,7 +674,7 @@ static int l_apply_vib(lua_State *L){/*{{{*/
 
       CObject *ob = (CObject *) lua_topointer(L, 1);
       if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
-      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-curve object
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-image object
       CImage *im = (CImage *) ob;
 
 
@@ -714,6 +714,37 @@ static int l_apply_vib(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+static int l_apply_noise(lua_State *L){/*{{{*/
+   // pars: image pointer, type ("gaussian"), gauusian_sigma }
+   try{
+      if (lua_gettop(L) < 2) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS; // at least two parameters required
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pointer to image
+      if (!lua_isstring(L, 2)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // noise type
+
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-image object
+      CImage *im = (CImage *) ob;
+
+      string noise_type = lua_tolstring(L, 2, NULL);
+      if (noise_type == (string) "gaussian"){
+	 if (lua_gettop(L) != 3) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS; // with gaussian 3 pars reqd.
+	 if (!lua_isnumber(L, 3)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // gaussian sigma
+
+	 double sigma = lua_tonumber(L,3);
+
+	 CGaussianNoise noi(sigma);
+	 noi.apply(im);
+      } else {
+	 throw	AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // unknown type of noise FIXME dedicated error constant
+      }
+   }
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+}/*}}}*/
+
 // lua function registration and lua code execution
 int exec_lua_file(const char *fn){/*{{{*/
    lua_State *L = lua_open();
@@ -733,6 +764,7 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_apply_background_image", l_apply_background_image);
    lua_register(L, "aig_apply_gaussian_psf", l_apply_gaussian_psf);
    lua_register(L, "aig_apply_vib", l_apply_vib);
+   lua_register(L, "aig_apply_noise", l_apply_noise);
 
    int err = luaL_dofile(L, fn);
    if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));

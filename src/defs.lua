@@ -56,6 +56,7 @@ table.insert(vibs,{-0.894913, -0.894913, 72.1391, -0.72543})
 
 
 aig_apply_vib(im,10000,50,100,0,vibs)
+aig_apply_noise(im, "gaussian", 0.07)
 
 aig_save_image(im,"test.tiff","Yo, man!")
 aig_delete_image(im)
