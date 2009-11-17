@@ -471,6 +471,7 @@ int CVibration::apply(CImage *im, unsigned long time_shift){/*{{{*/
 
    IM_STORE_TYPE *helper_array = new IM_STORE_TYPE[sx*sy];
 
+   if ((motion_x) || (motion_y)) destroy_curves(); // if the vib has been used, delete it
    generate_curves(sx,sy,time_shift);
 
    memcpy(helper_array, im->give_buffer(),sx*sy*sizeof(IM_STORE_TYPE));
