@@ -62,6 +62,7 @@ CImage::CImage(CImage *im){/*{{{*/
    send_message(AIG_MSG_CREATING,"Copying image");
    sizex = im->give_sizex();
    sizey = im->give_sizey();
+   this->fft_data = NULL;
    this->buffer = new IM_STORE_TYPE[sizex * sizey];
    
    memcpy(buffer, im->give_buffer(), sizex * sizey * sizeof(IM_STORE_TYPE));
