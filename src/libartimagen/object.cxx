@@ -88,11 +88,11 @@ int CObject::check_id(int id){/*{{{*/
    return AIG_CHECK_ID_NO_MATCH;
 }/*}}}*/
 
-void CObject::ident(int id){
+void CObject::ident(int id){/*{{{*/
    object_id = id;
    inherited_ids.push_back(id);
 
-}
+}/*}}}*/
 
 //
 // vim: cindent
