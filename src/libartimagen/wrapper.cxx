@@ -789,9 +789,34 @@ static int l_apply_noise(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+static int l_shift_image(lua_State *L){/*{{{*/
+   try{
+      if (lua_gettop(L) !=3 ) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS; // three parameters required
+
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pointer to image
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-image object
+      CImage *im = (CImage *) ob;
+
+      if (!lua_isnumber(L, 2))  throw AIG_LUA_ERR_ARGUMENT_TYPE; // shift-x
+      if (!lua_isnumber(L, 3))  throw AIG_LUA_ERR_ARGUMENT_TYPE; // shift-y
+
+      double shx = lua_tonumber(L, 2);
+      double shy = lua_tonumber(L, 3);
+
+      im->shift(shx, shy);
+   }
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+
+}/*}}}*/
+
 static int l_crop_image(lua_State *L){/*{{{*/
    try{
-      if (lua_gettop(L) !=5 ) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS; // three parameters required
+      if (lua_gettop(L) !=5 ) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS; // check the # of parameters
 
       if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pointer to image
       CObject *ob = (CObject *) lua_topointer(L, 1);
@@ -892,6 +917,7 @@ static const luaL_reg artimagen_lib [] = {/*{{{*/
    {"apply_vib", l_apply_vib},
    {"apply_noise", l_apply_noise},
    {"copy_image", l_copy_image},
+   {"shift_image", l_shift_image},
    {"crop_image", l_crop_image},
    {"give_image_data", l_give_image_data},
 

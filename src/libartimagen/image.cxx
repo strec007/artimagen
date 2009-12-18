@@ -56,7 +56,6 @@ CImage::CImage(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){ /*{{{*/
    block_ifft = IM_NO_IFFT_BLOCK;
 }/*}}}*/
 
-
 CImage::CImage(CImage *im){/*{{{*/
    sender_id = "CImage";
    ident(AIG_ID_IMAGE);
