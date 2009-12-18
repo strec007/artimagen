@@ -510,6 +510,42 @@ static int l_new_effect(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+static int l_goc_sample(lua_State *L){/*{{{*/
+#define GOC_PARS 14
+   try {
+      if (lua_gettop(L) != GOC_PARS) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      for (int i=1; i<=GOC_PARS; i++) if (!lua_isnumber(L, i)) throw AIG_LUA_ERR_ARGUMENT_TYPE; 
+
+      t_gc_definition gc_def; 
+
+      gc_def.sizex = lua_tonumber(L, 1);
+      gc_def.sizey = lua_tonumber(L, 2);
+      gc_def.ee_coefficient = lua_tonumber(L, 3);
+      gc_def.ee_top_above_base = lua_tonumber(L, 4);
+      gc_def.base_level = lua_tonumber(L, 5);
+      gc_def.base_level_variation = lua_tonumber(L, 6);
+      gc_def.grain_min_size = lua_tonumber(L, 7);
+      gc_def.grain_max_size = lua_tonumber(L, 8);
+      gc_def.number_of_grains = lua_tonumber(L, 9)*gc_def.sizex*gc_def.sizey/2000;
+      gc_def.rotation = 0;
+      gc_def.fs_density = lua_tonumber(L, 10);
+      gc_def.fs_min_r = lua_tonumber(L, 11);
+      gc_def.fs_max_r = lua_tonumber(L, 12);
+      gc_def.fs_min_coe = lua_tonumber(L, 13);
+      gc_def.fs_max_coe = lua_tonumber(L, 14);
+
+      CGoldOnCarbonSample *gc_sam = new CGoldOnCarbonSample(&gc_def);
+      lua_pushlightuserdata(L, (void *) gc_sam);
+      return 1;
+   }
+
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+
+}/*}}}*/
+
 // ------------- Image processing ------------------
 
 static int l_new_image(lua_State *L){/*{{{*/
@@ -753,7 +789,45 @@ static int l_apply_noise(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+CApp *l_app; // application pointer for use with standalone lua (as a lua module)
+
+static int l_initialize_app(lua_State *L){/*{{{*/
+   l_app = new CApp();
+   return 0;
+}/*}}}*/
+
+static int l_destroy_app(lua_State *L){/*{{{*/
+   delete l_app;
+   return 0;
+}/*}}}*/
+
 // lua function registration and lua code execution
+#define LUA_LIB
+
+static const luaL_reg artimagen_lib [] = {/*{{{*/
+   {"new_curve", l_new_curve},
+   {"new_feature", l_new_feature},
+   {"paint_feature", l_paint_feature},
+   {"move_feature", l_move_feature},
+   {"new_sample", l_new_sample},
+   {"delete_sample", l_delete_sample},
+   {"paint_sample", l_paint_sample},
+   {"new_effect", l_new_effect},
+   {"new_goc_sample", l_goc_sample},
+
+   {"new_image", l_new_image},
+   {"delete_image", l_delete_image},
+   {"save_image", l_save_image},
+   {"apply_background_image", l_apply_background_image},
+   {"apply_gaussian_psf", l_apply_gaussian_psf},
+   {"apply_vib", l_apply_vib},
+   {"apply_noise", l_apply_noise},
+
+   {"init_app", l_initialize_app},
+   {"destroy_app", l_destroy_app},
+   {NULL, NULL}  /* sentinel */
+};/*}}}*/
+
 int exec_lua_file(const char *fn){/*{{{*/
    lua_State *L = lua_open();
    luaL_openlibs(L);
@@ -774,42 +848,20 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_register(L, "aig_apply_vib", l_apply_vib);
    lua_register(L, "aig_apply_noise", l_apply_noise);
 
+   luaL_register(L, "artimagen", artimagen_lib);
+
    int err = luaL_dofile(L, fn);
    if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));
    lua_close(L);
    return err;
 }/*}}}*/
 
-#define LUA_LIB
-
-static const luaL_reg artimagen_lib [] = {
-   {"new_curve", l_new_curve},
-   {"new_feature", l_new_feature},
-   {"paint_feature", l_paint_feature},
-   {"move_feature", l_move_feature},
-   {"new_sample", l_new_sample},
-   {"delete_sample", l_delete_sample},
-   {"paint_sample", l_paint_sample},
-   {"new_effect", l_new_effect},
-
-   {"new_image", l_new_image},
-   {"delete_image", l_delete_image},
-   {"save_image", l_save_image},
-   {"apply_background_image", l_apply_background_image},
-   {"apply_gaussian_psf", l_apply_gaussian_psf},
-   {"apply_vib", l_apply_vib},
-   {"apply_noise", l_apply_noise},
-   {NULL, NULL}  /* sentinel */
-};
-
 extern "C" {
-LUALIB_API int luaopen_libartimagen (lua_State *L) {
-   CApp *app = new CApp();
+LUALIB_API int luaopen_libartimagen (lua_State *L) {/*{{{*/
    luaL_register(L, "artimagen", artimagen_lib);
    return 0;
+}/*}}}*/
 }
-}
-
 
 #endif
 
