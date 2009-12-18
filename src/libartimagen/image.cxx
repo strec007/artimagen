@@ -59,6 +59,7 @@ CImage::CImage(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){ /*{{{*/
 
 CImage::CImage(CImage *im){/*{{{*/
    sender_id = "CImage";
+   ident(AIG_ID_IMAGE);
    send_message(AIG_MSG_CREATING,"Copying image");
    sizex = im->give_sizex();
    sizey = im->give_sizey();

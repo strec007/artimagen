@@ -600,7 +600,7 @@ static int l_save_image(lua_State *L){/*{{{*/
 
       CObject *ob = (CObject *) lua_topointer(L, 1);
       if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
-      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-curve object
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-image object
       CImage *im = (CImage *) ob;
       const char *fn = lua_tolstring(L, 2, NULL);
       const char *comment = lua_tolstring(L, 3, NULL);
@@ -789,6 +789,75 @@ static int l_apply_noise(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+static int l_crop_image(lua_State *L){/*{{{*/
+   try{
+      if (lua_gettop(L) !=5 ) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS; // three parameters required
+
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pointer to image
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-image object
+      CImage *im = (CImage *) ob;
+
+      if (!lua_isnumber(L, 2))  throw AIG_LUA_ERR_ARGUMENT_TYPE; // left
+      if (!lua_isnumber(L, 3))  throw AIG_LUA_ERR_ARGUMENT_TYPE; // top
+      if (!lua_isnumber(L, 4))  throw AIG_LUA_ERR_ARGUMENT_TYPE; // right
+      if (!lua_isnumber(L, 5))  throw AIG_LUA_ERR_ARGUMENT_TYPE; // bottom
+
+      DIST_TYPE left = lua_tonumber(L, 2);
+      DIST_TYPE top = lua_tonumber(L, 3);
+      DIST_TYPE right = lua_tonumber(L, 4);
+      DIST_TYPE bottom = lua_tonumber(L, 5);
+
+      im->crop(left, top, right, bottom);
+   }
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+
+}/*}}}*/
+
+static int l_copy_image(lua_State *L){/*{{{*/
+   try{
+      if (lua_gettop(L) !=1 ) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS; // one parameter required
+
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pointer to image
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-image object
+      CImage *im = (CImage *) ob;
+
+      CImage *im2 = new CImage(im);
+
+      lua_pushlightuserdata(L, (void *) im2);
+      return 1;
+   }
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+}/*}}}*/
+
+static int l_give_image_data(lua_State *L){/*{{{*/
+   try{
+      if (lua_gettop(L) !=1 ) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS; // one parameter required
+
+      if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pointer to image
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_IMAGE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // non-image object
+      CImage *im = (CImage *) ob;
+
+      lua_pushlightuserdata(L, (void *) im->give_buffer());
+      return 1;
+   }
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+}/*}}}*/
+
 CApp *l_app; // application pointer for use with standalone lua (as a lua module)
 
 static int l_initialize_app(lua_State *L){/*{{{*/
@@ -822,6 +891,9 @@ static const luaL_reg artimagen_lib [] = {/*{{{*/
    {"apply_gaussian_psf", l_apply_gaussian_psf},
    {"apply_vib", l_apply_vib},
    {"apply_noise", l_apply_noise},
+   {"copy_image", l_copy_image},
+   {"crop_image", l_crop_image},
+   {"give_image_data", l_give_image_data},
 
    {"init_app", l_initialize_app},
    {"destroy_app", l_destroy_app},
