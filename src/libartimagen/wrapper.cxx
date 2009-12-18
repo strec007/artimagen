@@ -779,6 +779,38 @@ int exec_lua_file(const char *fn){/*{{{*/
    lua_close(L);
    return err;
 }/*}}}*/
+
+#define LUA_LIB
+
+static const luaL_reg artimagen_lib [] = {
+   {"new_curve", l_new_curve},
+   {"new_feature", l_new_feature},
+   {"paint_feature", l_paint_feature},
+   {"move_feature", l_move_feature},
+   {"new_sample", l_new_sample},
+   {"delete_sample", l_delete_sample},
+   {"paint_sample", l_paint_sample},
+   {"new_effect", l_new_effect},
+
+   {"new_image", l_new_image},
+   {"delete_image", l_delete_image},
+   {"save_image", l_save_image},
+   {"apply_background_image", l_apply_background_image},
+   {"apply_gaussian_psf", l_apply_gaussian_psf},
+   {"apply_vib", l_apply_vib},
+   {"apply_noise", l_apply_noise},
+   {NULL, NULL}  /* sentinel */
+};
+
+extern "C" {
+LUALIB_API int luaopen_libartimagen (lua_State *L) {
+   CApp *app = new CApp();
+   luaL_register(L, "artimagen", artimagen_lib);
+   return 0;
+}
+}
+
+
 #endif
 
 // vim: cindent
