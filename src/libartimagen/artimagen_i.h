@@ -269,6 +269,16 @@ class CRectangle:public CFeature{/*{{{*/
       CRectangle(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation);
 };/*}}}*/
 
+class CRectangleRounded:public CFeature{/*{{{*/
+   public:
+      CRectangleRounded(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation, const DIST_TYPE rounding);
+};/*}}}*/
+
+class CSnakeRounded:public CFeature{/*{{{*/
+   public:
+      CSnakeRounded(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DIST_TYPE c, double rotation);
+};/*}}}*/
+
 class CSnake:public CFeature{/*{{{*/
    public:
       CSnake(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DIST_TYPE c, double rotation);

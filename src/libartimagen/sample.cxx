@@ -235,6 +235,32 @@ CRectangle::CRectangle(const DIST_TYPE lsize, const DIST_TYPE tsize, double rota
    init();
 }/*}}}*/
 
+///////////////////// CRectangleRounded ////////////////
+
+CRectangleRounded::CRectangleRounded(const DIST_TYPE lsize, const DIST_TYPE tsize, double rotation, const DIST_TYPE rounding){/*{{{*/
+   sender_id = "CRectangleRounded";
+   ident(AIG_ID_RECTANGLERND);
+   send_message(AIG_MSG_CREATING,"Creating rounded rectangle");
+   number_of_curves = 8;
+   curves = new CCurve*[number_of_curves];
+   for (int i=0; i<number_of_curves; i++) curves[i]=NULL; // important if curve-constructor throws
+
+   
+   int cc = 0; 
+   curves[cc++] = new CStraightLine(CLine(CVector(rounding,0), CVector(tsize-rounding, 0)));
+   curves[cc++] = new CBezier(CVector(tsize-rounding, 0),CVector(tsize-rounding/2, 0),CVector(tsize,rounding/2),CVector(tsize,rounding));
+   curves[cc++] = new CStraightLine(CLine(CVector(tsize,rounding), CVector(tsize, lsize-rounding)));
+   curves[cc++] = new CBezier(CVector(tsize, lsize-rounding),CVector(tsize, lsize-rounding/2),CVector(tsize-rounding/2,lsize),CVector(tsize-rounding,lsize));
+   curves[cc++] = new CStraightLine(CLine(CVector(tsize-rounding,lsize) , CVector(rounding, lsize)));
+   curves[cc++] = new CBezier(CVector(rounding, lsize),CVector(rounding/2, lsize),CVector(0,lsize-rounding/2),CVector(0,lsize-rounding));
+   curves[cc++] = new CStraightLine(CLine(CVector(0,lsize-rounding), CVector(0,rounding)));
+   curves[cc++] = new CBezier(CVector(0,rounding),CVector(0,rounding/2),CVector(rounding/2,0),CVector(rounding,0));
+
+   for (int i=0; i< number_of_curves; i++) curves[i]->rotate(CVector(0,0), rotation);
+
+   init();
+}/*}}}*/
+
 ///////////////////// CSnake ////////////////
 
 CSnake::CSnake(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DIST_TYPE c, double rotation){/*{{{*/
@@ -254,6 +280,38 @@ CSnake::CSnake(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DI
    curves[5] = new CStraightLine(CLine(CVector(b, a+c-w), CVector(b, a)));
    curves[6] = new CStraightLine(CLine(CVector(b, a), CVector(0, a)));
    curves[7] = new CStraightLine(CLine(CVector(0, a), CVector(0, 0)));
+
+   for (int i=0; i< number_of_curves; i++) curves[i]->rotate(CVector(0,0), rotation);
+
+   init();
+}/*}}}*/
+
+///////////////////// CSnakeRounded ////////////////
+
+CSnakeRounded::CSnakeRounded(const DIST_TYPE w, const DIST_TYPE a, const DIST_TYPE b, const DIST_TYPE c, double rotation){/*{{{*/
+   sender_id = "CSnakeRounded";
+   ident(AIG_ID_SNAKERND);
+   send_message(AIG_MSG_CREATING,"Creating snake");
+
+   DIST_TYPE r1 = 0.6*w; // rounding parameter. Experiment with it, if you want different rounding
+   DIST_TYPE r2 = 1.8*w; // rounding parameter. Experiment with it, if you want different rounding
+   number_of_curves = 12;
+   curves = new CCurve*[number_of_curves];
+   for (int i=0; i<number_of_curves; i++) curves[i]=NULL; // important if curve-constructor throws
+
+   int cc = 0; 
+   curves[cc++] = new CStraightLine(CLine(CVector(0, 0), CVector(w, 0)));
+   curves[cc++] = new CStraightLine(CLine(CVector(w, 0), CVector(w, a-w-r1)));
+   curves[cc++] = new CBezier(CVector(w, a-w-r1),CVector(w,a-w-r1/2),CVector(w+r1/2,a-w),CVector(w+r1, a-w));
+   curves[cc++] = new CStraightLine(CLine(CVector(w+r1, a-w), CVector(b+w-r2, a-w)));
+   curves[cc++] = new CBezier(CVector(b+w-r2, a-w),CVector(b+w-r2/2, a-w),CVector(b+w, a-w+r2/2),CVector(b+w, a-w+r2));
+   curves[cc++] = new CStraightLine(CLine(CVector(b+w, a-w+r2), CVector(b+w, a+c-w)));
+   curves[cc++] = new CStraightLine(CLine(CVector(b+w, a+c-w), CVector(b, a+c-w)));
+   curves[cc++] = new CStraightLine(CLine(CVector(b, a+c-w), CVector(b, a+r1)));
+   curves[cc++] = new CBezier(CVector(b, a+r1),CVector(b, a+r1/2),CVector(b-r1/2, a),CVector(b-r1, a));
+   curves[cc++] = new CStraightLine(CLine(CVector(b-r1, a), CVector(r2, a)));
+   curves[cc++] = new CBezier(CVector(r2, a),CVector(r2/2, a),CVector(0, a-r2/2),CVector(0, a-r2));
+   curves[cc++] = new CStraightLine(CLine(CVector(0, a-r2), CVector(0, 0)));
 
    for (int i=0; i< number_of_curves; i++) curves[i]->rotate(CVector(0,0), rotation);
 
@@ -706,31 +764,32 @@ CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey
 
 #define STEP 2*def->tsize
 
-   fes[0] = new CRectangle(def->lsize, def->tsize, 0);
+   DIST_TYPE rounding = def->tsize/2.1;
+   fes[0] = new CRectangleRounded(def->lsize, def->tsize, 0, rounding);
    fes[0] -> move_by(CVector(STEP,0));
 
-   fes[1] = new CRectangle(def->lsize, def->tsize, 0);
+   fes[1] = new CRectangleRounded(def->lsize, def->tsize, 0, rounding);
    fes[1] -> move_by(CVector(3*STEP,0));
 
-   fes[2] = new CSnake(def->tsize, (def->lsize+def->tsize)/2, 2*STEP, (def->lsize+def->tsize)/2, 0);
+   fes[2] = new CSnakeRounded(def->tsize, (def->lsize+def->tsize)/2, 2*STEP, (def->lsize+def->tsize)/2, 0);
    fes[2] -> move_by(CVector(5*STEP,0));
 
-   fes[3] = new CRectangle(def->lsize/2 - def->tsize/2 - def->tsize, def->tsize, 0);
+   fes[3] = new CRectangleRounded(def->lsize/2 - def->tsize/2 - def->tsize, def->tsize, 0, rounding);
    fes[3] -> move_by(CVector(5*STEP,def->lsize/2+1.5*def->tsize));
 
-   fes[4] = new CRectangle(def->lsize/2 - 1.5*def->tsize, def->tsize, 0);
+   fes[4] = new CRectangleRounded(def->lsize/2 - 1.5*def->tsize, def->tsize, 0, rounding);
    fes[4] -> move_by(CVector(6*STEP,0));
 
-   fes[5] = new CRectangle(def->lsize/2 - 1.5*def->tsize, def->tsize, 0);
+   fes[5] = new CRectangleRounded(def->lsize/2 - 1.5*def->tsize, def->tsize, 0, rounding);
    fes[5] -> move_by(CVector(7*STEP,0));
 
-   fes[6] = new CRectangle(def->lsize, def->tsize, 0);
+   fes[6] = new CRectangleRounded(def->lsize, def->tsize, 0, rounding);
    fes[6] -> move_by(CVector(8*STEP,0));
 
-   fes[7] = new CRectangle(def->lsize, def->tsize, 0);
+   fes[7] = new CRectangleRounded(def->lsize, def->tsize, 0, rounding);
    fes[7] -> move_by(CVector(9*STEP,0));
 
-   fes[8] = new CRectangle(def->lsize, def->tsize, 0);
+   fes[8] = new CRectangleRounded(def->lsize, def->tsize, 0, rounding);
    fes[8] -> move_by(CVector(10*STEP,0));
 
 

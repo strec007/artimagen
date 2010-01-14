@@ -480,7 +480,7 @@ CBezier::CBezier(CVector p1, CVector p2, CVector p3, CVector p4)/*{{{*/
    control_points[1] = p2;
    control_points[2] = p3;
    control_points[3] = p4;
-   number_of_vertices = 5; // how many linear segments approximate this curve
+   number_of_vertices = 8; // how many linear segments approximate this curve
    init();
 }/*}}}*/
 
