@@ -19,6 +19,7 @@
 #include <cmath>
 #include <vector>
 #include "artimagen.h"
+#include "../../config.h"
 
 #define IM_NO_IFFT_BLOCK 0
 #define IM_IFFT_BLOCK 1
@@ -58,13 +59,14 @@ class CApp{/*{{{*/
       CApp();
       void set_message_call_back(void (*f)(t_message *));
       void broadcast_message(t_message message);
+      void set_number_of_threads(int nthreads);
+      int get_number_of_threads();
    private:
       void (*call_back)(t_message *);
-};/*}}}*/
-
-#ifndef AIGAPP_DECLARATION
-extern CApp *AIGApp;
+#ifdef HAVE_FFTW3_THREADS
+      int nthreads;
 #endif
+};/*}}}*/
 
 class CObject{/*{{{*/
    public:
@@ -615,6 +617,10 @@ class CWavyBackgroud:public CBackgroud{/*{{{*/
 };/*}}}*/
 
 }
+
+#ifndef AIGAPP_DECLARATION
+extern artimagen::CApp *AIGApp;
+#endif
 
 #endif
 

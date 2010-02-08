@@ -33,6 +33,12 @@ AC_CHECK_LIB([fftw3], [fftw_execute], [FFTW3LIB=-lfftw3],
 AC_MSG_ERROR([fftw3 check failed]))
 AC_SUBST([FFTW3LIB])
 
+AC_CHECK_LIB([fftw3_threads], [fftw_init_threads], 
+      [FFTW3TLIB="-lfftw3_threads -lm -lpthread"]
+      AC_DEFINE([HAVE_FFTW3_THREADS], [1], [Define if you have fftw3_threads]),
+AC_MSG_ERROR([fftw3 check failed]),[-lfftw3 -lpthread -lm])
+AC_SUBST([FFTW3TLIB])
+
 LUALIB=
 AS_IF([test "x$with_lua" != xno],
     [AC_CHECK_LIB([lua5.1], [main],

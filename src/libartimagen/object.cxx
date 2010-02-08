@@ -34,10 +34,10 @@
  #endif
 #endif
  
+artimagen::CApp *AIGApp = NULL; // global variable.
+
 using namespace std;
 using namespace artimagen;
-
-CApp *AIGApp = NULL; // global variable.
 
 CApp::CApp(){/*{{{*/
    assert(!AIGApp); // Attempt to create another CApp class. Only once CApp instance is allowed per application.
@@ -45,6 +45,10 @@ CApp::CApp(){/*{{{*/
    call_back = NULL; // the call_back function is not set (later used as indicator of being set)
 
    srandom(time(0)); // initialize the random generator.
+#ifdef HAVE_FFTW3_THREADS
+   nthreads = 1;
+   fftw_init_threads(); // initialize the FFTW3 threads
+#endif
 }/*}}}*/
 
 void CApp::set_message_call_back(void (*f)(t_message *)){/*{{{*/
@@ -54,6 +58,20 @@ void CApp::set_message_call_back(void (*f)(t_message *)){/*{{{*/
 void CApp::broadcast_message(t_message message){/*{{{*/
    if (call_back) call_back(&message); // executes the call_back function
    // then the message is automatically destroyed.
+}/*}}}*/
+
+void CApp::set_number_of_threads(int nthreads){/*{{{*/
+#ifdef HAVE_FFTW3_THREADS
+   this->nthreads = nthreads;
+#endif
+}/*}}}*/
+
+int CApp::get_number_of_threads(){/*{{{*/
+#ifdef HAVE_FFTW3_THREADS
+   return this->nthreads;
+#else
+   return -1; // no FFTW3 threads support
+#endif
 }/*}}}*/
 
 CObject::CObject(){/*{{{*/

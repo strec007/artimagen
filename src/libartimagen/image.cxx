@@ -1,11 +1,11 @@
 /* 
-    Artificial SEM Image Generator (ArtImaGen)
+    Artificial Charged-Particle-Microscope Image Generator (ARTIMAGEN)
     2009  Petr Cizmar @ National Institute of Standards and Technology
     E-mail: petr.cizmar@nist.gov
 
     As this software was developed as part of work done by the United States
     Government, it is not subject to copyright, and is in the public domain.
-    Note that according to Gnu.org public domain is compatible with GPL.
+    Note that according to GNU.org public domain is compatible with GPL.
 
  */
 #include <sstream>
@@ -34,9 +34,10 @@
   #define random (long)lrand48
  #endif
 #endif
- 
+
 using namespace std;
 using namespace artimagen;
+
 ///////////////// CImage ////////////////////////////
 
 CImage::CImage(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){ /*{{{*/
@@ -213,7 +214,11 @@ int CImage::make_fft_plan(){/*{{{*/
    fft_data = (fftw_complex *) fftw_malloc(sizex * sizey * sizeof(fftw_complex));
    assert(fft_data);
 
+   int nthreads = ::AIGApp->get_number_of_threads();
+   fftw_plan_with_nthreads(nthreads);
    plan_im = fftw_plan_dft_2d(sizey, sizex, fft_data, fft_data, FFTW_FORWARD, FFTW_ESTIMATE);
+
+   fftw_plan_with_nthreads(nthreads);
    plan_imi = fftw_plan_dft_2d(sizey, sizex, fft_data, fft_data, FFTW_BACKWARD, FFTW_ESTIMATE);
 
    plan_initialized = 1;

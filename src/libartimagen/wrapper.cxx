@@ -887,6 +887,7 @@ CApp *l_app; // application pointer for use with standalone lua (as a lua module
 
 static int l_initialize_app(lua_State *L){/*{{{*/
    l_app = new CApp();
+   l_app->set_number_of_threads(3);
    return 0;
 }/*}}}*/
 
