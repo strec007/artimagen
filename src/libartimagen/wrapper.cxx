@@ -125,7 +125,7 @@ CLuaMessenger::CLuaMessenger(int msg_id, const char *comment){ /*{{{*/
 
 #ifdef HAVE_LUA
 
-void print_lua_stack(lua_State *L){
+void print_lua_stack(lua_State *L){/*{{{*/
    int i;
    
    printf("\n ********* LUA STACK *********\n");
@@ -146,8 +146,7 @@ void print_lua_stack(lua_State *L){
       }
    }
    printf("\n ***** LUA STACK END *********\n");
-}
-
+}/*}}}*/
 
 static void report_lua_error(lua_State *L, int exc){/*{{{*/
       const char *comment = "";
@@ -546,6 +545,42 @@ static int l_goc_sample(lua_State *L){/*{{{*/
 
 }/*}}}*/
 
+static int l_pc_sample(lua_State *L){/*{{{*/
+#define PCR_PARS 15
+   try {
+      if (lua_gettop(L) != PCR_PARS) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      for (int i=1; i<=PCR_PARS; i++) if (!lua_isnumber(L, i)) throw AIG_LUA_ERR_ARGUMENT_TYPE; 
+
+      t_crs_definition cr_def;
+
+      cr_def.sizex = lua_tonumber(L, 1);
+      cr_def.sizey = lua_tonumber(L, 2);
+      cr_def.ee_coefficient = lua_tonumber(L, 3);
+      cr_def.ee_top_above_base = lua_tonumber(L, 4);
+      cr_def.base_level = lua_tonumber(L, 5);
+      cr_def.base_level_variation = lua_tonumber(L, 6);
+      cr_def.lsize = lua_tonumber(L, 7);
+      cr_def.tsize = lua_tonumber(L, 8);
+      cr_def.distance = lua_tonumber(L, 9);
+      cr_def.rotation = lua_tonumber(L, 10);
+      cr_def.fs_density = lua_tonumber(L, 11);
+      cr_def.fs_min_r = lua_tonumber(L, 12);
+      cr_def.fs_max_r = lua_tonumber(L, 13);
+      cr_def.fs_min_coe = lua_tonumber(L, 14);
+      cr_def.fs_max_coe = lua_tonumber(L, 15);
+
+      CPeriodicCrossSample *cr_sam = new CPeriodicCrossSample(&cr_def);
+      lua_pushlightuserdata(L, (void *) cr_sam);
+      return 1;
+   }
+
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+
+}/*}}}*/
+
 // ------------- Image processing ------------------
 
 static int l_new_image(lua_State *L){/*{{{*/
@@ -887,7 +922,7 @@ CApp *l_app; // application pointer for use with standalone lua (as a lua module
 
 static int l_initialize_app(lua_State *L){/*{{{*/
    l_app = new CApp();
-   l_app->set_number_of_threads(3);
+   l_app->set_number_of_threads(5);
    return 0;
 }/*}}}*/
 
@@ -908,6 +943,7 @@ static const luaL_reg artimagen_lib [] = {/*{{{*/
    {"delete_sample", l_delete_sample},
    {"paint_sample", l_paint_sample},
    {"new_effect", l_new_effect},
+   {"new_pc_sample", l_pc_sample},
    {"new_goc_sample", l_goc_sample},
 
    {"new_image", l_new_image},
