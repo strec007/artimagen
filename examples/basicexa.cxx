@@ -35,6 +35,8 @@ using namespace artimagen;
 int main(){
    srandom(time(0));
 
+   CApp app; // initialization of the generator
+
    t_gc_definition gc_def; 
 
    gc_def.sizex = SIZEX;
