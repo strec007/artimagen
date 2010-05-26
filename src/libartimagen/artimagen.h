@@ -43,6 +43,7 @@ extern "C" {
 #include <lua5.1/lauxlib.h>
 }
 #endif 
+#include <stdint.h>
 
 // definition of distance types
 #define DIST_TYPE double
