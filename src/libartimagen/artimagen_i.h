@@ -421,13 +421,15 @@ class CImage:public CObject{/*{{{*/
       int is_fft_valid();
       void set_ifft_blocking(unsigned char blk);  // WARNING: With ifft_blocking the image and 
                                                 //its FFT representation may not be consistent!!!
-                                                // user is responsible for make the ifft in the end of 
+                                                // user is responsible for making the ifft in the end of 
                                                 // fftw-based operations
       unsigned char give_ifft_blocking();
       void shift(double shx, double shy);
       void crop(IM_COORD_TYPE x1, IM_COORD_TYPE y1, IM_COORD_TYPE x2, IM_COORD_TYPE y2);
 
       IM_STORE_TYPE give_mean_value();
+      void zero(); 				// zero function is now public; however, making it private will be
+      						// considered
 
    private:
       int make_fft_plan();
@@ -445,7 +447,6 @@ class CImage:public CObject{/*{{{*/
       unsigned char block_ifft;                 // ifft is not automatically calculated. good for 
                                                 //saving machine-time when the following steps all work with fft
       
-      void zero();
 
 };/*}}}*/
 

@@ -140,7 +140,7 @@ void CImage::zero(){/*{{{*/
 
    //IM_COORD_TYPE x,y;
 
-   memset(this->buffer, 0, this->sizex * this->sizey);
+   memset(this->buffer, 0, this->sizex * this->sizey * sizeof(IM_STORE_TYPE));
 }/*}}}*/
 
 void CImage::tiff_write(const string filename, const string tiff_comment, int bits){/*{{{*/
