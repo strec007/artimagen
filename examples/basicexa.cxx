@@ -9,6 +9,10 @@
  *                  TIFF file.
  *
  *    Compilation:  g++ -O3 -lartimagen -o basicexa basicexa.cxx
+ *    		or for static build:
+ *    		    g++ basicexa.cxx $ARTIMAGEN_BASE/src/.libs/libartimagen.a \
+ *    		    -lfftw3 -lfftw3_threads -ltiff -I \
+ *    		    $ARTIMAGEN_BASE/src/libartimagen -o basicexa
  *
  *
  *        Version:  1.0
