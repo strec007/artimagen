@@ -61,14 +61,17 @@ CImage::CImage(CImage *im){/*{{{*/
    sender_id = "CImage";
    ident(AIG_ID_IMAGE);
    send_message(AIG_MSG_CREATING,"Copying image");
-   sizex = im->give_sizex();
-   sizey = im->give_sizey();
+
+   this->sizex = im->give_sizex();
+   this->sizey = im->give_sizey();
    this->fft_data = NULL;
    this->buffer = new IM_STORE_TYPE[sizex * sizey];
    
    memcpy(buffer, im->give_buffer(), sizex * sizey * sizeof(IM_STORE_TYPE));
 
    plan_initialized = 0;
+   fft_valid = 0;
+   fft_data = NULL;
    block_ifft = IM_NO_IFFT_BLOCK;
 
    if (im->is_fft_valid()) {
