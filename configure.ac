@@ -2,6 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.63)
+AC_CONFIG_MACRO_DIR([m4])
 define(ARTIMAGEN_VERSION,0.5a1)
 AC_SUBST([ARTIMAGEN_VERSION])
 AC_INIT(artimagen, ARTIMAGEN_VERSION, petr.cizmar@nist.gov)
@@ -20,7 +21,7 @@ LT_LANG([C++])
 
 # Compilation options
 AC_ARG_WITH(lua, 
-  AS_HELP_STRING([--without-lua],[disable LUA support (needed for saving)]),
+  AS_HELP_STRING([--without-lua],[disable LUA support]),
  [],
  [with_lua=yes])
 
