@@ -19,7 +19,6 @@
 #include <cmath>
 #include <vector>
 #include "artimagen.h"
-#include "../../config.h"
 
 #define IM_NO_IFFT_BLOCK 0
 #define IM_IFFT_BLOCK 1

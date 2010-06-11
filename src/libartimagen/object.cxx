@@ -9,13 +9,13 @@
 
  */
 #define AIGAPP_DECLARATION 1  // this file declares the global AIGApp variable
+#include "../../config.h"
 
 #include "artimagen_i.h"
 #include <cassert>
 #include <ctime>
 #include <cstdlib>
 #include <vector>
-#include "../../config.h"
 
 /* missing functions */
 #ifndef HAVE_SRANDOM
