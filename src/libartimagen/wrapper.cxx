@@ -963,7 +963,7 @@ static const luaL_reg artimagen_lib [] = {/*{{{*/
    {NULL, NULL}  /* sentinel */
 };/*}}}*/
 
-int exec_lua_file(const char *fn){/*{{{*/
+lua_State *aig_lua_init(){/*{{{*/
    lua_State *L = lua_open();
    luaL_openlibs(L);
    lua_register(L, "aig_new_curve", l_new_curve);
@@ -985,9 +985,27 @@ int exec_lua_file(const char *fn){/*{{{*/
 
    luaL_register(L, "artimagen", artimagen_lib);
 
+   return L;
+
+}/*}}}*/
+
+void aig_lua_close(lua_State *L){
+   lua_close(L);
+}
+
+int exec_lua_string(const char *st){/*{{{*/
+   lua_State *L = aig_lua_init();
+   int err = luaL_dostring(L, st);
+   if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));
+   aig_lua_close(L);
+   return err;
+}/*}}}*/
+
+int exec_lua_file(const char *fn){/*{{{*/
+   lua_State *L = aig_lua_init();
    int err = luaL_dofile(L, fn);
    if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));
-   lua_close(L);
+   aig_lua_close(L);
    return err;
 }/*}}}*/
 
