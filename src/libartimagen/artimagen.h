@@ -255,6 +255,7 @@ void save_image(void *image, char* filename, char *comment);
 #endif
 
 #ifdef HAVE_LUA
+int exec_lua_string(const char *st);
 int exec_lua_file(const char *fn);
 #endif
 
