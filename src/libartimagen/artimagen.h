@@ -255,8 +255,10 @@ void save_image(void *image, char* filename, char *comment);
 #endif
 
 #ifdef HAVE_LUA
-int exec_lua_string(const char *st);
-int exec_lua_file(const char *fn);
+lua_State *aig_lua_init();
+void aig_lua_close(lua_State *L);
+int exec_lua_string(const char *st, lua_State *L=NULL);
+int exec_lua_file(const char *fn, lua_State *L=NULL);
 #endif
 
 /////////////// Footer - do not write below this line //////////////

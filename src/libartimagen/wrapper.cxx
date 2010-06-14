@@ -989,23 +989,31 @@ lua_State *aig_lua_init(){/*{{{*/
 
 }/*}}}*/
 
-void aig_lua_close(lua_State *L){
+void aig_lua_close(lua_State *L){/*{{{*/
    lua_close(L);
-}
+}/*}}}*/
 
-int exec_lua_string(const char *st){/*{{{*/
-   lua_State *L = aig_lua_init();
+int exec_lua_string(const char *st, lua_State *L){/*{{{*/
+   int lua_context_obtained = 1;
+   if (!L){
+      L = aig_lua_init();
+      lua_context_obtained = 0; // this function closes the lua context
+   }
    int err = luaL_dostring(L, st);
    if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));
-   aig_lua_close(L);
+   if (!lua_context_obtained) aig_lua_close(L);
    return err;
 }/*}}}*/
 
-int exec_lua_file(const char *fn){/*{{{*/
-   lua_State *L = aig_lua_init();
+int exec_lua_file(const char *fn, lua_State *L){/*{{{*/
+   int lua_context_obtained = 1;
+   if (!L){
+      L = aig_lua_init();
+      lua_context_obtained = 0; // this function closes the lua context
+   }
    int err = luaL_dofile(L, fn);
    if (err) CLuaMessenger(AIG_MSG_FATAL_ERROR,lua_tostring(L,-1));
-   aig_lua_close(L);
+   if (!lua_context_obtained) aig_lua_close(L);
    return err;
 }/*}}}*/
 
