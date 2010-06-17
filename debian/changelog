@@ -1,3 +1,13 @@
+artimagen (0.9) stable; urgency=low
+
+  * New stable release.
+  * Lua scripting supported
+  * Poisson noise
+  * call-back messaging
+  * and much more :-) 
+
+ -- Petr Cizmar <cizmar@ubuntu>  Thu, 17 Jun 2010 10:54:14 -0400
+
 artimagen (0.4s-1) unstable; urgency=low
 
   * Stable release, typos only fixed 

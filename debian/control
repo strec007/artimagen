@@ -1,7 +1,7 @@
 Source: artimagen
 Priority: extra
 Maintainer: Petr Cizmar <petr.cizmar@nist.gov>
-Build-Depends: debhelper (>= 7), autotools-dev, libtiff4-dev, libfftw3-dev
+Build-Depends: debhelper (>= 7), autotools-dev, libtiff4-dev, libfftw3-dev, liblua5.1-0-dev
 Standards-Version: 3.8.3
 Section: libs
 Homepage: http://artimagen.sourceforge.net
