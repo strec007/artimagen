@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.63)
 AC_CONFIG_MACRO_DIR([m4])
-define(ARTIMAGEN_VERSION,0.5a1)
+define(ARTIMAGEN_VERSION,0.9)
 AC_SUBST([ARTIMAGEN_VERSION])
 AC_INIT(artimagen, ARTIMAGEN_VERSION, petr.cizmar@nist.gov)
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
@@ -25,6 +25,11 @@ AC_ARG_WITH(lua,
  [],
  [with_lua=yes])
 
+AC_ARG_WITH(threads, 
+  AS_HELP_STRING([--with-threads],[enable support for threads]),
+ [],
+ [with_threads=no])
+
 # Checks for libraries.
 AC_CHECK_LIB([tiff], [TIFFOpen], [TIFFLIB=-ltiff],
 AC_MSG_ERROR([libtiff check failed]))
@@ -34,11 +39,17 @@ AC_CHECK_LIB([fftw3], [fftw_execute], [FFTW3LIB=-lfftw3],
 AC_MSG_ERROR([fftw3 check failed]))
 AC_SUBST([FFTW3LIB])
 
+AS_IF([test "x$with_threads" != xno],
+[
 AC_CHECK_LIB([fftw3_threads], [fftw_init_threads], 
       [FFTW3TLIB="-lfftw3_threads -lm -lpthread"]
-      AC_DEFINE([HAVE_FFTW3_THREADS], [1], [Define if you have fftw3_threads]),
+      [AC_DEFINE([HAVE_FFTW3_THREADS], [1], [Define if you have fftw3_threads])]
+      [have_fftw3_threads=yes],
 AC_MSG_ERROR([fftw3 check failed]),[-lfftw3 -lpthread -lm])
 AC_SUBST([FFTW3TLIB])
+])
+
+AM_CONDITIONAL(HAVE_FFTW3_THREADS, test x$have_fftw3_threads = xyes)
 
 LUALIB=
 AS_IF([test "x$with_lua" != xno],

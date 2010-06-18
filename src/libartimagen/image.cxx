@@ -217,11 +217,15 @@ int CImage::make_fft_plan(){/*{{{*/
    fft_data = (fftw_complex *) fftw_malloc(sizex * sizey * sizeof(fftw_complex));
    assert(fft_data);
 
+#ifdef HAVE_FFTW3_THREADS
    int nthreads = ::AIGApp->get_number_of_threads();
    fftw_plan_with_nthreads(nthreads);
+#endif
    plan_im = fftw_plan_dft_2d(sizey, sizex, fft_data, fft_data, FFTW_FORWARD, FFTW_ESTIMATE);
 
+#ifdef HAVE_FFTW3_THREADS
    fftw_plan_with_nthreads(nthreads);
+#endif
    plan_imi = fftw_plan_dft_2d(sizey, sizex, fft_data, fft_data, FFTW_BACKWARD, FFTW_ESTIMATE);
 
    plan_initialized = 1;
