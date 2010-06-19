@@ -86,11 +86,6 @@ int CFeature::add_curve(CCurve *cu){/*{{{*/
 void CFeature::init(){/*{{{*/
    build_vertices();
    calculate_bounding_box();
-
-   CVector bbtl, bbbr;
-   give_bounding_box(&bbtl, &bbbr);
-   set_map_division(1 + (int)((bbbr.x - bbtl.x)/4)); // 4 pixels per map segment
-   create_map();
 }/*}}}*/
 
 /* copy vertices from included curves */

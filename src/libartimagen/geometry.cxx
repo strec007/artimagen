@@ -500,9 +500,6 @@ CVector CBezier::parametrize(DIST_TYPE t){/*{{{*/
 CPolygon::CPolygon(){/*{{{*/
    sender_id = "CPolygon";
    ident(AIG_ID_POLYGON);
-
-   map_division = 5; // just a guess for now. :-)
-   map = NULL;
 }/*}}}*/
 
 /* Detection intersection of the polygon  with a testline */
@@ -520,36 +517,36 @@ int CPolygon::is_hit(CVector x, CVector d){/*{{{*/
 /* Decection if the point p is inside the polygon using testline and
  * intersections */
 int CPolygon::is_inside_with_hits(CVector p){/*{{{*/
+   /*
    CVector d = p + CVector(121,111); // this is some ugly vector that should not collide with the vertices
    if (is_hit(p, d) % 2 == 1) return 1;
    return 0;
+   */
+{
+  int i, j, c = 0;
+  for (i = 0, j = number_of_vertices-1; i < number_of_vertices; j = i++) {
+    if ( ((vertices[i].y>p.y) != (vertices[j].y>p.y)) &&
+	 (p.x < (vertices[j].x-vertices[i].x) * (p.y-vertices[i].y) / (vertices[j].y-vertices[i].y) + vertices[i].x) )
+       c = !c;
+  }
+  return c;
+}
 }/*}}}*/
 
 /* Is the piont p inside the polygon? Used map first, then hits */
 int CPolygon::is_inside(CVector p){/*{{{*/
    CVector bbtl, bbbr;
-   int i,j;
-
    give_bounding_box(&bbtl, &bbbr);
+
 
    // Test 1: is p inside the bounding box?
    if ((p.x < bbtl.x) || (p.y < bbtl.y) || (p.x >= bbbr.x) || (p.y >= bbbr.y)) return 0; // p is outside the boundign box.
-
-
-   // Test 2: map test
-   //
-   // this is the map test (speeds up the detection significantly). 2 = whole segment is
-   // inside, 0 means definitely outside.
-   // Find the map indexes corresponding to p:
-   i = floor ((p.x - bbtl.x) * map_division / (bbbr.x - bbtl.x));
-   j = floor ((p.y - bbtl.y) * map_division / (bbbr.y - bbtl.y));
-   if (map[j * map_division + i] == 2) return 1; // the whole map segment is inside, thus p is inside.
-   if (map[j * map_division + i] == 0) return 0; //  segment outside, thus p outside
 
    // Test 3: the low-level test using testlines and intersections.
    if (is_inside_with_hits(p)) return 1; 
    return 0;
 }/*}}}*/
+
 
 /* detection of overlap with other polygon fe */
 bool CPolygon::overlaps(CPolygon *fe){/*{{{*/
@@ -563,93 +560,7 @@ bool CPolygon::overlaps(CPolygon *fe){/*{{{*/
 
 }/*}}}*/
 
-/* the mapping function */
-void CPolygon::create_map(){/*{{{*/
-// map values: 
-// 	0 segment outside polygon
-// 	1 uncertain
-// 	2 segment inside polygon
-
-   map = new char[sq(map_division)];
-   // zero it
-   for (unsigned int i=0; i < sq(map_division); i++) map[i] = 0;
-
-
-   // using lines - sides of the map segments find those segments
-   // that intersect with the polygon. the map segments sharing that
-   // side are uncertain.
-   //
-   // Horizontal lines:
-   for (unsigned int j=0; j<= map_division; j++)  
-      // horizontal lines tested for intersections with the feature's segments.
-      // n+1 lines, n columns.
-      for (unsigned int i=0; i < map_division; i++){
-	 DIST_TYPE x,y,xp;
-	 x = bounding_box_tl.x + (bounding_box_br.x - bounding_box_tl.x)*i/(map_division);
-	 y = bounding_box_tl.y + (bounding_box_br.y - bounding_box_tl.y)*j/(map_division);
-	 xp = x + (bounding_box_br.x - bounding_box_tl.x)/(map_division);// xp is x(i+1)
-
-	 CLine testline(CVector(x,y), CVector(xp,y)); // create the test line.
-	 int hits = hits_line(testline);
-	 if (hits != 0) { 
-	    // we have a hit or overlap => make map segments neighboring with
-	    // the test line uncertain
-	    if (j>0) map[index(i,j-1,map_division)] = 1; 
-	    if (j<map_division) map[index(i,j,map_division)] = 1;
-	    // if we are within the image, make the element uncertain
-	 }
-      }
-
-   // Vertical lines:
-   for (unsigned int j=0; j< map_division; j++) 
-	 // vertical lines tested for intersections with the feature's segments.
-	 // n lines, n+1 columns.
-      for (unsigned int i=0; i <= map_division; i++){
-	 DIST_TYPE x,y,yp;
-	 x = bounding_box_tl.x + (bounding_box_br.x - bounding_box_tl.x)*i/(map_division);
-	 y = bounding_box_tl.y + (bounding_box_br.y - bounding_box_tl.y)*j/(map_division);
-	 yp = y + (bounding_box_br.y - bounding_box_tl.y)/(map_division);// yp is y(i+1)
-
-	 CLine testline(CVector(x,y), CVector(x,yp)); // create the test line.
-	 if (hits_line(testline) != 0) 
-	 { 
-	    // we have a hit or overlap => make segments neighboring with
-	    // the test line uncertain
-	    if (i>0) map[index(i-1,j,map_division)] = 1; 
-	    if (i<map_division) map[index(i,j,map_division)] = 1; 
-	    // if we are within the image, make the element uncertain
-	 }
-      }
-   //  mapping which 0 elements are inside and which outside.
-
-   // The map segments set to 0 are now certainly inside or outside the polygon.
-   // So inside or outside? The following decides.
-
-   for (unsigned int j=0; j< map_division; j++) 
-      for (unsigned int i=0; i < map_division; i++){
-	 // x,y are in the middle of the segment, unlike before.
-	 DIST_TYPE x = bounding_box_tl.x + (bounding_box_br.x - bounding_box_tl.x)*((float) i+0.5)/(map_division);
-	 DIST_TYPE y = bounding_box_tl.y + (bounding_box_br.y - bounding_box_tl.y)*((float) j+0.5)/(map_division);
-	 if (map[index(i,j,map_division)] == 0) { // the segment is not uncertain
-	    if (is_inside_with_hits(CVector(x,y))){ // find out if inside
-	       map[index(i,j,map_division)] = 2; // yep, we're inside
-	    }
-	}
-      }
-
-}/*}}}*/
-
-void CPolygon::destroy_map(){/*{{{*/
-   if (map) delete [] map;
-   map = NULL; 
-}/*}}}*/
-
-void CPolygon::set_map_division(int md){/*{{{*/
-   map_division = md;
-}/*}}}*/
-
 CPolygon::~CPolygon(){/*{{{*/
-   destroy_map();
 }/*}}}*/
 
 // vim: cindent

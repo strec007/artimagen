@@ -204,13 +204,8 @@ class CPolygon:public CCurve{/*{{{*/
       int is_inside(CVector p);
       void set_map_division(int md);
       bool overlaps(CPolygon *fe);
-   protected:
-      void create_map();
-      void destroy_map();
 
    private:
-      char *map;
-      unsigned int map_division;
       int is_inside_with_hits(CVector p);
 
 };/*}}}*/
