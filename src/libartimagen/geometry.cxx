@@ -543,9 +543,6 @@ int CPolygon::is_inside(CVector p){/*{{{*/
    // Find the map indexes corresponding to p:
    i = floor ((p.x - bbtl.x) * map_division / (bbbr.x - bbtl.x));
    j = floor ((p.y - bbtl.y) * map_division / (bbbr.y - bbtl.y));
-   if ((j * map_division + i) >= sq(map_division)) {
-      cout << "map_division = " << map_division << ", i=" << i << "; j=" << j <<endl;
-   }
    if (map[j * map_division + i] == 2) return 1; // the whole map segment is inside, thus p is inside.
    if (map[j * map_division + i] == 0) return 0; //  segment outside, thus p outside
 
@@ -653,89 +650,6 @@ void CPolygon::set_map_division(int md){/*{{{*/
 
 CPolygon::~CPolygon(){/*{{{*/
    destroy_map();
-}/*}}}*/
-
-
-//////////////////// CVoronoi /////////////////
-// NOT YET USED
-
-CVoronoi::CVoronoi(CPolygon *polygon, CVector *free_points, int num_of_free){/*{{{*/
-   sender_id = "CVoronoi";
-   ident(AIG_ID_VORONOI);
-   this->polygon = polygon;
-   polygon->give_bounding_box(&bounding_box_tl, &bounding_box_br);
-   this->free_points = free_points;
-   number_of_free = num_of_free;
-}/*}}}*/
-
-CVoronoi::~CVoronoi(){/*{{{*/
-   delete [] map;
-}/*}}}*/
-
-void CVoronoi::calculate_map(int hsplit, int vsplit){/*{{{*/
-   this->hsplit = hsplit;
-   this->vsplit = vsplit;
-
-   if (map) delete [] map;
-   map = new int[hsplit * vsplit];
-
-   for (int j=0; j<vsplit; j++)
-      for (int i=0; i<hsplit; i++){
-	 CVector t = map2vec(i,j);
-	 CVector v = t - free_points[0];
-	 DIST_TYPE d = v.sq_length();
-	 for (int q=1; q<number_of_free; q++) {
-	    v = t - free_points[q];
-	    DIST_TYPE dd = v.sq_length();
-	    if (dd < d) { 
-	       d = dd;
-	       map[index(i,j,hsplit)] = q;
-	    }
-	 }
-	 try {
-	    for (int q=0; q < polygon->give_number_of_vertices(); q++) {
-	       v = t - polygon->give_vertices()[q];
-	       DIST_TYPE dd = v.sq_length();
-	       if (dd < d) { 
-		  map[index(i,j,hsplit)] = -1;
-		  throw -1; // this point is closest to the bordering point - no mor porcessing needed.
-	       }
-	    }
-	 }
-	 catch (int err){
-	 }
-
-      }
-}/*}}}*/
-
-void CVoronoi::lloyd(){/*{{{*/
-   CVector *new_free = new CVector[number_of_free];
-   int *counts = new int[number_of_free];
-   memset (new_free,0, sizeof(new_free));
-   memset (counts,0, sizeof(counts));
-
-   for (int j=0; j<vsplit; j++)
-      for (int i=0; i<hsplit; i++){
-	 int free_point_index = map[index(i,j,hsplit)];
-	 if (free_point_index >-1){
-	    new_free[free_point_index] = new_free[free_point_index] + map2vec(i,j);
-	    counts[free_point_index]++;
-	 }
-      }
-   for (int i=0; i<number_of_free; i++) {
-      CVector new_point = new_free[i] * ((float) 1 / counts[i]);
-      if (polygon->is_inside(new_point)) free_points[i] = new_point;
-   }
-   delete [] counts;
-   delete [] new_free;
-
-}/*}}}*/
-
-CVector CVoronoi::map2vec(int x, int y){/*{{{*/
-   DIST_TYPE xo= bounding_box_tl.x + x*(bounding_box_br.x - bounding_box_tl.x)/hsplit;
-   DIST_TYPE yo= bounding_box_tl.y + y*(bounding_box_br.y - bounding_box_tl.y)/vsplit;
-
-   return CVector(xo,yo);
 }/*}}}*/
 
 // vim: cindent

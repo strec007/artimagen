@@ -23,6 +23,6 @@ noinst_PROGRAMS=artimagen
 artimagen_SOURCES=artimagen.cxx
 artimagen_LDADD=libartimagen.la
 
-CXXFLAGS=-O3 -ggdb -fstrict-aliasing -ffast-math -Wall
+CXXFLAGS=-O3 -fstrict-aliasing -ffast-math -Wall
 #Flags with the GNU profiler analysis enabled
 #CXXFLAGS=-O3 -ggdb -pg -fstrict-aliasing -ffast-math -Wall
