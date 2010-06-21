@@ -579,18 +579,51 @@ double CNoise::noise_value(double n){/*{{{*/
 CPoissonNoise::CPoissonNoise(double particles_per_unit){/*{{{*/
    sender_id = "CPoissonNoise";
    ident(AIG_ID_POISSONNOISE);
+   if (particles_per_unit > 1000) throw (int) AIG_EX_POISSON_TOO_HIGH_LAMBDA;
    this->particles_per_unit = particles_per_unit;
 }/*}}}*/
 
+long int factorial(long int n){
+   if (n > 1) return n*factorial(n-1);
+   return 1;
+}
+
 double CPoissonNoise::noise_value(double n){/*{{{*/
-   double L = exp(-(n*particles_per_unit));
-   int k = 0;
-   double p = 1;
-   do {
-      k++;
-      p *= (double)rand()/RAND_MAX;
-   } while (p >= L);
-   return (k-1)/particles_per_unit;
+   double lambda = n*particles_per_unit;
+
+   if (n < 30) {
+      double L = exp(-lambda);
+      int k = 0;
+      double p = 1;
+      do {
+	 k++;
+	 p *= (double)rand()/RAND_MAX;
+      } while (p >= L);
+      return (k-1)/particles_per_unit;
+   } else {
+
+
+      double c = 0.767 - 3.36/lambda;
+      double beta = 3.14159265/sqrt(3.0*lambda);
+      double alpha = beta*lambda;
+      double k = log(c) - lambda - log(beta);
+
+      double x,y,u,v,lhs,rhs;
+      int n;
+      do {
+	 u = rand()/RAND_MAX;
+	 x = (alpha - log((1.0 - u)/u))/beta;
+	 n = floor(x + 0.5);
+	 if (n >= 0){
+	    v = rand()/RAND_MAX;
+	    y = alpha - beta*x;
+	    lhs = y + log(v/pow((1.0 + exp(y)),2));
+	    rhs = k + n*log(lambda) - log(factorial(n));
+
+	 } 
+      } while (lhs > rhs);
+      return n;
+   }
 }/*}}}*/
 
 //////////////// CGaussianNoise ///////////////////////////////

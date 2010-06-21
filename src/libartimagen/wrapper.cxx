@@ -178,6 +178,9 @@ static void report_lua_error(lua_State *L, int exc){/*{{{*/
 	 case AIG_LUA_ERR_BG_IM_TOO_SMALL:
 	    comment = "background density too small. minimum is 4x4";
 	    break;
+	 case AIG_LUA_ERR_POISSON_LAMBDA:
+	    comment = "Poisson-noise Lambda-parameter must not exceed 1000";
+	    break;
 	 default:
 	    comment = "undescribed error - This is a bug, please report it.";
       }
@@ -812,8 +815,13 @@ static int l_apply_noise(lua_State *L){/*{{{*/
 
 	 double ppu = lua_tonumber(L,3);
 
+	 try{
 	 CPoissonNoise noi(ppu);
 	 noi.apply(im);
+	 } 
+	 catch (int ex){
+	    if (ex == AIG_EX_POISSON_TOO_HIGH_LAMBDA) throw AIG_LUA_ERR_POISSON_LAMBDA;
+	 }
       } else {
 	 throw	AIG_LUA_ERR_INCOMPATIBLE_OBJECT; // unknown type of noise FIXME dedicated error constant
       }
