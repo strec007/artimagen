@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.63)
 AC_CONFIG_MACRO_DIR([m4])
-define(ARTIMAGEN_VERSION,0.9)
+define(ARTIMAGEN_VERSION,0.91)
 AC_SUBST([ARTIMAGEN_VERSION])
 AC_INIT(artimagen, ARTIMAGEN_VERSION, petr.cizmar@nist.gov)
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
