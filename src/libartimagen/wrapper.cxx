@@ -377,7 +377,7 @@ static int l_new_sample(lua_State *L){/*{{{*/
    try{
       if (lua_gettop(L) != 3) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
       if (!lua_isnumber(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // parameter is sizex
-      if (!lua_isnumber(L, 2)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // parameter is sizex
+      if (!lua_isnumber(L, 2)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // parameter is sizey
       if (!lua_istable(L, 3)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // parameter is the table of features
 
 
@@ -419,9 +419,11 @@ static int l_delete_sample(lua_State *L){/*{{{*/
       if (lua_gettop(L) != 1) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
       if (!lua_islightuserdata(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // pointer to sample
 
-      CSample *sa = (CSample *) lua_topointer(L, 1);
-      if (!sa) throw AIG_LUA_ERR_INVALID_POINTER;
-      if (((CObject *)sa)->check_id(AIG_ID_SAMPLE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT;
+      CObject *ob = (CObject *) lua_topointer(L, 1);
+      if (!ob) throw AIG_LUA_ERR_INVALID_POINTER;
+      if (!ob->check_id(AIG_ID_SAMPLE)) throw AIG_LUA_ERR_INCOMPATIBLE_OBJECT;
+
+      CSample *sa = (CSample *) ob;
 
       delete sa;
       return 0;
@@ -990,6 +992,9 @@ lua_State *aig_lua_init(){/*{{{*/
    lua_register(L, "aig_apply_gaussian_psf", l_apply_gaussian_psf);
    lua_register(L, "aig_apply_vib", l_apply_vib);
    lua_register(L, "aig_apply_noise", l_apply_noise);
+   lua_register(L, "aig_shift_image", l_shift_image);
+   lua_register(L, "aig_copy_image", l_copy_image);
+   lua_register(L, "aig_crop_image", l_crop_image);
 
    luaL_register(L, "artimagen", artimagen_lib);
 
