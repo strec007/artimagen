@@ -14,7 +14,7 @@ im = aig_new_image(512,512) -- Creation of a new empty image sized 512x512
 background = {} -- New empty table for the background
 background_density = 8 -- background "map" will be 8x8 pixels large
 for i = 1, background_density*background_density, 1 do
-  table.insert(background, math.random()*(0.2-0.1) + 0.1) -- value for each pixel is randomly generated, value varries from 0.1 to 0.2
+  table.insert(background, math.random()*(0.2-0.1) + 0.1) -- value for each pixel is randomly generated, value varies from 0.1 to 0.2
 end
 aig_apply_background_image(im, {background_density, background_density}, background) -- application of the background to the image
 

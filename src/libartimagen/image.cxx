@@ -419,7 +419,7 @@ CGaussianPsf::CGaussianPsf(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey, float sigma
 	 double xx=(i*cos(astigmatism_angle)+j*sin(astigmatism_angle))*astigmatism_ratio;
 	 double yy=(-i*sin(astigmatism_angle)+j*cos(astigmatism_angle))/astigmatism_ratio;
 
-	 psf_data[index(cx,cy,sizex)] = (double)1/2/sqrt(2*M_PI)/pow(sigma,2)*exp(-(powf(xx,2)+pow(yy,2))/2/pow(sigma,2));
+	 psf_data[index(cx,cy,sizex)] = (double)1/2/sqrt(2*M_PI)/pow(sigma,2)*exp(-(pow(xx,2)+pow(yy,2))/2/pow(sigma,2));
       }
 
    calculate_fft_psf();
