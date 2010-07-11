@@ -1,0 +1,5 @@
+
+#cmakedefine HAVE_LUA
+#cmakedefine HAVE_RAND
+#cmakedefine PACKAGE_VERSION
+
