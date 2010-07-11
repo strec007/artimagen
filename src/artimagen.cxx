@@ -13,7 +13,7 @@
 #include <cmath>
 #include "libartimagen/artimagen_i.h"
 #include "libartimagen/artimagen.h"
-#include "../config.h"
+#include <config.h>
 
 #define SIZEX 1124
 #define SIZEY 1124

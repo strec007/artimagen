@@ -16,7 +16,7 @@
 #include <assert.h>
 #include "strings.h"
 #include "artimagen_i.h"
-#include "../../config.h"
+#include <config.h>
 
 /* missing functions */
 #ifndef HAVE_SRANDOM
