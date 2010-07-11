@@ -10,7 +10,7 @@
  */
 
 
-#include "../config.h"
+#include <config.h>
 #include <iostream>
 #include <cstdlib>
 #include "libartimagen/artimagen_i.h"

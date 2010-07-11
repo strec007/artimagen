@@ -9,7 +9,7 @@
 
  */
 #define AIGAPP_DECLARATION 1  // this file declares the global AIGApp variable
-#include "../../config.h"
+#include <config.h>
 
 #include "artimagen_i.h"
 #include <cassert>

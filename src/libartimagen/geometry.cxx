@@ -17,7 +17,7 @@ using namespace std;
 #include <cstring>
 #include "artimagen_i.h"
 #include <cassert>
-#include "../../config.h"
+#include <config.h>
 
 /* missing functions */
 #ifndef HAVE_SRANDOM
