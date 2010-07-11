@@ -55,3 +55,9 @@ configure_file (
 include_directories("${PROJECT_BINARY_DIR}")
 
 add_subdirectory (src)
+
+file(GLOB example_files "${PROJECT_SOURCE_DIR}/examples/*" )
+
+install (FILES "README" DESTINATION share/doc/artimagen)
+install (FILES ${example_files} DESTINATION share/doc/artimagen/examples)
+
