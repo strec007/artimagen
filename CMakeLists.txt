@@ -52,4 +52,6 @@ configure_file (
   "${PROJECT_BINARY_DIR}/config.h"
   )
 
+include_directories("${PROJECT_BINARY_DIR}")
+
 add_subdirectory (src)
