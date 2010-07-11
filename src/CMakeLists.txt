@@ -9,12 +9,12 @@ SET_TARGET_PROPERTIES(artimagen PROPERTIES VERSION 0.91.0 SOVERSION 0)
 if (USE_LUA)
    add_executable (artimagenl artimagenl.cxx)
    target_link_libraries (artimagenl artimagen ${LIBS})
+   install (TARGETS artimagenl DESTINATION bin)
 endif (USE_LUA)
 
 add_executable (aigtest artimagen.cxx)
 target_link_libraries (aigtest artimagen ${LIBS})
 
-install (TARGETS artimagenl DESTINATION bin)
 install (TARGETS artimagen DESTINATION lib)
 install (FILES "${PROJECT_SOURCE_DIR}/src/libartimagen/artimagen.h" DESTINATION include)
 install (FILES "${PROJECT_SOURCE_DIR}/src/libartimagen/artimagen_i.h" DESTINATION include)
