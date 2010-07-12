@@ -19,7 +19,7 @@ endif (COMPILE_SHARED)
 
 set (PACKAGE_VERSION ${artimagen_VERSION_MAJOR}.${artimagen_VERSION_MINOR} )
 
-include (CheckFunctionExists.cmake)
+include (cmake/CheckFunctionExists.cmake)
 CHECK_FUNCTION_EXISTS (rand HAVE_RAND)
 
 
