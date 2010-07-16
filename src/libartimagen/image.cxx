@@ -131,6 +131,45 @@ CImage::CImage(CImage *im, IM_COORD_TYPE sizex, IM_COORD_TYPE sizey){/*{{{*/
 }
 /*}}}*/
 
+CImage::CImage(const string filename){ /*{{{*/
+   sender_id = "CImage";
+   ident(AIG_ID_IMAGE);
+   send_message(AIG_MSG_CREATING,"Reading image from TIFF.");
+
+   uint32 i, j, sizex_h, sizey_h;
+
+   unsigned char *helper_buffer;
+   TIFF *tif = TIFFOpen(filename.data(), "r");
+   if (tif) {
+      TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &sizex_h);
+      TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &sizey_h);
+
+      this->sizex = sizex_h;
+      this->sizey = sizey_h;
+      this->buffer = new IM_STORE_TYPE[sizex * sizey];
+      
+      assert(helper_buffer = (unsigned char*) malloc(sizeof(uint32) * sizex_h * sizey_h)); // 8-bit images only
+      TIFFReadRGBAImage(tif, sizex_h, sizey_h, (uint32 *)helper_buffer, 1);
+      for (j=0; j < sizey_h; j++) 
+	 for (i=0; i < sizex_h; i++) {
+	    uint32 v_source;
+	    v_source = 4 * (sizex_h * j + i);
+	    uint32 v_dest;
+	    v_dest = sizex_h * (sizey_h - 1 - j) + i;
+	    buffer[v_dest]= (IM_STORE_TYPE) helper_buffer[v_source] / (uint8_t)(-1); //copy every 4. valye to the grayscale buffer
+	 }
+      free(helper_buffer);
+
+   } else throw(AIG_EX_CANNOT_READ_TIFF);
+    
+   TIFFClose(tif);
+
+   fft_valid = 0;
+   fft_data = NULL;
+   plan_initialized = 0;
+   block_ifft = IM_NO_IFFT_BLOCK;
+}/*}}}*/
+
 CImage::~CImage(){/*{{{*/
    // This is the destructor, disposes the buffers and plans.
    destroy_fft_plan();
@@ -169,7 +208,7 @@ void CImage::tiff_write(const string filename, const string tiff_comment){/*{{{*
 
    if((output = TIFFOpen(filename.data(), "w")) == NULL){
       cerr << "Could not write the image" << endl;
-      exit(-11);
+      throw(AIG_EX_CANNOT_WRITE_TIFF);
    }
 
    // Write the tiff tags to the file
@@ -189,7 +228,7 @@ void CImage::tiff_write(const string filename, const string tiff_comment){/*{{{*
    if(TIFFWriteEncodedStrip(output, 0,(void *) sb.give_save_buffer(),
 	    this->sizex * this->sizey * sb.give_element_size()) == 0){
       cerr << "Could not write image." << endl;
-      exit(42);
+      throw(AIG_EX_CANNOT_WRITE_TIFF);
    }
    TIFFClose(output);
 

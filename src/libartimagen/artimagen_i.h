@@ -45,7 +45,9 @@ enum {
    AIG_EX_READD_EFFECT_CHAIN_ATTEMPT,
    AIG_EX_FEATURE_OVERLAP,
    AIG_EX_GOLDONCARBON_TOO_MANY_FAILS,
-   AIG_EX_POISSON_TOO_HIGH_LAMBDA
+   AIG_EX_POISSON_TOO_HIGH_LAMBDA,
+   AIG_EX_CANNOT_READ_TIFF,
+   AIG_EX_CANNOT_WRITE_TIFF
 };
 
 
@@ -404,6 +406,7 @@ class CImage:public CObject{/*{{{*/
       CImage(IM_COORD_TYPE sizex, IM_COORD_TYPE sizey); //create empty image of a certain size
       CImage(CImage *im); // copy image
       CImage(CImage *im, IM_COORD_TYPE sizex, IM_COORD_TYPE sizey); // copy and resize image
+      CImage(const string filename); // read image from an 8-bit TIFF file
       ~CImage(); // desroy image
       void tiff_write(const string filename, const string tiff_comment, int bits); // write image file in a tiff file
       IM_COORD_TYPE give_sizex();

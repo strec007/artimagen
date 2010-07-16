@@ -630,6 +630,25 @@ static int l_delete_image(lua_State *L){/*{{{*/
    return 0;
 }/*}}}*/
 
+static int l_load_image(lua_State *L){/*{{{*/
+   // pars: filename
+   try{
+      if (lua_gettop(L) != 1) throw AIG_LUA_ERR_NUMBER_OF_ARGUMENTS;
+      if (!lua_isstring(L, 1)) throw AIG_LUA_ERR_ARGUMENT_TYPE; // filename
+
+      const char *fn = lua_tolstring(L, 1, NULL);
+      CImage *im = new CImage((string)fn);
+
+      lua_pushlightuserdata(L, (void *) im);
+      return 1;
+   }
+
+   catch (t_aig_lua_err ex){
+      report_lua_error(L, ex);
+   }
+   return 0;
+}/*}}}*/
+
 static int l_save_image(lua_State *L){/*{{{*/
    // pars: image pointer, filename, comment
    try{
@@ -958,6 +977,7 @@ static const luaL_reg artimagen_lib [] = {/*{{{*/
 
    {"new_image", l_new_image},
    {"delete_image", l_delete_image},
+   {"load_image", l_load_image},
    {"save_image", l_save_image},
    {"apply_background_image", l_apply_background_image},
    {"apply_gaussian_psf", l_apply_gaussian_psf},
@@ -987,6 +1007,7 @@ lua_State *aig_lua_init(){/*{{{*/
 
    lua_register(L, "aig_new_image", l_new_image);
    lua_register(L, "aig_delete_image", l_delete_image);
+   lua_register(L, "aig_load_image", l_load_image);
    lua_register(L, "aig_save_image", l_save_image);
    lua_register(L, "aig_apply_background_image", l_apply_background_image);
    lua_register(L, "aig_apply_gaussian_psf", l_apply_gaussian_psf);
