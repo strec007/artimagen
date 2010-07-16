@@ -1,4 +1,4 @@
--- This is a ARTIMAGEN Lua script that generate the ARTIMAGEN logo SEM image
+-- This is a ARTIMAGEN Lua script that loads a TIFF image and processes it
 -- by Petr Cizmar @ NIST
 
 --[[

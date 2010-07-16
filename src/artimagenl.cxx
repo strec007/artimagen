@@ -24,7 +24,7 @@ void message_call_back(t_message *msg){ // this is the call-back function that w
 
 
 int main(int argc, char **argv){
-   cout << "\n **** ArtImaGen v." << PACKAGE_VERSION << " ****\n * by Petr Cizmar @ NIST\n * 2008-2009\n\n";
+   cout << "\n **** ArtImaGen v." << PACKAGE_VERSION << " ****\n * by Petr Cizmar @ NIST\n * 2008-2010\n\n";
    if (argc != 2){
       cerr << "Usage: " << argv[0] << " defs.aig" << endl << endl;
       exit(-1);
