@@ -6,7 +6,8 @@ project (artimagen)
 set (CMAKE_BUILD_TYPE release)
 
 set (artimagen_VERSION_MAJOR 0)
-set (artimagen_VERSION_MINOR 91)
+set (artimagen_VERSION_MINOR 9)
+set (artimagen_PATCH_LEVEL 3)
 
 option(USE_LUA "Compile with Lua support" ON)
 option(COMPILE_SHARED "Compile libartimagen as a shared lib." OFF)
