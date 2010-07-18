@@ -181,6 +181,12 @@ static void report_lua_error(lua_State *L, int exc){/*{{{*/
 	 case AIG_LUA_ERR_POISSON_LAMBDA:
 	    comment = "Poisson-noise Lambda-parameter must not exceed 1000";
 	    break;
+	 case AIG_LUA_ERR_CANNOT_READ_FILE:
+	    comment = "Cannot open file for reading.";
+	    break;
+	 case AIG_LUA_ERR_CANNOT_WRITE_FILE:
+	    comment = "Cannot open file for writing.";
+	    break;
 	 default:
 	    comment = "undescribed error - This is a bug, please report it.";
       }
@@ -638,6 +644,7 @@ static int l_load_image(lua_State *L){/*{{{*/
 
       const char *fn = lua_tolstring(L, 1, NULL);
       CImage *im = new CImage((string)fn);
+      
 
       lua_pushlightuserdata(L, (void *) im);
       return 1;
@@ -645,6 +652,9 @@ static int l_load_image(lua_State *L){/*{{{*/
 
    catch (t_aig_lua_err ex){
       report_lua_error(L, ex);
+   }
+   catch (aig_exception ex) {
+      if (ex == AIG_EX_CANNOT_READ_TIFF) report_lua_error(L, AIG_LUA_ERR_CANNOT_READ_FILE);
    }
    return 0;
 }/*}}}*/
@@ -671,6 +681,9 @@ static int l_save_image(lua_State *L){/*{{{*/
    
    catch (t_aig_lua_err ex){
       report_lua_error(L, ex);
+   }
+   catch (aig_exception ex) {
+      if (ex == AIG_EX_CANNOT_WRITE_TIFF) report_lua_error(L, AIG_LUA_ERR_CANNOT_WRITE_FILE);
    }
    return 0;
 }/*}}}*/

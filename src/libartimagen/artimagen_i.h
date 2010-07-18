@@ -40,7 +40,7 @@ enum {
 #define SA_ADD_OK 1
 #define SA_ADD_FULL 2
 
-enum {
+enum aig_exception {
    AIG_EX_ZERO_LINE,
    AIG_EX_READD_EFFECT_CHAIN_ATTEMPT,
    AIG_EX_FEATURE_OVERLAP,
