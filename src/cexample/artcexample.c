@@ -95,10 +95,10 @@ int main(){
    void *image = generate_standard_image(sample, &im_def);
    printf("image OK\n");
 
-   save_image(image, (char *)"cex.tiff", (char *)"generated using Artimagen library by Petr Cizmar @ NIST.");
+   aig_save_image(image, (char *)"cex.tiff", (char *)"generated using Artimagen library by Petr Cizmar @ NIST.");
 
    destroy_gc_sample(sample);
-   destroy_image(image);
+   aig_destroy_image(image);
    return 0;
 }
 

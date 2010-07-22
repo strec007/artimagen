@@ -96,12 +96,12 @@ extern "C" void *generate_standard_image(void *sample, t_std_image_def_struct *d
    return (void *) im;
 }/*}}}*/
 
-extern "C" void destroy_image(void *poi){/*{{{*/
+extern "C" void aig_destroy_image(void *poi){/*{{{*/
    CImage *im = (CImage *) poi;
    delete im;
 }/*}}}*/
 
-extern "C" void save_image(void *image, char* filename, char *comment){/*{{{*/
+extern "C" void aig_save_image(void *image, char* filename, char *comment){/*{{{*/
    CImage *im = (CImage *) image;
    im->tiff_write(filename, comment, BI_8B);
 }/*}}}*/

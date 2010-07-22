@@ -251,8 +251,8 @@ extern "C" {
 void *generate_gc_sample(t_gc_definition *def);
 void destroy_gc_sample(void *poi);
 void *generate_standard_image(void *sample, t_std_image_def_struct *def);
-void destroy_image(void *poi);
-void save_image(void *image, char* filename, char *comment);
+void aig_destroy_image(void *poi);
+void aig_save_image(void *image, char* filename, char *comment);
 #ifdef __cplusplus
 }
 #endif
