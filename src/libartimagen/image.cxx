@@ -527,7 +527,7 @@ void CVibration::generate_curves(const int sizex, const int sizey, unsigned long
    motion_x = new double[(int) (sizex * sizey)];
    motion_y = new double[(int) (sizex * sizey)];
 
-   unsigned long t = time_shift/def.pixel_dwell_time;
+   unsigned long t = (double) time_shift/def.pixel_dwell_time;
 
    for (int j=0; j< sizey; j++){
       t += def.line_dead_time;
