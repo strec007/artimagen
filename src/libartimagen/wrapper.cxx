@@ -18,8 +18,8 @@
 
 #ifdef HAVE_LUA
 extern "C" {
-#include <lua5.1/lualib.h>
-#include <lua5.1/lauxlib.h>
+#include <lua5.3/lualib.h>
+#include <lua5.3/lauxlib.h>
 }
 #endif
 
@@ -976,7 +976,7 @@ static int l_destroy_app(lua_State *L){/*{{{*/
 // lua function registration and lua code execution
 #define LUA_LIB
 
-static const luaL_reg artimagen_lib [] = {/*{{{*/
+static const luaL_Reg artimagen_lib [] = {/*{{{*/
    {"new_curve", l_new_curve},
    {"new_feature", l_new_feature},
    {"paint_feature", l_paint_feature},
@@ -1007,7 +1007,7 @@ static const luaL_reg artimagen_lib [] = {/*{{{*/
 };/*}}}*/
 
 lua_State *aig_lua_init(){/*{{{*/
-   lua_State *L = lua_open();
+   lua_State *L = luaL_newstate();
    luaL_openlibs(L);
    lua_register(L, "aig_new_curve", l_new_curve);
    lua_register(L, "aig_new_feature", l_new_feature);
@@ -1029,8 +1029,6 @@ lua_State *aig_lua_init(){/*{{{*/
    lua_register(L, "aig_shift_image", l_shift_image);
    lua_register(L, "aig_copy_image", l_copy_image);
    lua_register(L, "aig_crop_image", l_crop_image);
-
-   luaL_register(L, "artimagen", artimagen_lib);
 
    return L;
 
@@ -1064,12 +1062,6 @@ int exec_lua_file(const char *fn, lua_State *L){/*{{{*/
    return err;
 }/*}}}*/
 
-extern "C" {
-LUALIB_API int luaopen_libartimagen (lua_State *L) {/*{{{*/
-   luaL_register(L, "artimagen", artimagen_lib);
-   return 0;
-}/*}}}*/
-}
 
 #endif
 

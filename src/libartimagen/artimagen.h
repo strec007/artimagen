@@ -39,8 +39,8 @@
 
 #ifdef HAVE_LUA
 extern "C" {
-#include <lua5.1/lualib.h>
-#include <lua5.1/lauxlib.h>
+#include <lua5.3/lualib.h>
+#include <lua5.3/lauxlib.h>
 }
 #endif 
 #include <stdint.h>
