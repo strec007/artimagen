@@ -793,8 +793,8 @@ CSnakeSample::CSnakeSample(t_rct_definition *def):CSample(def->sizex, def->sizey
       fes[i]->set_base_gray_level(def->base_level*(1+rand()*def->base_level_variation/RAND_MAX));
       fes[i]->add_effect_chain(effects, number_of_effects);
       if (add_feature(fes[i]) == SA_ADD_OVERLAP) {
-	 cout << i << " overlaps!!!" << cout;
-	 throw (int) AIG_EX_FEATURE_OVERLAP;
+         cout << i << " overlaps!!!" << endl;
+         throw (int) AIG_EX_FEATURE_OVERLAP;
       }
    }
    rotate(CVector(6*STEP, def->lsize/2), def->rotation); 
