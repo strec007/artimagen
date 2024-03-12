@@ -136,7 +136,7 @@ CImage::CImage(const string filename){ /*{{{*/
    ident(AIG_ID_IMAGE);
    send_message(AIG_MSG_CREATING,"Reading image from TIFF.");
 
-   uint32 i, j, sizex_h, sizey_h;
+   uint32_t i, j, sizex_h, sizey_h;
 
    unsigned char *helper_buffer;
    TIFF *tif = TIFFOpen(filename.data(), "r");
@@ -148,13 +148,13 @@ CImage::CImage(const string filename){ /*{{{*/
       this->sizey = sizey_h;
       this->buffer = new IM_STORE_TYPE[sizex * sizey];
       
-      assert(helper_buffer = (unsigned char*) malloc(sizeof(uint32) * sizex_h * sizey_h)); // 8-bit images only
-      TIFFReadRGBAImage(tif, sizex_h, sizey_h, (uint32 *)helper_buffer, 1);
+      assert(helper_buffer = (unsigned char*) malloc(sizeof(uint32_t) * sizex_h * sizey_h)); // 8-bit images only
+      TIFFReadRGBAImage(tif, sizex_h, sizey_h, (uint32_t *)helper_buffer, 1);
       for (j=0; j < sizey_h; j++) 
 	 for (i=0; i < sizex_h; i++) {
-	    uint32 v_source;
+	    uint32_t v_source;
 	    v_source = 4 * (sizex_h * j + i);
-	    uint32 v_dest;
+	    uint32_t v_dest;
 	    v_dest = sizex_h * (sizey_h - 1 - j) + i;
 	    buffer[v_dest]= (IM_STORE_TYPE) helper_buffer[v_source] / (uint8_t)(-1); //copy every 4. valye to the grayscale buffer
 	 }
